@@ -5,11 +5,11 @@ DIT
 package ru.mos.mostech.ews.http;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Consts;
 import org.apache.http.impl.auth.NTLMEngine;
 import org.apache.http.impl.auth.NTLMEngineException;
-import org.apache.log4j.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -29,13 +29,17 @@ import java.util.Locale;
  * authentication protocol.
  * Duplicate code from NTLMEngineImpl to implement channel binding
  */
+@Slf4j
 final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 
-    static final Logger LOGGER = Logger.getLogger(MosTechEwsNTLMEngineImpl.class);
 
-    /** Unicode encoding */
+    /**
+     * Unicode encoding
+     */
     private static final Charset UNICODE_LITTLE_UNMARKED = StandardCharsets.UTF_16LE;
-    /** Character encoding */
+    /**
+     * Character encoding
+     */
     private static final Charset DEFAULT_CHARSET = Consts.ASCII;
 
     // Flags we use; descriptions according to:
@@ -88,7 +92,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
         }
     }
 
-    /** The signature string as bytes in the default encoding */
+    /**
+     * The signature string as bytes in the default encoding
+     */
     private static final byte[] SIGNATURE = getNullTerminatedAsciiString("NTLMSSP");
 
     // prefix for GSS API channel binding
@@ -111,6 +117,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 
     /**
      * Store connection certificate for channel binding implementation.
+     *
      * @param peerServerCertificate certificate
      */
     public void setPeerServerCertificate(Certificate peerServerCertificate) {
@@ -122,10 +129,8 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
      * sequence. This message includes the user name, domain and host for the
      * authentication session.
      *
-     * @param host
-     *            the computer name of the host requesting authentication.
-     * @param domain
-     *            The domain to authenticate with.
+     * @param host   the computer name of the host requesting authentication.
+     * @param domain The domain to authenticate with.
      * @return String the message to add to the HTTP request header.
      */
     static String getType1Message(final String host, final String domain) {
@@ -140,19 +145,13 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
      * username and the result of encrypting the nonce sent by the server using
      * the user's password as the key.
      *
-     * @param user
-     *            The user name. This should not include the domain name.
-     * @param password
-     *            The password.
-     * @param host
-     *            The host that is originating the authentication request.
-     * @param domain
-     *            The domain to authenticate within.
-     * @param nonce
-     *            the 8 byte array the server sent.
+     * @param user     The user name. This should not include the domain name.
+     * @param password The password.
+     * @param host     The host that is originating the authentication request.
+     * @param domain   The domain to authenticate within.
+     * @param nonce    the 8 byte array the server sent.
      * @return The type 3 message.
-     * @throws NTLMEngineException
-     *             If {link #Type3Message(String, String, String, String, byte[], int, String, byte[])} fails.
+     * @throws NTLMEngineException If {link #Type3Message(String, String, String, String, byte[], int, String, byte[])} fails.
      */
     static String getType3Message(final String user, final String password, final String host, final String domain,
                                   final byte[] nonce, final int type2Flags, final String target, final byte[] targetInformation)
@@ -167,19 +166,13 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
      * username and the result of encrypting the nonce sent by the server using
      * the user's password as the key.
      *
-     * @param user
-     *            The user name. This should not include the domain name.
-     * @param password
-     *            The password.
-     * @param host
-     *            The host that is originating the authentication request.
-     * @param domain
-     *            The domain to authenticate within.
-     * @param nonce
-     *            the 8 byte array the server sent.
+     * @param user     The user name. This should not include the domain name.
+     * @param password The password.
+     * @param host     The host that is originating the authentication request.
+     * @param domain   The domain to authenticate within.
+     * @param nonce    the 8 byte array the server sent.
      * @return The type 3 message.
-     * @throws NTLMEngineException
-     *             If {link #Type3Message(String, String, String, String, byte[], int, String, byte[], Certificate, byte[], byte[])} fails.
+     * @throws NTLMEngineException If {link #Type3Message(String, String, String, String, byte[], int, String, byte[], Certificate, byte[], byte[])} fails.
      */
     static String getType3Message(final String user, final String password, final String host, final String domain,
                                   final byte[] nonce, final int type2Flags, final String target, final byte[] targetInformation,
@@ -215,14 +208,18 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
         return buffer;
     }
 
-    /** Calculate a challenge block */
+    /**
+     * Calculate a challenge block
+     */
     private static byte[] makeRandomChallenge() {
         final byte[] rval = new byte[8];
         RNG.nextBytes(rval);
         return rval;
     }
 
-    /** Calculate a 16-byte secondary key */
+    /**
+     * Calculate a 16-byte secondary key
+     */
     private static byte[] makeSecondaryKey() {
         final byte[] rval = new byte[16];
         RNG.nextBytes(rval);
@@ -293,7 +290,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             this(currentTime, domain, user, password, challenge, target, targetInformation, null, null, null, null);
         }
 
-        /** Calculate and return client challenge */
+        /**
+         * Calculate and return client challenge
+         */
         public byte[] getClientChallenge() {
             if (clientChallenge == null) {
                 clientChallenge = makeRandomChallenge();
@@ -301,7 +300,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return clientChallenge;
         }
 
-        /** Calculate and return second client challenge */
+        /**
+         * Calculate and return second client challenge
+         */
         public byte[] getClientChallenge2() {
             if (clientChallenge2 == null) {
                 clientChallenge2 = makeRandomChallenge();
@@ -309,7 +310,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return clientChallenge2;
         }
 
-        /** Calculate and return random secondary key */
+        /**
+         * Calculate and return random secondary key
+         */
         public byte[] getSecondaryKey() {
             if (secondaryKey == null) {
                 secondaryKey = makeSecondaryKey();
@@ -317,7 +320,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return secondaryKey;
         }
 
-        /** Calculate and return the LMHash */
+        /**
+         * Calculate and return the LMHash
+         */
         public byte[] getLMHash()
                 throws NTLMEngineException {
             if (lmHash == null) {
@@ -326,7 +331,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return lmHash;
         }
 
-        /** Calculate and return the LMResponse */
+        /**
+         * Calculate and return the LMResponse
+         */
         public byte[] getLMResponse()
                 throws NTLMEngineException {
             if (lmResponse == null) {
@@ -335,7 +342,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return lmResponse;
         }
 
-        /** Calculate and return the NTLMHash */
+        /**
+         * Calculate and return the NTLMHash
+         */
         public byte[] getNTLMHash() {
             if (ntlmHash == null) {
                 ntlmHash = ntlmHash(password);
@@ -343,7 +352,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return ntlmHash;
         }
 
-        /** Calculate and return the NTLMResponse */
+        /**
+         * Calculate and return the NTLMResponse
+         */
         public byte[] getNTLMResponse()
                 throws NTLMEngineException {
             if (ntlmResponse == null) {
@@ -352,7 +363,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return ntlmResponse;
         }
 
-        /** Calculate the LMv2 hash */
+        /**
+         * Calculate the LMv2 hash
+         */
         public byte[] getLMv2Hash()
                 throws NTLMEngineException {
             if (lmv2Hash == null) {
@@ -361,7 +374,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return lmv2Hash;
         }
 
-        /** Calculate the NTLMv2 hash */
+        /**
+         * Calculate the NTLMv2 hash
+         */
         public byte[] getNTLMv2Hash()
                 throws NTLMEngineException {
             if (ntlmv2Hash == null) {
@@ -370,7 +385,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return ntlmv2Hash;
         }
 
-        /** Calculate a timestamp */
+        /**
+         * Calculate a timestamp
+         */
         public byte[] getTimestamp() {
             if (timestamp == null) {
                 long time = this.currentTime;
@@ -386,7 +403,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return timestamp;
         }
 
-        /** Calculate the NTLMv2Blob */
+        /**
+         * Calculate the NTLMv2Blob
+         */
         public byte[] getNTLMv2Blob() {
             if (ntlmv2Blob == null) {
                 ntlmv2Blob = createBlob(getClientChallenge2(), targetInformation, getTimestamp());
@@ -394,7 +413,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return ntlmv2Blob;
         }
 
-        /** Calculate the NTLMv2Response */
+        /**
+         * Calculate the NTLMv2Response
+         */
         public byte[] getNTLMv2Response()
                 throws NTLMEngineException {
             if (ntlmv2Response == null) {
@@ -403,7 +424,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return ntlmv2Response;
         }
 
-        /** Calculate the LMv2Response */
+        /**
+         * Calculate the LMv2Response
+         */
         public byte[] getLMv2Response()
                 throws NTLMEngineException {
             if (lmv2Response == null) {
@@ -412,7 +435,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return lmv2Response;
         }
 
-        /** Get NTLM2SessionResponse */
+        /**
+         * Get NTLM2SessionResponse
+         */
         public byte[] getNTLM2SessionResponse()
                 throws NTLMEngineException {
             if (ntlm2SessionResponse == null) {
@@ -421,7 +446,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return ntlm2SessionResponse;
         }
 
-        /** Calculate and return LM2 session response */
+        /**
+         * Calculate and return LM2 session response
+         */
         public byte[] getLM2SessionResponse() {
             if (lm2SessionResponse == null) {
                 final byte[] clntChallenge = getClientChallenge();
@@ -432,7 +459,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return lm2SessionResponse;
         }
 
-        /** Get LMUserSessionKey */
+        /**
+         * Get LMUserSessionKey
+         */
         public byte[] getLMUserSessionKey()
                 throws NTLMEngineException {
             if (lmUserSessionKey == null) {
@@ -443,7 +472,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return lmUserSessionKey;
         }
 
-        /** Get NTLMUserSessionKey */
+        /**
+         * Get NTLMUserSessionKey
+         */
         public byte[] getNTLMUserSessionKey()
                 throws NTLMEngineException {
             if (ntlmUserSessionKey == null) {
@@ -454,7 +485,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return ntlmUserSessionKey;
         }
 
-        /** GetNTLMv2UserSessionKey */
+        /**
+         * GetNTLMv2UserSessionKey
+         */
         public byte[] getNTLMv2UserSessionKey()
                 throws NTLMEngineException {
             if (ntlmv2UserSessionKey == null) {
@@ -466,7 +499,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return ntlmv2UserSessionKey;
         }
 
-        /** Get NTLM2SessionResponseUserSessionKey */
+        /**
+         * Get NTLM2SessionResponseUserSessionKey
+         */
         public byte[] getNTLM2SessionResponseUserSessionKey()
                 throws NTLMEngineException {
             if (ntlm2SessionResponseUserSessionKey == null) {
@@ -479,7 +514,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return ntlm2SessionResponseUserSessionKey;
         }
 
-        /** Get LAN Manager session key */
+        /**
+         * Get LAN Manager session key
+         */
         public byte[] getLanManagerSessionKey()
                 throws NTLMEngineException {
             if (lanManagerSessionKey == null) {
@@ -508,14 +545,18 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
         }
     }
 
-    /** Calculates HMAC-MD5 */
+    /**
+     * Calculates HMAC-MD5
+     */
     static byte[] hmacMD5(final byte[] value, final byte[] key) {
         final MosTechEwsNTLMEngineImpl.HMACMD5 hmacMD5 = new MosTechEwsNTLMEngineImpl.HMACMD5(key);
         hmacMD5.update(value);
         return hmacMD5.getOutput();
     }
 
-    /** Calculates RC4 */
+    /**
+     * Calculates RC4
+     */
     static byte[] RC4(final byte[] value, final byte[] key)
             throws NTLMEngineException {
         try {
@@ -532,8 +573,8 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
      * specified password and client challenge.
      *
      * @return The NTLM2 Session Response. This is placed in the NTLM response
-     *         field of the Type 3 message; the LM response field contains the
-     *         client challenge, null-padded to 24 bytes.
+     * field of the Type 3 message; the LM response field contains the
+     * client challenge, null-padded to 24 bytes.
      */
     static byte[] ntlm2SessionResponse(final byte[] ntlmHash, final byte[] challenge,
                                        final byte[] clientChallenge) throws NTLMEngineException {
@@ -556,11 +597,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
     /**
      * Creates the LM Hash of the user's password.
      *
-     * @param password
-     *            The password.
-     *
+     * @param password The password.
      * @return The LM Hash of the given password, used in the calculation of the
-     *         LM Response.
+     * LM Response.
      */
     private static byte[] lmHash(final String password) throws NTLMEngineException {
         try {
@@ -588,11 +627,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
     /**
      * Creates the NTLM Hash of the user's password.
      *
-     * @param password
-     *            The password.
-     *
+     * @param password The password.
      * @return The NTLM Hash of the given password, used in the calculation of
-     *         the NTLM Response and the NTLMv2 and LMv2 Hashes.
+     * the NTLM Response and the NTLMv2 and LMv2 Hashes.
      */
     private static byte[] ntlmHash(final String password) {
         final byte[] unicodePassword = password.getBytes(UNICODE_LITTLE_UNMARKED);
@@ -605,7 +642,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
      * Creates the LMv2 Hash of the user's password.
      *
      * @return The LMv2 Hash, used in the calculation of the NTLMv2 and LMv2
-     *         Responses.
+     * Responses.
      */
     private static byte[] lmv2Hash(final String domain, final String user, final byte[] ntlmHash)
             throws NTLMEngineException {
@@ -622,7 +659,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
      * Creates the NTLMv2 Hash of the user's password.
      *
      * @return The NTLMv2 Hash, used in the calculation of the NTLMv2 and LMv2
-     *         Responses.
+     * Responses.
      */
     private static byte[] ntlmv2Hash(final String domain, final String user, final byte[] ntlmHash) {
         final MosTechEwsNTLMEngineImpl.HMACMD5 hmacMD5 = new MosTechEwsNTLMEngineImpl.HMACMD5(ntlmHash);
@@ -637,11 +674,8 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
     /**
      * Creates the LM Response from the given hash and Type 2 challenge.
      *
-     * @param hash
-     *            The LM or NTLM Hash.
-     * @param challenge
-     *            The server challenge from the Type 2 message.
-     *
+     * @param hash      The LM or NTLM Hash.
+     * @param challenge The server challenge from the Type 2 message.
      * @return The response (either LM or NTLM, depending on the provided hash).
      */
     private static byte[] lmResponse(final byte[] hash, final byte[] challenge) throws NTLMEngineException {
@@ -672,15 +706,11 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
      * Creates the LMv2 Response from the given hash, client data, and Type 2
      * challenge.
      *
-     * @param hash
-     *            The NTLMv2 Hash.
-     * @param clientData
-     *            The client data (blob or client challenge).
-     * @param challenge
-     *            The server challenge from the Type 2 message.
-     *
+     * @param hash       The NTLMv2 Hash.
+     * @param clientData The client data (blob or client challenge).
+     * @param challenge  The server challenge from the Type 2 message.
      * @return The response (either NTLMv2 or LMv2, depending on the client
-     *         data).
+     * data).
      */
     private static byte[] lmv2Response(final byte[] hash, final byte[] challenge, final byte[] clientData) {
         final MosTechEwsNTLMEngineImpl.HMACMD5 hmacMD5 = new MosTechEwsNTLMEngineImpl.HMACMD5(hash);
@@ -700,7 +730,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
     }
 
     private static void encodeLong(final byte[] buf, final int offset, final int value) {
-        buf[offset    ] = (byte) (value & 0xff);
+        buf[offset] = (byte) (value & 0xff);
         buf[offset + 1] = (byte) (value >> 8 & 0xff);
         buf[offset + 2] = (byte) (value >> 16 & 0xff);
         buf[offset + 3] = (byte) (value >> 24 & 0xff);
@@ -710,11 +740,8 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
      * Creates the NTLMv2 blob from the given target information block and
      * client challenge.
      *
-     * @param targetInformation
-     *            The target information block from the Type 2 message.
-     * @param clientChallenge
-     *            The random 8-byte client challenge.
-     *
+     * @param targetInformation The target information block from the Type 2 message.
+     * @param clientChallenge   The random 8-byte client challenge.
      * @return The blob, used in the calculation of the NTLMv2 Response.
      */
     private static byte[] createBlob(final byte[] clientChallenge, final byte[] targetInformation, final byte[] timestamp) {
@@ -745,14 +772,11 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
     /**
      * Creates a DES encryption key from the given key material.
      *
-     * @param bytes
-     *            A byte array containing the DES key material.
-     * @param offset
-     *            The offset in the given byte array at which the 7-byte key
-     *            material starts.
-     *
+     * @param bytes  A byte array containing the DES key material.
+     * @param offset The offset in the given byte array at which the 7-byte key
+     *               material starts.
      * @return A DES encryption key created from the key material starting at
-     *         the specified offset in the given byte array.
+     * the specified offset in the given byte array.
      */
     private static Key createDESKey(final byte[] bytes, final int offset) {
         final byte[] keyBytes = new byte[7];
@@ -773,8 +797,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
     /**
      * Applies odd parity to the given byte array.
      *
-     * @param bytes
-     *            The data whose parity bits are to be adjusted for odd parity.
+     * @param bytes The data whose parity bits are to be adjusted for odd parity.
      */
     private static void oddParity(final byte[] bytes) {
         for (int i = 0; i < bytes.length; i++) {
@@ -791,6 +814,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 
     /**
      * Find the character set based on the flags.
+     *
      * @param flags is the flags.
      * @return the character set.
      */
@@ -801,7 +825,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
         return UNICODE_LITTLE_UNMARKED;
     }
 
-    /** Strip dot suffix from a name */
+    /**
+     * Strip dot suffix from a name
+     */
     private static String stripDotSuffix(final String value) {
         if (value == null) {
             return null;
@@ -813,34 +839,50 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
         return value;
     }
 
-    /** Convert host to standard form */
+    /**
+     * Convert host to standard form
+     */
     private static String convertHost(final String host) {
         return stripDotSuffix(host);
     }
 
-    /** Convert domain to standard form */
+    /**
+     * Convert domain to standard form
+     */
     private static String convertDomain(final String domain) {
         return stripDotSuffix(domain);
     }
 
-    /** NTLM message generation, base class */
+    /**
+     * NTLM message generation, base class
+     */
     static class NTLMMessage {
-        /** The current response */
+        /**
+         * The current response
+         */
         protected byte[] messageContents = null;
 
-        /** The current output position */
+        /**
+         * The current output position
+         */
         protected int currentOutputPosition = 0;
 
-        /** Constructor to use when message contents are not yet known */
+        /**
+         * Constructor to use when message contents are not yet known
+         */
         NTLMMessage() {
         }
 
-        /** Constructor taking a string */
+        /**
+         * Constructor taking a string
+         */
         NTLMMessage(final String messageBody, final int expectedType) throws NTLMEngineException {
             this(Base64.decodeBase64(messageBody.getBytes(DEFAULT_CHARSET)), expectedType);
         }
 
-        /** Constructor to use when message bytes are known */
+        /**
+         * Constructor to use when message bytes are known
+         */
         NTLMMessage(final byte[] message, final int expectedType) throws NTLMEngineException {
             messageContents = message;
             // Look for NTLM message
@@ -874,12 +916,16 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return SIGNATURE.length + 4;
         }
 
-        /** Get the message length */
+        /**
+         * Get the message length
+         */
         protected int getMessageLength() {
             return currentOutputPosition;
         }
 
-        /** Read a byte from a position within the message buffer */
+        /**
+         * Read a byte from a position within the message buffer
+         */
         protected byte readByte(final int position) throws NTLMEngineException {
             if (messageContents.length < position + 1) {
                 throw new NTLMEngineException("NTLM: Message too short");
@@ -887,7 +933,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return messageContents[position];
         }
 
-        /** Read a bunch of bytes from a position in the message buffer */
+        /**
+         * Read a bunch of bytes from a position in the message buffer
+         */
         protected void readBytes(final byte[] buffer, final int position) throws NTLMEngineException {
             if (messageContents.length < position + buffer.length) {
                 throw new NTLMEngineException("NTLM: Message too short");
@@ -895,17 +943,23 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             System.arraycopy(messageContents, position, buffer, 0, buffer.length);
         }
 
-        /** Read a ushort from a position within the message buffer */
+        /**
+         * Read a ushort from a position within the message buffer
+         */
         protected int readUShort(final int position) {
             return MosTechEwsNTLMEngineImpl.readUShort(messageContents, position);
         }
 
-        /** Read a ulong from a position within the message buffer */
+        /**
+         * Read a ulong from a position within the message buffer
+         */
         protected int readULong(final int position) {
             return MosTechEwsNTLMEngineImpl.readULong(messageContents, position);
         }
 
-        /** Read a security buffer from a position within the message buffer */
+        /**
+         * Read a security buffer from a position within the message buffer
+         */
         protected byte[] readSecurityBuffer(final int position) {
             return MosTechEwsNTLMEngineImpl.readSecurityBuffer(messageContents, position);
         }
@@ -913,10 +967,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
         /**
          * Prepares the object to create a response of the given length.
          *
-         * @param maxlength
-         *            the maximum length of the response to prepare,
-         *            including the type and the signature (which this method
-         *            adds).
+         * @param maxlength the maximum length of the response to prepare,
+         *                  including the type and the signature (which this method
+         *                  adds).
          */
         protected void prepareResponse(final int maxlength, final int messageType) {
             messageContents = new byte[maxlength];
@@ -928,8 +981,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
         /**
          * Adds the given byte to the response.
          *
-         * @param b
-         *            the byte to add.
+         * @param b the byte to add.
          */
         protected void addByte(final byte b) {
             messageContents[currentOutputPosition] = b;
@@ -939,8 +991,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
         /**
          * Adds the given bytes to the response.
          *
-         * @param bytes
-         *            the bytes to add.
+         * @param bytes the bytes to add.
          */
         protected void addBytes(final byte[] bytes) {
             if (bytes == null) {
@@ -952,13 +1003,17 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             }
         }
 
-        /** Adds a USHORT to the response */
+        /**
+         * Adds a USHORT to the response
+         */
         protected void addUShort(final int value) {
             addByte((byte) (value & 0xff));
             addByte((byte) (value >> 8 & 0xff));
         }
 
-        /** Adds a ULong to the response */
+        /**
+         * Adds a ULong to the response
+         */
         protected void addULong(final int value) {
             addByte((byte) (value & 0xff));
             addByte((byte) (value >> 8 & 0xff));
@@ -994,7 +1049,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
         }
     }
 
-    /** Type 1 message assembly class */
+    /**
+     * Type 1 message assembly class
+     */
     static class Type1Message extends MosTechEwsNTLMEngineImpl.NTLMMessage {
 
         private final byte[] hostBytes;
@@ -1113,7 +1170,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 
     }
 
-    /** Type 2 message class */
+    /**
+     * Type 2 message class
+     */
     static class Type2Message extends NTLMMessage {
         protected final byte[] challenge;
         protected String target;
@@ -1170,29 +1229,39 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             }
         }
 
-        /** Retrieve the challenge */
+        /**
+         * Retrieve the challenge
+         */
         byte[] getChallenge() {
             return challenge;
         }
 
-        /** Retrieve the target */
+        /**
+         * Retrieve the target
+         */
         String getTarget() {
             return target;
         }
 
-        /** Retrieve the target info */
+        /**
+         * Retrieve the target info
+         */
         byte[] getTargetInfo() {
             return targetInfo;
         }
 
-        /** Retrieve the response flags */
+        /**
+         * Retrieve the response flags
+         */
         int getFlags() {
             return flags;
         }
 
     }
 
-    /** Type 3 message assembly class */
+    /**
+     * Type 3 message assembly class
+     */
     static class Type3Message extends MosTechEwsNTLMEngineImpl.NTLMMessage {
         // For mic computation
         protected final byte[] type1Message;
@@ -1211,7 +1280,8 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 
         protected final boolean computeMic;
 
-        /** More primitive constructor: don't include cert or previous messages.
+        /**
+         * More primitive constructor: don't include cert or previous messages.
          */
         Type3Message(final String domain,
                      final String host,
@@ -1225,7 +1295,8 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             this(domain, host, user, password, nonce, type2Flags, target, targetInformation, null, null, null);
         }
 
-        /** More primitive constructor: don't include cert or previous messages.
+        /**
+         * More primitive constructor: don't include cert or previous messages.
          */
         Type3Message(final long currentTime,
                      final String domain,
@@ -1240,7 +1311,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             this(currentTime, domain, host, user, password, nonce, type2Flags, target, targetInformation, null, null, null);
         }
 
-        /** Constructor. Pass the arguments we will need */
+        /**
+         * Constructor. Pass the arguments we will need
+         */
         Type3Message(final String domain,
                      final String host,
                      final String user,
@@ -1256,7 +1329,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             this(System.currentTimeMillis(), domain, host, user, password, nonce, type2Flags, target, targetInformation, peerServerCertificate, type1Message, type2Message);
         }
 
-        /** Constructor. Pass the arguments we will need */
+        /**
+         * Constructor. Pass the arguments we will need
+         */
         Type3Message(final long currentTime,
                      final String domain,
                      final String host,
@@ -1377,7 +1452,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
             return exportedSessionKey;
         }
 
-        /** Assemble the response */
+        /**
+         * Assemble the response
+         */
         @Override
         protected void buildMessage() {
             final int ntRespLen = ntResp.length;
@@ -1798,19 +1875,25 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 
         }
 
-        /** Grab the current digest. This is the "answer". */
+        /**
+         * Grab the current digest. This is the "answer".
+         */
         byte[] getOutput() {
             final byte[] digest = md5.digest();
             md5.update(opad);
             return md5.digest(digest);
         }
 
-        /** Update by adding a complete array */
+        /**
+         * Update by adding a complete array
+         */
         void update(final byte[] input) {
             md5.update(input);
         }
 
-        /** Update the algorithm */
+        /**
+         * Update the algorithm
+         */
         void update(final byte[] input, final int offset, final int length) {
             md5.update(input, offset, length);
         }
@@ -1821,7 +1904,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
     public String generateType1Msg(
             final String domain,
             final String workstation) {
-        LOGGER.debug("generateType1Msg domain='" + domain + "' workstation='" + workstation + "'");
+        log.debug("generateType1Msg domain='" + domain + "' workstation='" + workstation + "'");
         return getType1Message(workstation, domain);
     }
 
@@ -1839,7 +1922,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 
         final MosTechEwsNTLMEngineImpl.Type2Message t2m = new MosTechEwsNTLMEngineImpl.Type2Message(challenge);
 
-        LOGGER.debug("generateType3Msg type2Flags " + t2m.getFlags() + " target='" + t2m.getTarget() + " username='" + username + "'");
+        log.debug("generateType3Msg type2Flags " + t2m.getFlags() + " target='" + t2m.getTarget() + " username='" + username + "'");
 
         return getType3Message(
                 username,

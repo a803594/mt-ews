@@ -4,7 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.http;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
 
 import java.io.IOException;
@@ -17,8 +17,8 @@ import java.util.List;
  * Custom proxy selector based on MT-EWS settings.
  * Interactive O365 authentication relies on native HttpUrlConnection so we need to override default proxy selector.
  */
+@Slf4j
 public class MosTechEwsProxySelector extends ProxySelector {
-    static final Logger LOGGER = Logger.getLogger(MosTechEwsProxySelector.class);
 
     static final List<Proxy> DIRECT = Collections.singletonList(Proxy.NO_PROXY);
 
@@ -39,7 +39,7 @@ public class MosTechEwsProxySelector extends ProxySelector {
             return DIRECT;
         } else if (useSystemProxies) {
             List<Proxy> proxyes = proxySelector.select(uri);
-            LOGGER.debug("Selected " + proxyes + " proxy for " + uri);
+            log.debug("Selected " + proxyes + " proxy for " + uri);
             return proxyes;
         } else if (enableProxy
                 && proxyHost != null && proxyHost.length() > 0 && proxyPort > 0
@@ -70,7 +70,7 @@ public class MosTechEwsProxySelector extends ProxySelector {
 
     @Override
     public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
-        LOGGER.debug("Connection to " + uri + " failed, socket address " + sa + " " + ioe);
+        log.debug("Connection to " + uri + " failed, socket address " + sa + " " + ioe);
         proxySelector.connectFailed(uri, sa, ioe);
     }
 }

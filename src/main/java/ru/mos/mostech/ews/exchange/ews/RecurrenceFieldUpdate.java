@@ -4,7 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.exchange.ews;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ExchangeSession;
 
 import java.io.IOException;
@@ -18,9 +18,11 @@ import java.util.Locale;
 /**
  * Handle calendar item recurrence update
  */
+@Slf4j
 public class RecurrenceFieldUpdate extends FieldUpdate {
-    public static final Logger LOGGER = Logger.getLogger(RecurrenceFieldUpdate.class);
+
     static final HashMap<String, String> calDayToDayOfWeek = new HashMap<>();
+
     static {
         calDayToDayOfWeek.put("SU", "Sunday");
         calDayToDayOfWeek.put("MO", "Monday");
@@ -30,6 +32,7 @@ public class RecurrenceFieldUpdate extends FieldUpdate {
         calDayToDayOfWeek.put("FR", "Friday");
         calDayToDayOfWeek.put("SA", "Saturday");
     }
+
     protected Date startDate;
     protected Date endDate;
     protected HashSet<String> byDays = null;
@@ -44,10 +47,10 @@ public class RecurrenceFieldUpdate extends FieldUpdate {
 
     public void setByDay(String[] days) {
         byDays = new HashSet<>();
-        for (String day: days) {
+        for (String day : days) {
             String value = calDayToDayOfWeek.get(day);
             if (value == null) {
-                LOGGER.warn("Invalid day value: "+day);
+                log.warn("Invalid day value: " + day);
             } else {
                 byDays.add(value);
             }
@@ -58,7 +61,7 @@ public class RecurrenceFieldUpdate extends FieldUpdate {
         }
     }
 
-    public enum RecurrencePattern {DailyRecurrence, WeeklyRecurrence,  AbsoluteMonthlyRecurrence, AbsoluteYearlyRecurrence}
+    public enum RecurrencePattern {DailyRecurrence, WeeklyRecurrence, AbsoluteMonthlyRecurrence, AbsoluteYearlyRecurrence}
 
     RecurrencePattern recurrencePattern;
     int recurrenceInterval = 1;
@@ -168,7 +171,7 @@ public class RecurrenceFieldUpdate extends FieldUpdate {
         writer.write("<t:DaysOfWeek>");
         if (byDays != null) {
             boolean first = true;
-            for (String dayOfeek:byDays) {
+            for (String dayOfeek : byDays) {
                 if (first) {
                     first = false;
                 } else {

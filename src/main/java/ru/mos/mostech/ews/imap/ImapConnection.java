@@ -5,8 +5,8 @@ package ru.mos.mostech.ews.imap;
 
 import com.sun.mail.imap.protocol.BASE64MailboxDecoder;
 import com.sun.mail.imap.protocol.BASE64MailboxEncoder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpResponseException;
-import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
@@ -35,8 +35,9 @@ import java.util.*;
 /**
  * Dav Gateway IMAP connection implementation.
  */
+@Slf4j
 public class ImapConnection extends AbstractConnection {
-    private static final Logger LOGGER = Logger.getLogger(ImapConnection.class);
+    
 
     protected String baseMailboxPath;
     ExchangeSession.Folder currentFolder;
@@ -216,7 +217,7 @@ public class ImapConnection extends AbstractConnection {
                                                 sendClient("* " + currentFolder.count() + " EXISTS");
                                             } else {
                                                 // load folder in a separate thread
-                                                LOGGER.debug("*");
+                                                log.debug("*");
                                                 os.write('*');
                                                 FolderLoadThread.loadFolder(currentFolder, os);
                                                 sendClient(" " + currentFolder.count() + " EXISTS");
@@ -301,13 +302,13 @@ public class ImapConnection extends AbstractConnection {
                                                         try {
                                                             handleFetch(message, uidRangeIterator.currentIndex, parameters);
                                                         } catch (HttpNotFoundException e) {
-                                                            LOGGER.warn("Ignore missing message " + uidRangeIterator.currentIndex);
+                                                            log.warn("Ignore missing message " + uidRangeIterator.currentIndex);
                                                         } catch (SocketException e) {
                                                             // client closed connection
                                                             throw e;
                                                         } catch (IOException e) {
                                                             MosTechEwsTray.log(e);
-                                                            LOGGER.warn("Ignore broken message " + uidRangeIterator.currentIndex + ' ' + e.getMessage());
+                                                            log.warn("Ignore broken message " + uidRangeIterator.currentIndex + ' ' + e.getMessage());
                                                         }
                                                     }
                                                     sendClient(commandId + " OK UID FETCH completed");
@@ -392,13 +393,13 @@ public class ImapConnection extends AbstractConnection {
                                             try {
                                                 handleFetch(message, rangeIterator.currentIndex, parameters);
                                             } catch (HttpNotFoundException e) {
-                                                LOGGER.warn("Ignore missing message " + rangeIterator.currentIndex);
+                                                log.warn("Ignore missing message " + rangeIterator.currentIndex);
                                             } catch (SocketException e) {
                                                 // client closed connection, rethrow exception
                                                 throw e;
                                             } catch (IOException e) {
                                                 MosTechEwsTray.log(e);
-                                                LOGGER.warn("Ignore broken message " + rangeIterator.currentIndex + ' ' + e.getMessage());
+                                                log.warn("Ignore broken message " + rangeIterator.currentIndex + ' ' + e.getMessage());
                                             }
 
                                         }
@@ -589,7 +590,7 @@ public class ImapConnection extends AbstractConnection {
                                         // must retrieve messages
 
                                         // use folder.loadMessages() for small folders only
-                                        LOGGER.debug("*");
+                                        log.debug("*");
                                         os.write('*');
                                         if (folder.count() <= 500) {
                                             // simple folder load
@@ -658,7 +659,7 @@ public class ImapConnection extends AbstractConnection {
                 MosTechEwsTray.debug(new BundleMessage("LOG_EXCEPTION_CLOSING_CONNECTION_ON_TIMEOUT"));
             }
         } catch (SocketException e) {
-            LOGGER.warn(BundleMessage.formatLog("LOG_CLIENT_CLOSED_CONNECTION"));
+            log.warn(BundleMessage.formatLog("LOG_CLIENT_CLOSED_CONNECTION"));
         } catch (Exception e) {
             MosTechEwsTray.log(e);
             try {
@@ -805,7 +806,7 @@ public class ImapConnection extends AbstractConnection {
             if (!message.isLoaded()) {
                 // flush current buffer
                 String flushString = buffer.toString();
-                LOGGER.debug(flushString);
+                log.debug(flushString);
                 os.write(flushString.getBytes(StandardCharsets.UTF_8));
                 buffer.setLength(0);
                 MessageLoadThread.loadMimeMessage(message, os);
@@ -853,7 +854,7 @@ public class ImapConnection extends AbstractConnection {
                             || parameters.equals("RFC822.SIZE RFC822.HEADER FLAGS") // icedove
                             || Settings.getBooleanProperty("mt.ews.imapAlwaysApproxMsgSize")) {   // Send approximate size
                         size = message.size;
-                        LOGGER.debug(String.format("Message %s sent approximate size %d bytes", message.getImapUid(), size));
+                        log.debug(String.format("Message %s sent approximate size %d bytes", message.getImapUid(), size));
                     } else {
                         size = messageWrapper.getMimeMessageSize();
                     }
@@ -1002,8 +1003,8 @@ public class ImapConnection extends AbstractConnection {
                     buffer.append(" {").append(baos.size()).append('}');
                     sendClient(buffer.toString());
                     // log content if less than 2K
-                    if (LOGGER.isDebugEnabled() && baos.size() < 2048) {
-                        LOGGER.debug(new String(baos.toByteArray(), StandardCharsets.UTF_8));
+                    if (log.isDebugEnabled() && baos.size() < 2048) {
+                        log.debug(new String(baos.toByteArray(), StandardCharsets.UTF_8));
                     }
                     os.write(baos.toByteArray());
                     os.flush();
@@ -1277,7 +1278,7 @@ public class ImapConnection extends AbstractConnection {
                     appendBodyStructure(buffer, bodyPart);
                 }
             } catch (UnsupportedEncodingException e) {
-                LOGGER.warn(e);
+                log.warn("", e);
                 // failover: send default bodystructure
                 buffer.append("(\"TEXT\" \"PLAIN\" (\"CHARSET\" \"US-ASCII\") NIL NIL \"7BIT\" 0 0)");
             } catch (MessagingException me) {
@@ -1404,7 +1405,7 @@ public class ImapConnection extends AbstractConnection {
                 bodySize = baos.size();
             }
         } catch (IOException | MessagingException e) {
-            LOGGER.warn("Unable to get body part size " + e.getMessage(), e);
+            log.warn("Unable to get body part size " + e.getMessage(), e);
         }
         return bodySize;
     }

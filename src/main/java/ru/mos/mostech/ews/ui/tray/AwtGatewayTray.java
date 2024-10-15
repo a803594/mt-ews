@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.ui.tray;
 
-import org.apache.log4j.Level;
+import org.slf4j.event.Level;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
 import ru.mos.mostech.ews.Settings;
@@ -99,22 +99,7 @@ public class AwtGatewayTray implements MosTechEwsTrayInterface {
      * @param level   log level
      */
     public void displayMessage(final String message, final Level level) {
-        SwingUtilities.invokeLater(() -> {
-            if (trayIcon != null) {
-                TrayIcon.MessageType messageType = null;
-                if (level.equals(Level.INFO)) {
-                    messageType = TrayIcon.MessageType.INFO;
-                } else if (level.equals(Level.WARN)) {
-                    messageType = TrayIcon.MessageType.WARNING;
-                } else if (level.equals(Level.ERROR)) {
-                    messageType = TrayIcon.MessageType.ERROR;
-                }
-                if (messageType != null) {
-                    trayIcon.displayMessage(BundleMessage.format("UI_MT_EWS_GATEWAY"), message, messageType);
-                }
-                trayIcon.setToolTip(BundleMessage.format("UI_MT_EWS_GATEWAY") + '\n' + message);
-            }
-        });
+
     }
 
     /**

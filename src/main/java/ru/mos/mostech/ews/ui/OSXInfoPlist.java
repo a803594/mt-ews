@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.ui;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.util.IOUtil;
 
 import java.io.File;
@@ -15,8 +15,9 @@ import java.nio.charset.StandardCharsets;
 /**
  * Handle OSX Info.plist file access
  */
+@Slf4j
 public class OSXInfoPlist {
-    protected static final Logger LOGGER = Logger.getLogger(OSXInfoPlist.class);
+    
     protected static final String INFO_PLIST_PATH = "../Info.plist";
 
     private OSXInfoPlist() {
@@ -42,7 +43,7 @@ public class OSXInfoPlist {
         try {
             result = isOSX() && getInfoPlistContent().contains("<key>LSUIElement</key><string>1</string>");
         } catch (IOException e) {
-            LOGGER.warn("Unable to update Info.plist", e);
+            log.warn("Unable to update Info.plist", e);
         }
         return result;
     }
@@ -66,7 +67,7 @@ public class OSXInfoPlist {
                 }
             }
         } catch (IOException e) {
-            LOGGER.warn("Unable to update Info.plist", e);
+            log.warn("Unable to update Info.plist", e);
         }
     }
 

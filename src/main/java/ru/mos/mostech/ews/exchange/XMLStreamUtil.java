@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -19,8 +19,9 @@ import java.util.Map;
 /**
  * XmlStreamReader utility methods
  */
+@Slf4j
 public final class XMLStreamUtil {
-    private static final Logger LOGGER = Logger.getLogger(XMLStreamUtil.class);
+    
 
     private XMLStreamUtil() {
     }
@@ -88,7 +89,7 @@ public final class XMLStreamUtil {
                     reader.close();
                 }
             } catch (XMLStreamException e) {
-                ExchangeSession.LOGGER.error(e);
+                log.error("", e);
             }
         }
         return results;
@@ -173,7 +174,7 @@ public final class XMLStreamUtil {
             value = reader.getElementText();
         } catch (XMLStreamException | RuntimeException e) {
             // RuntimeException: probably com.ctc.wstx.exc.WstxLazyException on invalid character sequence
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
         }
 
         return value;

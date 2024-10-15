@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
 
 import java.io.IOException;
@@ -13,8 +13,9 @@ import java.net.SocketException;
 /**
  * Load folder messages in a separate thread.
  */
+@Slf4j
 public class FolderLoadThread extends Thread {
-    private static final Logger LOGGER = Logger.getLogger(FolderLoadThread.class);
+    
 
     boolean isComplete = false;
     ExchangeSession.Folder folder;
@@ -33,7 +34,7 @@ public class FolderLoadThread extends Thread {
         } catch (IOException e) {
             exception = e;
         } catch (Exception e) {
-            LOGGER.error(e+" "+e.getMessage(), e);
+            log.error(e+" "+e.getMessage(), e);
             exception = new IOException(e.getMessage(), e);
         } finally {
             isComplete = true;
@@ -54,10 +55,10 @@ public class FolderLoadThread extends Thread {
             try {
                 folderLoadThread.join(20000);
             } catch (InterruptedException e) {
-                LOGGER.warn("Thread interrupted", e);
+                log.warn("Thread interrupted", e);
                 Thread.currentThread().interrupt();
             }
-            LOGGER.debug("Still loading " + folder.folderPath + " (" + folder.count() + " messages)");
+            log.debug("Still loading " + folder.folderPath + " (" + folder.count() + " messages)");
             if (Settings.getBooleanProperty("mt.ews.enableKeepAlive", false)) {
                 try {
                     outputStream.write(' ');

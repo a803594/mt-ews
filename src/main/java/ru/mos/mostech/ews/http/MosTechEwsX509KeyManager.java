@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.http;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.ui.SelectCertificateDialog;
 
@@ -25,9 +25,9 @@ import java.util.List;
  * is sufficient to establish the HTTPs connection by asking the user to
  * select one.
  */
+@Slf4j
 public class MosTechEwsX509KeyManager implements X509KeyManager {
 
-    protected static final Logger LOGGER = Logger.getLogger(MosTechEwsX509KeyManager.class);
 
     // Wrap an existing key manager to handle most of the interface as a pass through
     private final X509KeyManager keyManager;
@@ -59,7 +59,7 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
      * This method allows the user to select the right client certificate
      */
     public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
-        LOGGER.debug("Find client certificates issued by: " + Arrays.asList(issuers));
+        log.debug("Find client certificates issued by: " + Arrays.asList(issuers));
         // Build a list of all aliases
         ArrayList<String> aliases = new ArrayList<>();
         for (String keyTypeValue : keyType) {
@@ -77,7 +77,7 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
             if (cachedAlias != null) {
                 for (String alias : aliases) {
                     if (cachedAlias.equals(stripAlias(alias))) {
-                        LOGGER.debug(alias + " matched cached alias: " + cachedAlias);
+                        log.debug(alias + " matched cached alias: " + cachedAlias);
                         return alias;
                     }
                 }
@@ -93,13 +93,13 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
                 X509Certificate certificate = getCertificateChain(alias)[0];
                 String subject = certificate.getSubjectX500Principal().getName();
                 if (subject.contains("=")) {
-                    subject = subject.substring(subject.indexOf("=")+1);
+                    subject = subject.substring(subject.indexOf("=") + 1);
                 }
                 if (subject.contains(",")) {
                     subject = subject.substring(0, subject.indexOf(","));
                 }
                 try {
-                    for (List<?> subjectAltName:certificate.getSubjectAlternativeNames()) {
+                    for (List<?> subjectAltName : certificate.getSubjectAlternativeNames()) {
                         if (subjectAltName.get(1) instanceof String) {
                             subject = " " + subjectAltName.get(1);
                         }
@@ -109,7 +109,7 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
                 }
                 String issuer = certificate.getIssuerX500Principal().getName();
                 if (issuer.contains("=")) {
-                    issuer = issuer.substring(issuer.indexOf("=")+1);
+                    issuer = issuer.substring(issuer.indexOf("=") + 1);
                 }
                 if (issuer.contains(",")) {
                     issuer = issuer.substring(0, issuer.indexOf(","));
@@ -124,22 +124,22 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
                 SelectCertificateDialog selectCertificateDialog = new SelectCertificateDialog(aliasesArray, descriptionsArray);
 
                 selectedAlias = selectCertificateDialog.getSelectedAlias();
-                LOGGER.debug("User selected Key Alias: " + selectedAlias);
+                log.debug("User selected Key Alias: " + selectedAlias);
             }
 
             cachedAlias = stripAlias(selectedAlias);
-            LOGGER.debug("Stored Key Alias Pattern: " + cachedAlias);
+            log.debug("Stored Key Alias Pattern: " + cachedAlias);
 
             return selectedAlias;
 
             // exactly one, simply return that and don't bother the user
         } else if (aliases.size() == 1) {
-            LOGGER.debug("One Private Key found, returning that");
+            log.debug("One Private Key found, returning that");
             return aliases.get(0);
 
             // none, return null
         } else {
-            LOGGER.debug("No Private Keys found");
+            log.debug("No Private Keys found");
             return null;
         }
     }
@@ -147,8 +147,8 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
     private String chooseClientAlias(String[] aliasesArray, String[] descriptionsArray) {
         System.out.println("Choose client alias:");
         int i = 1;
-        for (String aliasDescription:descriptionsArray) {
-            System.out.println(i+++": "+aliasDescription);
+        for (String aliasDescription : descriptionsArray) {
+            System.out.println(i++ + ": " + aliasDescription);
         }
         BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
         int chosenIndex = 0;
@@ -175,9 +175,9 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
         String value = alias;
         if (value != null && value.length() > 1) {
             char firstChar = value.charAt(0);
-            int dotIndex = value.indexOf('.'); 
+            int dotIndex = value.indexOf('.');
             if (firstChar >= '0' && firstChar <= '9' && dotIndex >= 0) {
-                value = value.substring(dotIndex+1);
+                value = value.substring(dotIndex + 1);
             }
         }
         return value;
@@ -202,8 +202,8 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
      */
     public X509Certificate[] getCertificateChain(String string) {
         X509Certificate[] certificates = keyManager.getCertificateChain(string);
-        for (X509Certificate certificate: certificates) {
-            LOGGER.debug("Certificate chain: " + certificate.getSubjectX500Principal());
+        for (X509Certificate certificate : certificates) {
+            log.debug("Certificate chain: " + certificate.getSubjectX500Principal());
         }
         return certificates;
     }

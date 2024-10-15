@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.exchange.auth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -13,7 +14,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.log4j.Logger;
 import org.htmlcleaner.*;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.exception.MosTechEwsAuthenticationException;
@@ -44,8 +44,9 @@ import java.util.Set;
 /**
  * New Exchange form authenticator based on HttpClient 4.
  */
+@Slf4j
 public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
-    protected static final Logger LOGGER = Logger.getLogger(ExchangeFormAuthenticator.class);
+    
 
     /**
      * Various username fields found on custom Exchange authentication forms
@@ -203,22 +204,22 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 
         } catch (MosTechEwsAuthenticationException exc) {
             close();
-            LOGGER.error(exc.getMessage());
+            log.error(exc.getMessage());
             throw exc;
         } catch (ConnectException | UnknownHostException exc) {
             close();
             BundleMessage message = new BundleMessage("EXCEPTION_CONNECT", exc.getClass().getName(), exc.getMessage());
-            LOGGER.error(message);
+            log.error("{}", message);
             throw new MosTechEwsException("EXCEPTION_MT-EWS_CONFIGURATION", message);
         } catch (WebdavNotAvailableException exc) {
             close();
             throw exc;
         } catch (IOException exc) {
             close();
-            LOGGER.error(BundleMessage.formatLog("EXCEPTION_EXCHANGE_LOGIN_FAILED", exc));
+            log.error(BundleMessage.formatLog("EXCEPTION_EXCHANGE_LOGIN_FAILED", exc));
             throw new MosTechEwsException("EXCEPTION_EXCHANGE_LOGIN_FAILED", exc);
         }
-        LOGGER.debug("Successfully authenticated to " + exchangeUri);
+        log.debug("Successfully authenticated to " + exchangeUri);
     }
 
     /**
@@ -272,11 +273,11 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
     }
 
     protected void formLogin(HttpClientAdapter httpClient, ResponseWrapper initRequest, String password) throws IOException {
-        LOGGER.debug("Form based authentication detected");
+        log.debug("Form based authentication detected");
 
         PostRequest postRequest = buildLogonMethod(httpClient, initRequest);
         if (postRequest == null) {
-            LOGGER.debug("Authentication form not found at " + initRequest.getURI() + ", trying default url");
+            log.debug("Authentication form not found at " + initRequest.getURI() + ", trying default url");
             postRequest = new PostRequest("/owa/auth/owaauth.dll");
         }
 
@@ -384,7 +385,7 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
                 if (frameList.size() == 1) {
                     String src = frameList.get(0).getAttributeByName("src");
                     if (src != null) {
-                        LOGGER.debug("Frames detected in form page, try frame content");
+                        log.debug("Frames detected in form page, try frame content");
                         logonMethod = buildLogonMethod(httpClient, httpClient.executeFollowRedirect(new GetRequest(src)));
                     }
                 } else {
@@ -402,7 +403,7 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
                                 }
                                 if (sUrl != null && sLgn != null) {
                                     URI src = getScriptBasedFormURL(uri, sLgn + sUrl);
-                                    LOGGER.debug("Detected script based logon, redirect to form at " + src);
+                                    log.debug("Detected script based logon, redirect to form at " + src);
                                     logonMethod = buildLogonMethod(httpClient, httpClient.executeFollowRedirect(new GetRequest(src)));
                                 }
 
@@ -411,7 +412,7 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
                                 String scriptValue = ((ContentNode) content).getContent();
                                 String location = StringUtil.getToken(scriptValue, "window.location.replace(\"", "\"");
                                 if (location != null) {
-                                    LOGGER.debug("Post logon redirect to: " + location);
+                                    log.debug("Post logon redirect to: " + location);
                                     logonMethod = buildLogonMethod(httpClient, httpClient.executeFollowRedirect(new GetRequest(location)));
                                 }
                             }
@@ -420,7 +421,7 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
                 }
             }
         } catch (IOException | URISyntaxException e) {
-            LOGGER.error("Error parsing login form at " + responseWrapper.getURI());
+            log.error("Error parsing login form at " + responseWrapper.getURI());
         }
 
         return logonMethod;
@@ -522,7 +523,7 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
             }
         } catch (IOException | URISyntaxException e) {
             String errorMessage = "Error parsing language selection form at " + uri;
-            LOGGER.error(errorMessage);
+            log.error(errorMessage);
             throw new IOException(errorMessage);
         }
 
@@ -536,7 +537,7 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
             // multiple username fields, split userid|username on |
             int pipeIndex = username.indexOf('|');
             if (pipeIndex < 0) {
-                LOGGER.debug("Multiple user fields detected, please use userid|username as user name in client, except when userid is username");
+                log.debug("Multiple user fields detected, please use userid|username as user name in client, except when userid is username");
                 userid = username;
             } else {
                 userid = username.substring(0, pipeIndex);

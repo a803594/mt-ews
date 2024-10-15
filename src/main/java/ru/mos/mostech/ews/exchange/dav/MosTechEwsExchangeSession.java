@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.dav;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Consts;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -62,6 +63,7 @@ import java.util.zip.GZIPInputStream;
  * Compatible with Exchange 2003 and 2007 with webdav available.
  */
 @SuppressWarnings("rawtypes")
+@Slf4j
 public class MosTechEwsExchangeSession extends ExchangeSession {
     protected enum FolderQueryTraversal {
         Shallow, Deep
@@ -159,7 +161,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 email = line.substring(start, end);
             }
         } catch (IOException e) {
-            LOGGER.error("Error parsing options page at " + optionsMethod.getURI());
+            log.error("Error parsing options page at " + optionsMethod.getURI());
         }
     }
 
@@ -183,9 +185,9 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         if ("Exchange2007".equals(serverVersion)) {
             HttpGet getMethod = new HttpGet("/owa/");
             try (CloseableHttpResponse response = httpClientAdapter.execute(getMethod)) {
-                LOGGER.debug(response.getStatusLine().getStatusCode() + " at /owa/");
+                log.debug(response.getStatusLine().getStatusCode() + " at /owa/");
             } catch (IOException e) {
-                LOGGER.warn(e.getMessage());
+                log.warn(e.getMessage());
             }
         }
 
@@ -250,7 +252,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             } else if (alias.equalsIgnoreCase(principal) || (email != null && email.equalsIgnoreCase(principal))) {
                 exchangeFolderPath = mailPath + localPath;
             } else {
-                LOGGER.debug("Detected shared path for principal " + principal + ", user principal is " + email);
+                log.debug("Detected shared path for principal " + principal + ", user principal is " + email);
                 exchangeFolderPath = rootPath + principal + '/' + localPath;
             }
 
@@ -367,11 +369,11 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         HttpGet httpGet = new HttpGet(path);
         try (CloseableHttpResponse response = httpClientAdapter.execute(httpGet)) {
             results = XMLStreamUtil.getElementContentsAsMap(response.getEntity().getContent(), "item", "AN");
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(path + ": " + results.size() + " result(s)");
+            if (log.isDebugEnabled()) {
+                log.debug(path + ": " + results.size() + " result(s)");
             }
         } catch (IOException e) {
-            LOGGER.debug("GET " + path + " failed: " + e + ' ' + e.getMessage());
+            log.debug("GET " + path + " failed: " + e + ' ' + e.getMessage());
             disableGalFind = true;
             throw e;
         }
@@ -483,7 +485,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
      */
     public void galLookup(Contact contact) {
         if (!disableGalLookup) {
-            LOGGER.debug("galLookup(" + contact.get("smtpemail1") + ')');
+            log.debug("galLookup(" + contact.get("smtpemail1") + ')');
             HttpGet httpGet = new HttpGet(URIUtil.encodePathQuery(getCmdBasePath() + "?Cmd=gallookup&ADDR=" + contact.get("smtpemail1")));
             try (CloseableHttpResponse response = httpClientAdapter.execute(httpGet)) {
                 Map<String, Map<String, String>> results = XMLStreamUtil.getElementContentsAsMap(response.getEntity().getContent(), "person", "alias");
@@ -495,7 +497,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                     }
                 }
             } catch (IOException e) {
-                LOGGER.warn("Unable to gallookup person: " + contact + ", disable GalLookup");
+                log.warn("Unable to gallookup person: " + contact + ", disable GalLookup");
                 disableGalLookup = true;
             }
         }
@@ -570,10 +572,10 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 String mailBoxBaseHref = line.substring(start, end);
                 URL baseURL = new URL(mailBoxBaseHref);
                 welcomePageMailPath = URIUtil.decode(baseURL.getPath());
-                LOGGER.debug("Base href found in body, mailPath is " + welcomePageMailPath);
+                log.debug("Base href found in body, mailPath is " + welcomePageMailPath);
             }
         } catch (IOException e) {
-            LOGGER.error("Error parsing main page at " + method.getURI(), e);
+            log.error("Error parsing main page at " + method.getURI(), e);
         }
         return welcomePageMailPath;
     }
@@ -612,7 +614,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         if (mailPath == null || email == null) {
             throw new MosTechEwsAuthenticationException("EXCEPTION_AUTHENTICATION_FAILED_PASSWORD_EXPIRED");
         }
-        LOGGER.debug("Current user email is " + email + ", alias is " + alias + ", mailPath is " + mailPath + " on " + serverVersion);
+        log.debug("Current user email is " + email + ", alias is " + alias + ", mailPath is " + mailPath + " on " + serverVersion);
         rootPath = mailPath.substring(0, mailPath.lastIndexOf('/', mailPath.length() - 2) + 1);
     }
 
@@ -645,7 +647,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 email = getEmail(alias);
             }
             if (email == null) {
-                LOGGER.debug("Unable to get user email with alias " + mailBoxPath
+                log.debug("Unable to get user email with alias " + mailBoxPath
                         + " or " + getAliasFromLogin()
                         + " or " + alias
                 );
@@ -689,12 +691,12 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         try {
             Folder rootFolder = getFolder("");
             if (rootFolder == null) {
-                LOGGER.warn(new BundleMessage("EXCEPTION_UNABLE_TO_GET_MAIL_FOLDER", mailPath));
+                log.warn("{}", new BundleMessage("EXCEPTION_UNABLE_TO_GET_MAIL_FOLDER", mailPath));
             } else {
                 displayName = rootFolder.displayName;
             }
         } catch (IOException e) {
-            LOGGER.warn(new BundleMessage("EXCEPTION_UNABLE_TO_GET_MAIL_FOLDER", mailPath));
+            log.warn("{}", new BundleMessage("EXCEPTION_UNABLE_TO_GET_MAIL_FOLDER", mailPath));
         }
         return displayName;
     }
@@ -712,7 +714,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         if (index >= 0 && mailPath.endsWith("/")) {
             return mailPath.substring(index + 1, mailPath.length() - 1);
         } else {
-            LOGGER.warn(new BundleMessage("EXCEPTION_INVALID_MAIL_PATH", mailPath));
+            log.warn("{}", new BundleMessage("EXCEPTION_INVALID_MAIL_PATH", mailPath));
             return null;
         }
     }
@@ -735,7 +737,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             } catch (IOException e) {
                 // galfind not available
                 disableGalFind = true;
-                LOGGER.debug("getEmail(" + alias + ") failed");
+                log.debug("getEmail(" + alias + ") failed");
             }
         }
         return emailResult;
@@ -786,7 +788,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             publicFolderUrl = httpPropfind.getURI().toString();
 
         } catch (IOException e) {
-            LOGGER.warn("Public folders not available: " + (e.getMessage() == null ? e : e.getMessage()));
+            log.warn("Public folders not available: " + (e.getMessage() == null ? e : e.getMessage()));
             // default public folder path
             publicFolderUrl = PUBLIC_ROOT;
         }
@@ -826,7 +828,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             outboxName = getFolderName(outboxUrl);
             // junk folder not available over webdav
 
-            LOGGER.debug("Inbox URL: " + inboxUrl +
+            log.debug("Inbox URL: " + inboxUrl +
                     " Trash URL: " + deleteditemsUrl +
                     " Sent URL: " + sentitemsUrl +
                     " Send URL: " + sendmsgUrl +
@@ -838,7 +840,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                     " Public folder URL: " + publicFolderUrl
             );
         } catch (IOException | DavException e) {
-            LOGGER.error(e.getMessage());
+            log.error(e.getMessage());
             throw new WebdavNotAvailableException("EXCEPTION_UNABLE_TO_GET_MAIL_FOLDER", mailPath);
         }
     }
@@ -1124,7 +1126,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                     result = new ByteArrayInputStream(messageHeaders.getBytes(StandardCharsets.UTF_8));
                 }
             } catch (Exception e) {
-                LOGGER.warn(e.getMessage());
+                log.warn(e.getMessage());
             }
 
             return result;
@@ -1198,7 +1200,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 propPatchRequest.setHeader("If-None-Match", noneMatch);
             }
             try (CloseableHttpResponse response = httpClientAdapter.execute(propPatchRequest)) {
-                LOGGER.debug("internalCreateOrUpdate returned " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+                log.debug("internalCreateOrUpdate returned " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
             }
             return propPatchRequest;
         }
@@ -1222,17 +1224,17 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 }
                 //noinspection VariableNotUsedInsideIf
                 if (status == HttpStatus.SC_CREATED) {
-                    LOGGER.debug("Created contact " + encodedHref);
+                    log.debug("Created contact " + encodedHref);
                 } else {
-                    LOGGER.debug("Updated contact " + encodedHref);
+                    log.debug("Updated contact " + encodedHref);
                 }
             } else if (status == HttpStatus.SC_NOT_FOUND) {
-                LOGGER.debug("Contact not found at " + encodedHref + ", searching permanenturl by urlcompname");
+                log.debug("Contact not found at " + encodedHref + ", searching permanenturl by urlcompname");
                 // failover, search item by urlcompname
                 MultiStatusResponse[] responses = searchItems(folderPath, EVENT_REQUEST_PROPERTIES, MosTechEwsExchangeSession.this.isEqualTo("urlcompname", convertItemNameToEML(itemName)), FolderQueryTraversal.Shallow, 1);
                 if (responses.length == 1) {
                     encodedHref = getPropertyIfExists(responses[0].getProperties(HttpStatus.SC_OK), "permanenturl");
-                    LOGGER.warn("Contact found, permanenturl is " + encodedHref);
+                    log.warn("Contact found, permanenturl is " + encodedHref);
                     propPatchRequest = internalCreateOrUpdate(encodedHref);
                     status = propPatchRequest.getStatusLine().getStatusCode();
                     if (status == HttpStatus.SC_MULTI_STATUS) {
@@ -1241,14 +1243,14 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                         } catch (HttpResponseException e) {
                             throw new IOException(e.getMessage(), e);
                         }
-                        LOGGER.debug("Updated contact " + encodedHref);
+                        log.debug("Updated contact " + encodedHref);
                     } else {
-                        LOGGER.warn("Unable to create or update contact " + status + ' ' + propPatchRequest.getStatusLine());
+                        log.warn("Unable to create or update contact " + status + ' ' + propPatchRequest.getStatusLine());
                     }
                 }
 
             } else {
-                LOGGER.warn("Unable to create or update contact " + status + ' ' + propPatchRequest.getStatusLine().getReasonPhrase());
+                log.warn("Unable to create or update contact " + status + ' ' + propPatchRequest.getStatusLine().getReasonPhrase());
             }
             ItemResult itemResult = new ItemResult();
             // 440 means forbidden on Exchange
@@ -1278,7 +1280,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                             }
                         }
                     } catch (IOException e) {
-                        LOGGER.error("Error in contact photo create or update", e);
+                        log.error("Error in contact photo create or update", e);
                         throw e;
                     }
 
@@ -1292,7 +1294,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                         attachmentPropPatchRequest.handleResponse(response);
                         status = response.getStatusLine().getStatusCode();
                         if (status != HttpStatus.SC_MULTI_STATUS) {
-                            LOGGER.error("Error in contact photo create or update: " + response.getStatusLine().getStatusCode());
+                            log.error("Error in contact photo create or update: " + response.getStatusLine().getStatusCode());
                             throw new IOException("Unable to update contact picture");
                         }
                     }
@@ -1303,7 +1305,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                     try (CloseableHttpResponse response = httpClientAdapter.execute(httpDelete)) {
                         status = response.getStatusLine().getStatusCode();
                         if (status != HttpStatus.SC_OK && status != HttpStatus.SC_NOT_FOUND) {
-                            LOGGER.error("Error in contact photo delete: " + status);
+                            log.error("Error in contact photo delete: " + status);
                             throw new IOException("Unable to delete contact picture");
                         }
                     }
@@ -1373,7 +1375,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         @Override
         public byte[] getEventContent() throws IOException {
             byte[] result = null;
-            LOGGER.debug("Get event subject: " + subject + " contentclass: " + contentClass + " href: " + getHref() + " permanentUrl: " + permanentUrl);
+            log.debug("Get event subject: " + subject + " contentclass: " + contentClass + " href: " + getHref() + " permanentUrl: " + permanentUrl);
             // do not try to load tasks MIME body
             if (!"urn:content-classes:task".equals(contentClass)) {
                 // try to get PR_INTERNET_CONTENT
@@ -1388,7 +1390,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                         }
                     }
                 } catch (DavException | IOException | MessagingException e) {
-                    LOGGER.warn(e.getMessage());
+                    log.warn(e.getMessage());
                 }
             }
 
@@ -1403,9 +1405,9 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             }
             // debug code
             /*if (new String(result).indexOf("VTODO") < 0) {
-                LOGGER.debug("Original body: " + new String(result));
+                log.debug("Original body: " + new String(result));
                 result = getICSFromItemProperties();
-                LOGGER.debug("Rebuilt body: " + new String(result));
+                log.debug("Rebuilt body: " + new String(result));
             }*/
 
             return result;
@@ -1499,7 +1501,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                     if (dtstart != null) {
                         vEvent.setPropertyValue("DTSTART", convertDateFromExchange(dtstart));
                     } else {
-                        LOGGER.warn("missing dtstart on item, using fake value. Set mt.ews.deleteBroken=true to delete broken events");
+                        log.warn("missing dtstart on item, using fake value. Set mt.ews.deleteBroken=true to delete broken events");
                         vEvent.setPropertyValue("DTSTART", "20000101T000000Z");
                         deleteBroken();
                     }
@@ -1508,7 +1510,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                     if (dtend != null) {
                         vEvent.setPropertyValue("DTEND", convertDateFromExchange(dtend));
                     } else {
-                        LOGGER.warn("missing dtend on item, using fake value. Set mt.ews.deleteBroken=true to delete broken events");
+                        log.warn("missing dtend on item, using fake value. Set mt.ews.deleteBroken=true to delete broken events");
                         vEvent.setPropertyValue("DTEND", "20000101T010000Z");
                         deleteBroken();
                     }
@@ -1565,7 +1567,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 localVCalendar.addVObject(vEvent);
                 result = localVCalendar.toString().getBytes(StandardCharsets.UTF_8);
             } catch (MessagingException | IOException e) {
-                LOGGER.warn("Unable to rebuild event content: " + e.getMessage(), e);
+                log.warn("Unable to rebuild event content: " + e.getMessage(), e);
                 throw new HttpNotFoundException("Unable to get event " + getName() + " subject: " + subject + " at " + permanentUrl + ": " + e.getMessage());
             }
 
@@ -1575,14 +1577,14 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         protected void deleteBroken() {
             // try to delete broken event
             if (Settings.getBooleanProperty("mt.ews.deleteBroken")) {
-                LOGGER.warn("Deleting broken event at: " + permanentUrl);
+                log.warn("Deleting broken event at: " + permanentUrl);
                 try {
                     HttpDelete httpDelete = new HttpDelete(encodeAndFixUrl(permanentUrl));
                     try (CloseableHttpResponse response = httpClientAdapter.execute(httpDelete)) {
-                        LOGGER.warn("deleteBroken returned " + response.getStatusLine().getStatusCode());
+                        log.warn("deleteBroken returned " + response.getStatusLine().getStatusCode());
                     }
                 } catch (IOException e) {
-                    LOGGER.warn("Unable to delete broken event at: " + permanentUrl);
+                    log.warn("Unable to delete broken event at: " + permanentUrl);
                 }
             }
         }
@@ -1672,33 +1674,33 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 int status = httpResponse.getStatusLine().getStatusCode();
 
                 if (status == HttpStatus.SC_OK) {
-                    LOGGER.debug("Updated event " + encodedHref);
+                    log.debug("Updated event " + encodedHref);
                 } else if (status == HttpStatus.SC_CREATED) {
-                    LOGGER.debug("Created event " + encodedHref);
+                    log.debug("Created event " + encodedHref);
                 } else if (status == HttpStatus.SC_NOT_FOUND) {
-                    LOGGER.debug("Event not found at " + encodedHref + ", searching permanenturl by urlcompname");
+                    log.debug("Event not found at " + encodedHref + ", searching permanenturl by urlcompname");
                     // failover, search item by urlcompname
                     MultiStatusResponse[] responses = searchItems(folderPath, EVENT_REQUEST_PROPERTIES, MosTechEwsExchangeSession.this.isEqualTo("urlcompname", convertItemNameToEML(itemName)), FolderQueryTraversal.Shallow, 1);
                     if (responses.length == 1) {
                         encodedHref = getPropertyIfExists(responses[0].getProperties(HttpStatus.SC_OK), "permanenturl");
-                        LOGGER.warn("Event found, permanenturl is " + encodedHref);
+                        log.warn("Event found, permanenturl is " + encodedHref);
                         httpResponse = internalCreateOrUpdate(encodedHref, mimeContent);
                         status = httpResponse.getStatusLine().getStatusCode();
                         if (status == HttpStatus.SC_OK) {
-                            LOGGER.debug("Updated event " + encodedHref);
+                            log.debug("Updated event " + encodedHref);
                         } else {
-                            LOGGER.warn("Unable to create or update event " + status + ' ' + httpResponse.getStatusLine().getReasonPhrase());
+                            log.warn("Unable to create or update event " + status + ' ' + httpResponse.getStatusLine().getReasonPhrase());
                         }
                     }
                 } else {
-                    LOGGER.warn("Unable to create or update event " + status + ' ' + httpResponse.getStatusLine().getReasonPhrase());
+                    log.warn("Unable to create or update event " + status + ' ' + httpResponse.getStatusLine().getReasonPhrase());
                 }
 
                 // 440 means forbidden on Exchange
                 if (status == 440) {
                     status = HttpStatus.SC_FORBIDDEN;
                 } else if (status == HttpStatus.SC_UNAUTHORIZED && getHref().startsWith("/public")) {
-                    LOGGER.warn("Ignore 401 unauthorized on public event");
+                    log.warn("Ignore 401 unauthorized on public event");
                     status = HttpStatus.SC_OK;
                 }
                 itemResult.status = status;
@@ -1718,7 +1720,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                     try (CloseableHttpResponse response = httpClientAdapter.execute(propPatchMethod)) {
                         int patchStatus = response.getStatusLine().getStatusCode();
                         if (patchStatus != HttpStatus.SC_MULTI_STATUS) {
-                            LOGGER.warn("Unable to patch event to trigger activeSync push");
+                            log.warn("Unable to patch event to trigger activeSync push");
                         } else {
                             // need to retrieve new etag
                             Item newItem = getItem(folderPath, itemName);
@@ -1877,12 +1879,12 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             if (status == HttpStatus.SC_MULTI_STATUS) {
                 status = propPatchRequest.getResponseStatusCode();
             } else if (status == HttpStatus.SC_METHOD_NOT_ALLOWED) {
-                LOGGER.info("Folder " + folderPath + " already exists");
+                log.info("Folder " + folderPath + " already exists");
             }
         } catch (HttpResponseException e) {
             throw new IOException(e.getMessage(), e);
         }
-        LOGGER.debug("Create folder " + folderPath + " returned " + status);
+        log.debug("Create folder " + folderPath + " returned " + status);
         return status;
     }
 
@@ -2068,7 +2070,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 
         message.keywords = getPropertyIfExists(properties, "keywords");
 
-        if (LOGGER.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             StringBuilder buffer = new StringBuilder();
             buffer.append("Message");
             if (message.imapUid != 0) {
@@ -2078,7 +2080,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 buffer.append(" uid: ").append(message.uid);
             }
             buffer.append(" href: ").append(responseEntity.getHref()).append(" permanenturl:").append(message.permanentUrl);
-            LOGGER.debug(buffer.toString());
+            log.debug(buffer.toString());
         }
         return message;
     }
@@ -2161,7 +2163,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                     events.add(event);
                 } catch (IOException e) {
                     // invalid event: exclude from list
-                    LOGGER.warn("Invalid event " + event.displayName + " found at " + response.getHref(), e);
+                    log.warn("Invalid event " + event.displayName + " found at " + response.getHref(), e);
                 }
             } else {
                 events.add(event);
@@ -2264,7 +2266,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             }
         } catch (HttpNotFoundException e) {
             try {
-                LOGGER.debug(itemPath + " not found, searching by urlcompname");
+                log.debug(itemPath + " not found, searching by urlcompname");
                 // failover: try to get event by displayname
                 responses = searchItems(folderPath, EVENT_REQUEST_PROPERTIES, isEqualTo("urlcompname", emlItemName), FolderQueryTraversal.Shallow, 1);
                 if (responses.length == 0 && isMainCalendar(folderPath)) {
@@ -2274,7 +2276,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                     throw new HttpNotFoundException(itemPath + " not found");
                 }
             } catch (HttpNotFoundException e2) {
-                LOGGER.debug("last failover: search all items");
+                log.debug("last failover: search all items");
                 List<ExchangeSession.Event> events = getAllEvents(folderPath);
                 for (ExchangeSession.Event event : events) {
                     if (itemName.equals(event.getName())) {
@@ -2290,7 +2292,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 if (responses == null || responses.length == 0) {
                     throw new HttpNotFoundException(itemPath + " not found");
                 }
-                LOGGER.warn("search by urlcompname failed, actual value is " + getPropertyIfExists(responses[0].getProperties(HttpStatus.SC_OK), "urlcompname"));
+                log.warn("search by urlcompname failed, actual value is " + getPropertyIfExists(responses[0].getProperties(HttpStatus.SC_OK), "urlcompname"));
             }
         }
         // build item
@@ -2301,7 +2303,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             List<ExchangeSession.Contact> contacts = searchContacts(folderPath, CONTACT_ATTRIBUTES,
                     isEqualTo("urlcompname", StringUtil.decodeUrlcompname(urlcompname)), 1);
             if (contacts.isEmpty()) {
-                LOGGER.warn("Item found, but unable to build contact");
+                log.warn("Item found, but unable to build contact");
                 throw new HttpNotFoundException(itemPath + " not found");
             }
             return contacts.get(0);
@@ -2310,7 +2312,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 || "urn:content-classes:task".equals(contentClass)) {
             return new Event(responses[0]);
         } else {
-            LOGGER.warn("wrong contentclass on item " + itemPath + ": " + contentClass);
+            log.warn("wrong contentclass on item " + itemPath + ": " + contentClass);
             // return item anyway
             return new Event(responses[0]);
         }
@@ -2344,7 +2346,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    LOGGER.debug(e);
+                    log.debug("{}",e);
                 }
             }
         }
@@ -2381,7 +2383,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             }
         }
         if (status == HttpStatus.SC_NOT_FOUND) {
-            LOGGER.debug("Unable to delete " + itemName + ": item not found");
+            log.debug("Unable to delete " + itemName + ": item not found");
         }
     }
 
@@ -2394,7 +2396,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         list.add(Field.createDavProperty("read", "1"));
         HttpProppatch patchMethod = new HttpProppatch(eventPath, list);
         try (CloseableHttpResponse response = httpClientAdapter.execute(patchMethod)) {
-            LOGGER.debug("Processed " + itemName + " " + response.getStatusLine().getStatusCode());
+            log.debug("Processed " + itemName + " " + response.getStatusLine().getStatusCode());
         }
     }
 
@@ -2472,7 +2474,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             // delete temporary folder
             deleteFolder("mt-ews-temp");
         } catch (IOException e) {
-            LOGGER.warn("Unable to get VTIMEZONE info: " + e, e);
+            log.warn("Unable to get VTIMEZONE info: " + e, e);
         }
     }
 
@@ -2494,9 +2496,9 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 }
             }
         } catch (MissingResourceException e) {
-            LOGGER.warn("Unable to retrieve Exchange timezone id for name " + timezoneName);
+            log.warn("Unable to retrieve Exchange timezone id for name " + timezoneName);
         } catch (IOException e) {
-            LOGGER.warn("Unable to retrieve Exchange timezone id: " + e.getMessage(), e);
+            log.warn("Unable to retrieve Exchange timezone id: " + e.getMessage(), e);
         }
         return timezoneId;
     }
@@ -2518,7 +2520,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             }
 
         } catch (XMLStreamException e) {
-            LOGGER.error("Error while parsing RoamingDictionary: " + e, e);
+            log.error("Error while parsing RoamingDictionary: " + e, e);
         }
         return timezoneName;
     }
@@ -2621,7 +2623,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 
             // workaround for misconfigured Exchange server
             if (code == HttpStatus.SC_NOT_ACCEPTABLE) {
-                LOGGER.warn("Draft message creation failed, failover to property update. Note: attachments are lost");
+                log.warn("Draft message creation failed, failover to property update. Note: attachments are lost");
 
                 ArrayList<PropEntry> propertyList = new ArrayList<>();
                 propertyList.add(Field.createDavProperty("to", mimeMessage.getHeader("to", ",")));
@@ -2647,7 +2649,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 } else if (contentType.startsWith("text/html")) {
                     propertyList.add(Field.createDavProperty("htmldescription", (String) mimePart.getContent()));
                 } else {
-                    LOGGER.warn("Unsupported content type: " + contentType.replaceAll("[\n\r\t]", "_") + " message body will be empty");
+                    log.warn("Unsupported content type: " + contentType.replaceAll("[\n\r\t]", "_") + " message body will be empty");
                 }
 
                 propertyList.add(Field.createDavProperty("subject", mimeMessage.getHeader("subject", ",")));
@@ -2672,7 +2674,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                             throw HttpClientAdapter.buildHttpResponseException(httpDelete, response);
                         }
                     } catch (IOException e) {
-                        LOGGER.warn("Unable to delete draft message");
+                        log.warn("Unable to delete draft message");
                     }
                 }
                 if (code == HttpStatus.SC_INSUFFICIENT_STORAGE) {
@@ -2733,7 +2735,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
      */
     @Override
     public void deleteMessage(ExchangeSession.Message message) throws IOException {
-        LOGGER.debug("Delete " + message.permanentUrl + " (" + message.messageUrl + ')');
+        log.debug("Delete " + message.permanentUrl + " (" + message.messageUrl + ')');
         HttpDelete httpDelete = new HttpDelete(encodeAndFixUrl(message.permanentUrl));
         try (CloseableHttpResponse response = httpClientAdapter.execute(httpDelete)) {
             int status = response.getStatusLine().getStatusCode();
@@ -2814,7 +2816,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                     contentInputStream = getContentInputStream(message.messageUrl);
                 }
             } catch (HttpNotFoundException e) {
-                LOGGER.debug("Message not found at: " + message.messageUrl + ", retrying with permanenturl");
+                log.debug("Message not found at: " + message.messageUrl + ", retrying with permanenturl");
                 contentInputStream = getContentInputStream(message.permanentUrl);
             }
 
@@ -2826,11 +2828,11 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 
         } catch (LoginTimeoutException | SocketException e) {
             // throw error on expired session
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             throw e;
         } // throw error on broken connection
         catch (IOException e) {
-            LOGGER.warn("Broken message at: " + message.messageUrl + " permanentUrl: " + message.permanentUrl + ", trying to rebuild from properties");
+            log.warn("Broken message at: " + message.messageUrl + " permanentUrl: " + message.permanentUrl + ", trying to rebuild from properties");
 
             try {
                 DavPropertyNameSet messageProperties = new DavPropertyNameSet();
@@ -2886,19 +2888,19 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                         mimeMessage.writeTo(baos);
                     }
                 }
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Rebuilt message content: " + new String(baos.toByteArray(), StandardCharsets.UTF_8));
+                if (log.isDebugEnabled()) {
+                    log.debug("Rebuilt message content: " + new String(baos.toByteArray(), StandardCharsets.UTF_8));
                 }
             } catch (IOException | DavException | MessagingException e2) {
-                LOGGER.warn(e2);
+                log.warn("",e2);
             }
             // other exception
             if (baos.size() == 0 && Settings.getBooleanProperty("mt.ews.deleteBroken")) {
-                LOGGER.warn("Deleting broken message at: " + message.messageUrl + " permanentUrl: " + message.permanentUrl);
+                log.warn("Deleting broken message at: " + message.messageUrl + " permanentUrl: " + message.permanentUrl);
                 try {
                     message.delete();
                 } catch (IOException ioe) {
-                    LOGGER.warn("Unable to delete broken message at: " + message.permanentUrl);
+                    log.warn("Unable to delete broken message at: " + message.permanentUrl);
                 }
                 throw e;
             }
@@ -2971,7 +2973,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             };
 
         } catch (IOException e) {
-            LOGGER.warn("Unable to retrieve message at: " + url);
+            log.warn("Unable to retrieve message at: " + url);
             throw e;
         }
         return inputStream;
@@ -2985,7 +2987,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         try {
             moveMessage(message.permanentUrl, targetFolder);
         } catch (HttpNotFoundException e) {
-            LOGGER.debug("404 not found at permanenturl: " + message.permanentUrl + ", retry with messageurl");
+            log.debug("404 not found at permanenturl: " + message.permanentUrl + ", retry with messageurl");
             moveMessage(message.messageUrl, targetFolder);
         }
     }
@@ -3016,7 +3018,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         try {
             copyMessage(message.permanentUrl, targetFolder);
         } catch (HttpNotFoundException e) {
-            LOGGER.debug("404 not found at permanenturl: " + message.permanentUrl + ", retry with messageurl");
+            log.debug("404 not found at permanenturl: " + message.permanentUrl + ", retry with messageurl");
             copyMessage(message.messageUrl, targetFolder);
         }
     }
@@ -3039,7 +3041,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
     @Override
     protected void moveToTrash(ExchangeSession.Message message) throws IOException {
         String destination = URIUtil.encodePath(deleteditemsUrl) + '/' + UUID.randomUUID().toString();
-        LOGGER.debug("Deleting : " + message.permanentUrl + " to " + destination);
+        log.debug("Deleting : " + message.permanentUrl + " to " + destination);
         HttpMove method = new HttpMove(encodeAndFixUrl(message.permanentUrl), destination, false);
         method.addHeader("Allow-rename", "t");
 
@@ -3054,7 +3056,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
             }
         }
 
-        LOGGER.debug("Deleted to :" + destination);
+        log.debug("Deleted to :" + destination);
     }
 
     protected String getItemProperty(String permanentUrl, String propertyName) throws IOException, DavException {
@@ -3162,7 +3164,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 calendarValue.set(Calendar.SECOND, 0);
                 result = ExchangeSession.getExchangeZuluDateFormatMillisecond().format(calendarValue.getTime());
             } catch (ParseException e) {
-                LOGGER.warn("Invalid date: " + value);
+                log.warn("Invalid date: " + value);
             }
         }
 

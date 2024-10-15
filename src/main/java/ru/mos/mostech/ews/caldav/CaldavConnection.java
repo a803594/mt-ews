@@ -3,10 +3,10 @@ DIT
  */
 package ru.mos.mostech.ews.caldav;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.EnglishReasonPhraseCatalog;
-import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
@@ -36,12 +36,13 @@ import java.util.*;
 /**
  * Handle a caldav connection.
  */
+@Slf4j
+@SuppressWarnings({"java:S3776", "java:S6541"})
 public class CaldavConnection extends AbstractConnection {
     /**
      * Maximum keep alive time in seconds
      */
     protected static final int MAX_KEEP_ALIVE_TIME = 300;
-    protected final Logger wireLogger = Logger.getLogger(this.getClass());
 
     protected boolean closed;
 
@@ -70,17 +71,15 @@ public class CaldavConnection extends AbstractConnection {
      */
     public CaldavConnection(Socket clientSocket) {
         super(CaldavConnection.class.getSimpleName(), clientSocket, "UTF-8");
-        // set caldav logging to mt-ews logging level
-        wireLogger.setLevel(Settings.getLoggingLevel("ru/mos/mostech/ews"));
     }
 
     protected Map<String, String> parseHeaders() throws IOException {
         HashMap<String, String> headers = new HashMap<>();
         String line;
-        while ((line = readClient()) != null && line.length() > 0) {
+        while ((line = readClient()) != null && !line.isEmpty()) {
             int index = line.indexOf(':');
             if (index <= 0) {
-                wireLogger.warn("Invalid header: " + line);
+                log.warn("Invalid header: {}", line);
                 throw new MosTechEwsException("EXCEPTION_INVALID_HEADER");
             }
             headers.put(line.substring(0, index).toLowerCase(), line.substring(index + 1).trim());
@@ -89,7 +88,7 @@ public class CaldavConnection extends AbstractConnection {
     }
 
     protected String getContent(String contentLength) throws IOException {
-        if (contentLength == null || contentLength.length() == 0) {
+        if (contentLength == null || contentLength.isEmpty()) {
             return null;
         } else {
             int size;
@@ -99,15 +98,13 @@ public class CaldavConnection extends AbstractConnection {
                 throw new MosTechEwsException("EXCEPTION_INVALID_CONTENT_LENGTH", contentLength);
             }
             String content = in.readContentAsString(size);
-            if (wireLogger.isDebugEnabled()) {
-                wireLogger.debug("< " + content);
-            }
+            log.debug("< {}", content);
             return content;
         }
     }
 
     protected void setSocketTimeout(String keepAliveValue) throws IOException {
-        if (keepAliveValue != null && keepAliveValue.length() > 0) {
+        if (keepAliveValue != null && !keepAliveValue.isEmpty()) {
             int keepAlive;
             try {
                 keepAlive = Integer.parseInt(keepAliveValue);
@@ -793,7 +790,7 @@ public class CaldavConnection extends AbstractConnection {
                     // rethrow SocketException (client closed connection)
                     throw e;
                 } catch (Exception e) {
-                    wireLogger.debug(e.getMessage(), e);
+                    log.debug(e.getMessage(), e);
                     MosTechEwsTray.warn(new BundleMessage("LOG_ITEM_NOT_AVAILABLE", eventName, href));
                     notFound.add(href);
                 }
@@ -1309,8 +1306,8 @@ public class CaldavConnection extends AbstractConnection {
         sendClient("");
         if (content != null && content.length > 0) {
             // full debug trace
-            if (wireLogger.isDebugEnabled()) {
-                wireLogger.debug("> " + new String(content, StandardCharsets.UTF_8));
+            if (log.isDebugEnabled()) {
+                log.debug("> " + new String(content, StandardCharsets.UTF_8));
             }
             sendClient(content);
         }
@@ -1710,8 +1707,8 @@ public class CaldavConnection extends AbstractConnection {
                 public void write(byte[] data, int offset, int length) throws IOException {
                     sendClient(Integer.toHexString(length));
                     sendClient(data, offset, length);
-                    if (wireLogger.isDebugEnabled()) {
-                        wireLogger.debug("> " + new String(data, offset, length, StandardCharsets.UTF_8));
+                    if (log.isDebugEnabled()) {
+                        log.debug("> " + new String(data, offset, length, StandardCharsets.UTF_8));
                     }
                     sendClient("");
                 }

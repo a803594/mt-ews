@@ -4,7 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.http;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.ui.PasswordPromptDialog;
 
@@ -24,8 +24,8 @@ import java.util.ArrayList;
  * SSLSocketFactory implementation.
  * Wrapper for DavGatewaySSLProtocolSocketFactory used by HttpClient 4
  */
+@Slf4j
 public class MosTechEwsSSLSocketFactory extends SSLSocketFactory {
-    static final Logger LOGGER = Logger.getLogger(MosTechEwsSSLSocketFactory.class);
 
     private SSLContext sslcontext;
 
@@ -155,50 +155,55 @@ public class MosTechEwsSSLSocketFactory extends SSLSocketFactory {
 
     @Override
     public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException {
-        LOGGER.debug("createSocket " + host + " " + port);
+        log.debug("createSocket " + host + " " + port);
         try {
             return getSSLContext().getSocketFactory().createSocket(socket, host, port, autoClose);
-        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException | InvalidAlgorithmParameterException e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException |
+                 InvalidAlgorithmParameterException e) {
             throw new IOException(e + " " + e.getMessage());
         }
     }
 
     @Override
     public Socket createSocket(String host, int port) throws IOException {
-        LOGGER.debug("createSocket " + host + " " + port);
+        log.debug("createSocket " + host + " " + port);
         try {
             return getSSLContext().getSocketFactory().createSocket(host, port);
-        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException | InvalidAlgorithmParameterException e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException |
+                 InvalidAlgorithmParameterException e) {
             throw new IOException(e + " " + e.getMessage());
         }
     }
 
     @Override
     public Socket createSocket(String host, int port, InetAddress clientHost, int clientPort) throws IOException {
-        LOGGER.debug("createSocket " + host + " " + port + " " + clientHost + " " + clientPort);
+        log.debug("createSocket " + host + " " + port + " " + clientHost + " " + clientPort);
         try {
             return getSSLContext().getSocketFactory().createSocket(host, port, clientHost, clientPort);
-        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException | InvalidAlgorithmParameterException e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException |
+                 InvalidAlgorithmParameterException e) {
             throw new IOException(e + " " + e.getMessage());
         }
     }
 
     @Override
     public Socket createSocket(InetAddress host, int port) throws IOException {
-        LOGGER.debug("createSocket " + host + " " + port);
+        log.debug("createSocket " + host + " " + port);
         try {
             return getSSLContext().getSocketFactory().createSocket(host, port);
-        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException | InvalidAlgorithmParameterException e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException |
+                 InvalidAlgorithmParameterException e) {
             throw new IOException(e + " " + e.getMessage());
         }
     }
 
     @Override
     public Socket createSocket(InetAddress host, int port, InetAddress clientHost, int clientPort) throws IOException {
-        LOGGER.debug("createSocket " + host + " " + port + " " + clientHost + " " + clientPort);
+        log.debug("createSocket " + host + " " + port + " " + clientHost + " " + clientPort);
         try {
             return getSSLContext().getSocketFactory().createSocket(host, port, clientHost, clientPort);
-        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException | InvalidAlgorithmParameterException e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException |
+                 InvalidAlgorithmParameterException e) {
             throw new IOException(e + " " + e.getMessage());
         }
     }

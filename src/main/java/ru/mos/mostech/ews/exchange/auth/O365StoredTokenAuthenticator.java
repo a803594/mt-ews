@@ -4,7 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.exchange.auth;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
 
@@ -15,8 +15,9 @@ import java.net.URI;
  * Experimental: load Oauth2 token from settings
  */
 @SuppressWarnings("unused")
+@Slf4j
 public class O365StoredTokenAuthenticator implements ExchangeAuthenticator {
-    private static final Logger LOGGER = Logger.getLogger(O365StoredTokenAuthenticator.class);
+    
 
     URI ewsUrl = URI.create(Settings.getO365Url());
 
@@ -59,7 +60,7 @@ public class O365StoredTokenAuthenticator implements ExchangeAuthenticator {
         }
         String accessToken = Settings.getProperty("mt.ews.oauth.accessToken");
         if (refreshToken == null && accessToken == null) {
-            LOGGER.warn("No stored Oauth refresh token found for "+username);
+            log.warn("No stored Oauth refresh token found for "+username);
             throw new IOException("No stored Oauth refresh token found for "+username);
         }
 

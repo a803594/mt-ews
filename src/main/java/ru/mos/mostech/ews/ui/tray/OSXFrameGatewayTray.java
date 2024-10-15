@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.ui.tray;
 
-import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.BundleMessage;
 
 import javax.swing.*;
@@ -12,7 +11,7 @@ import javax.swing.*;
  * MacOSX specific frame to handle menu
  */
 public class OSXFrameGatewayTray extends FrameGatewayTray implements OSXTrayInterface {
-    protected static final Logger LOGGER = Logger.getLogger(OSXFrameGatewayTray.class);
+    
 
     @Override
     protected void buildMenu() {

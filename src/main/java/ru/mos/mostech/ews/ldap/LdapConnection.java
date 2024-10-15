@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.ldap;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
@@ -35,8 +35,9 @@ import java.util.*;
 /**
  * Handle a caldav connection.
  */
+@Slf4j
 public class LdapConnection extends AbstractConnection {
-    private static final Logger LOGGER = Logger.getLogger(LdapConnection.class);
+    
     /**
      * MT-EWS base context
      */
@@ -679,7 +680,7 @@ public class LdapConnection extends AbstractConnection {
     protected void dumpBer(byte[] inbuf, int offset) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Ber.dumpBER(baos, "LDAP request buffer\n", inbuf, 0, offset);
-        LOGGER.debug(new String(baos.toByteArray(), StandardCharsets.UTF_8));
+        log.debug(new String(baos.toByteArray(), StandardCharsets.UTF_8));
     }
 
     protected LdapFilter parseFilter(BerDecoder reqBer) throws IOException {
@@ -1528,7 +1529,7 @@ public class LdapConnection extends AbstractConnection {
                 }
             } catch (SocketException e) {
                 // client closed connection
-                LOGGER.warn(BundleMessage.formatLog("LOG_CLIENT_CLOSED_CONNECTION"));
+                log.warn(BundleMessage.formatLog("LOG_CLIENT_CLOSED_CONNECTION"));
             } catch (IOException e) {
                 MosTechEwsTray.log(e);
                 try {

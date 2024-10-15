@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import ru.mos.mostech.ews.BundleMessage;
@@ -29,6 +30,7 @@ import java.util.Map;
 /**
  * Create ExchangeSession instances.
  */
+@Slf4j
 public final class ExchangeSessionFactory {
     private static final Object LOCK = new Object();
     private static final Map<PoolKey, ExchangeSession> POOL_MAP = new HashMap<>();
@@ -118,13 +120,13 @@ public final class ExchangeSessionFactory {
                 session = POOL_MAP.get(poolKey);
             }
             if (session != null) {
-                ExchangeSession.LOGGER.debug("Got session " + session + " from cache");
+                log.debug("Got session " + session + " from cache");
             }
 
             if (session != null && session.isExpired()) {
                 synchronized (LOCK) {
                     session.close();
-                    ExchangeSession.LOGGER.debug("Session " + session + " for user " + session.userName + " expired");
+                    log.debug("Session " + session + " for user " + session.userName + " expired");
                     session = null;
                     // expired session, remove from cache
                     POOL_MAP.remove(poolKey);
@@ -173,10 +175,10 @@ public final class ExchangeSessionFactory {
                         || poolKey.url.toLowerCase().endsWith("/ews/services.wsdl")) {
                     if (poolKey.url.toLowerCase().endsWith("/ews/exchange.asmx")
                             || poolKey.url.toLowerCase().endsWith("/ews/services.wsdl")) {
-                        ExchangeSession.LOGGER.debug("Direct EWS authentication");
+                        log.debug("Direct EWS authentication");
                         session = new EwsExchangeSession(poolKey.url, poolKey.userName, poolKey.password);
                     } else {
-                        ExchangeSession.LOGGER.debug("OWA authentication in EWS mode");
+                        log.debug("OWA authentication in EWS mode");
                         ExchangeFormAuthenticator exchangeFormAuthenticator = new ExchangeFormAuthenticator();
                         exchangeFormAuthenticator.setUrl(poolKey.url);
                         exchangeFormAuthenticator.setUsername(poolKey.userName);
@@ -197,7 +199,7 @@ public final class ExchangeSessionFactory {
                                 exchangeFormAuthenticator.getUsername());
                     } catch (WebdavNotAvailableException e) {
                         if (Settings.AUTO.equals(mode)) {
-                            ExchangeSession.LOGGER.debug(e.getMessage() + ", retry with EWS");
+                            log.debug(e.getMessage() + ", retry with EWS");
                             session = new EwsExchangeSession(poolKey.url, poolKey.userName, poolKey.password);
                         } else {
                             throw e;
@@ -205,7 +207,7 @@ public final class ExchangeSessionFactory {
                     }
                 }
                 checkWhiteList(session.getEmail());
-                ExchangeSession.LOGGER.debug("Created new session " + session + " for user " + poolKey.userName);
+                log.debug("Created new session " + session + " for user " + poolKey.userName);
             }
             // successful login, put session in cache
             synchronized (LOCK) {
@@ -240,7 +242,7 @@ public final class ExchangeSessionFactory {
                     return;
                 }
             }
-            ExchangeSession.LOGGER.warn(email + " not allowed by whitelist");
+            log.warn(email + " not allowed by whitelist");
             throw new MosTechEwsAuthenticationException("EXCEPTION_AUTHENTICATION_FAILED");
         }
     }
@@ -260,7 +262,7 @@ public final class ExchangeSessionFactory {
         ExchangeSession session = currentSession;
         try {
             if (session.isExpired()) {
-                ExchangeSession.LOGGER.debug("Session " + session + " expired, trying to open a new one");
+                log.debug("Session " + session + " expired, trying to open a new one");
                 session = null;
                 String baseUrl = Settings.getProperty("mt.ews.url");
                 PoolKey poolKey = new PoolKey(baseUrl, userName, password);
@@ -271,10 +273,10 @@ public final class ExchangeSessionFactory {
                 session = getInstance(userName, password);
             }
         } catch (MosTechEwsAuthenticationException exc) {
-            ExchangeSession.LOGGER.debug("Unable to reopen session", exc);
+            log.debug("Unable to reopen session", exc);
             throw exc;
         } catch (Exception exc) {
-            ExchangeSession.LOGGER.debug("Unable to reopen session", exc);
+            log.debug("Unable to reopen session", exc);
             handleNetworkDown(exc);
         }
         return session;
@@ -296,7 +298,7 @@ public final class ExchangeSessionFactory {
         ) {
             // get webMail root url (will not follow redirects)
             int status = response.getStatusLine().getStatusCode();
-            ExchangeSession.LOGGER.debug("Test configuration status: " + status);
+            log.debug("Test configuration status: " + status);
             if (status != HttpStatus.SC_OK && status != HttpStatus.SC_UNAUTHORIZED
                     && !HttpClientAdapter.isRedirect(status)) {
                 throw new MosTechEwsException("EXCEPTION_CONNECTION_FAILED", url, status);
@@ -313,22 +315,22 @@ public final class ExchangeSessionFactory {
 
     private static void handleNetworkDown(Exception exc) throws MosTechEwsException {
         if (!checkNetwork() || configChecked) {
-            ExchangeSession.LOGGER.warn(BundleMessage.formatLog("EXCEPTION_NETWORK_DOWN"));
+            log.warn(BundleMessage.formatLog("EXCEPTION_NETWORK_DOWN"));
             // log full stack trace for unknown errors
             if (!((exc instanceof UnknownHostException) || (exc instanceof NetworkDownException))) {
-                ExchangeSession.LOGGER.debug(exc, exc);
+                log.debug("{}", exc, exc);
             }
             throw new NetworkDownException("EXCEPTION_NETWORK_DOWN");
         } else {
             BundleMessage message = new BundleMessage("EXCEPTION_CONNECT", exc.getClass().getName(), exc.getMessage());
             if (errorSent) {
-                ExchangeSession.LOGGER.warn(message);
+                log.warn("{}",message);
                 throw new NetworkDownException("EXCEPTION_MT-EWS_CONFIGURATION", message);
             } else {
                 // Mark that an error has been sent so you only get one
                 // error in a row (not a repeating string of errors).
                 errorSent = true;
-                ExchangeSession.LOGGER.error(message);
+                log.error("{}",message);
                 throw new MosTechEwsException("EXCEPTION_MT-EWS_CONFIGURATION", message);
             }
         }
@@ -368,10 +370,10 @@ public final class ExchangeSessionFactory {
                 }
             }
         } catch (NoSuchMethodError error) {
-            ExchangeSession.LOGGER.debug("Unable to test network interfaces (not available under Java 1.5)");
+            log.debug("Unable to test network interfaces (not available under Java 1.5)");
             up = true;
         } catch (SocketException exc) {
-            ExchangeSession.LOGGER.error("MT-EWS configuration exception: \n Error listing network interfaces " + exc.getMessage(), exc);
+            log.error("MT-EWS configuration exception: \n Error listing network interfaces " + exc.getMessage(), exc);
         }
         return up;
     }

@@ -1,6 +1,6 @@
 package ru.mos.mostech.ews.exchange;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
 
 import javax.mail.MessagingException;
@@ -12,8 +12,9 @@ import java.net.SocketException;
  * Message load thread.
  * Used to avoid timeouts over POP and IMAP
  */
+@Slf4j
 public class MessageLoadThread extends Thread {
-    private static final Logger LOGGER = Logger.getLogger(MessageLoadThread.class);
+    
 
     protected boolean isComplete = false;
     protected ExchangeSession.Message message;
@@ -51,17 +52,17 @@ public class MessageLoadThread extends Thread {
         if (message.size < 1024 * 1024) {
             message.loadMimeMessage();
         } else {
-            LOGGER.debug("Load large message " + (message.size / 1024) + "KB uid " + message.getUid() + " imapUid " + message.getImapUid() + " in a separate thread");
+            log.debug("Load large message " + (message.size / 1024) + "KB uid " + message.getUid() + " imapUid " + message.getImapUid() + " in a separate thread");
                 MessageLoadThread messageLoadThread = new MessageLoadThread(currentThread().getName(), message);
                 messageLoadThread.start();
                 while (!messageLoadThread.isComplete) {
                     try {
                         messageLoadThread.join(10000);
                     } catch (InterruptedException e) {
-                        LOGGER.warn("Thread interrupted", e);
+                        log.warn("Thread interrupted", e);
                         Thread.currentThread().interrupt();
                     }
-                    LOGGER.debug("Still loading uid " + message.getUid() + " imapUid " + message.getImapUid());
+                    log.debug("Still loading uid " + message.getUid() + " imapUid " + message.getImapUid());
                     if (Settings.getBooleanProperty("mt.ews.enableKeepAlive", false)) {
                         try {
                             outputStream.write(' ');

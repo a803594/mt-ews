@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.http.request;
 
-import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.util.StringUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -17,7 +16,7 @@ import java.nio.charset.StandardCharsets;
  * Does not load full DOM in memory.
  */
 public class ExchangeSearchRequest extends ExchangeDavRequest {
-    protected static final Logger LOGGER = Logger.getLogger(ExchangeSearchRequest.class);
+    
 
     protected final String searchRequest;
 

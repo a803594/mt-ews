@@ -7,7 +7,6 @@ package ru.mos.mostech.ews.http.request;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
-import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.exchange.dav.PropertyValue;
 
 import java.io.ByteArrayOutputStream;
@@ -22,7 +21,7 @@ import java.util.*;
  */
 
 public class ExchangePropPatchRequest extends ExchangeDavRequest {
-    protected static final Logger LOGGER = Logger.getLogger(ExchangePropPatchRequest.class);
+    
     static final String TYPE_NAMESPACE = "urn:schemas-microsoft-com:datatypes";
     final Set<PropertyValue> propertyValues;
     private StatusLine statusLine;

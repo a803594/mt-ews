@@ -5,16 +5,17 @@ DIT
 package ru.mos.mostech.ews.exchange.auth;
 
 import javafx.scene.web.WebEngine;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
+@Slf4j
 public class O365InteractiveJSLogger {
-    private static final Logger LOGGER = Logger.getLogger(O365InteractiveJSLogger.class);
+    
     public void log(String message) {
-        LOGGER.info(message);
+        log.info(message);
     }
 
     public static void register(WebEngine webEngine) {
@@ -28,7 +29,7 @@ public class O365InteractiveJSLogger {
 
             webEngine.executeScript("console.log = function(message) { mt-ews.log(message); }");
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            LOGGER.info("netscape.javascript.JSObject not available");
+            log.info("netscape.javascript.JSObject not available");
         }
 
     }

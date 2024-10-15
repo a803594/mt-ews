@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.pop;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
@@ -28,8 +28,9 @@ import java.util.StringTokenizer;
 /**
  * Dav Gateway pop connection implementation
  */
+@Slf4j
 public class PopConnection extends AbstractConnection {
-    private static final Logger LOGGER = Logger.getLogger(PopConnection.class);
+    
 
     private List<ExchangeSession.Message> messages;
 
@@ -130,7 +131,7 @@ public class PopConnection extends AbstractConnection {
                             } catch (SocketException e) {
                                 logConnection("FAILED", userName);
                                 // can not send error to client after a socket exception
-                                LOGGER.warn(BundleMessage.formatLog("LOG_CLIENT_CLOSED_CONNECTION"));
+                                log.warn("{}", BundleMessage.formatLog("LOG_CLIENT_CLOSED_CONNECTION"));
                             } catch (Exception e) {
                                 MosTechEwsTray.error(e);
                                 sendERR(e);
@@ -202,7 +203,7 @@ public class PopConnection extends AbstractConnection {
                                     }
                                 } catch (SocketException e) {
                                     // can not send error to client after a socket exception
-                                    LOGGER.warn(BundleMessage.formatLog("LOG_CLIENT_CLOSED_CONNECTION"));
+                                    log.warn(BundleMessage.formatLog("LOG_CLIENT_CLOSED_CONNECTION"));
                                 } catch (Exception e) {
                                     MosTechEwsTray.error(new BundleMessage("LOG_ERROR_RETRIEVING_MESSAGE"), e);
                                     sendERR("error retrieving message " + e + ' ' + e.getMessage());

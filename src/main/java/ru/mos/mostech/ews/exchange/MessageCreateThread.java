@@ -1,6 +1,6 @@
 package ru.mos.mostech.ews.exchange;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
 
 import javax.mail.internet.MimeMessage;
@@ -13,8 +13,9 @@ import java.util.HashMap;
 /**
  * Create message in a separate thread.
  */
+@Slf4j
 public class MessageCreateThread extends Thread {
-    private static final Logger LOGGER = Logger.getLogger(MessageCreateThread.class);
+    
 
     boolean isComplete = false;
     ExchangeSession session;
@@ -65,14 +66,14 @@ public class MessageCreateThread extends Thread {
             try {
                 messageCreateThread.join(20000);
             } catch (InterruptedException e) {
-                LOGGER.warn("Thread interrupted", e);
+                log.warn("Thread interrupted", e);
                 Thread.currentThread().interrupt();
             }
             if (!messageCreateThread.isComplete) {
                 if (Settings.getBooleanProperty("mt.ews.enableKeepAlive", false)) {
-                    LOGGER.debug("Still loading message, send capabilities untagged response to avoid timeout");
+                    log.debug("Still loading message, send capabilities untagged response to avoid timeout");
                     try {
-                        LOGGER.debug("* " + capabilities);
+                        log.debug("* " + capabilities);
                         outputStream.write(("* " + capabilities).getBytes(StandardCharsets.US_ASCII));
                         outputStream.write((char) 13);
                         outputStream.write((char) 10);

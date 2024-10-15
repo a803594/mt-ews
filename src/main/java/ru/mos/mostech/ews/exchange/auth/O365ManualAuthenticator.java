@@ -4,8 +4,8 @@ DIT
 
 package ru.mos.mostech.ews.exchange.auth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.exception.MosTechEwsAuthenticationException;
@@ -24,9 +24,10 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 
+@Slf4j
 public class O365ManualAuthenticator implements ExchangeAuthenticator {
 
-    private static final Logger LOGGER = Logger.getLogger(O365ManualAuthenticator.class);
+    
 
     String errorCode = null;
     String code = null;
@@ -100,13 +101,13 @@ public class O365ManualAuthenticator implements ExchangeAuthenticator {
         }
 
         if (code == null) {
-            LOGGER.error("Authentication failed, code not available");
+            log.error("Authentication failed, code not available");
             throw new MosTechEwsException("EXCEPTION_AUTHENTICATION_FAILED_REASON", errorCode);
         }
 
         token = O365Token.build(tenantId, clientId, redirectUri, code, password);
 
-        LOGGER.debug("Authenticated username: " + token.getUsername());
+        log.debug("Authenticated username: " + token.getUsername());
         if (username != null && !username.isEmpty() && !username.equalsIgnoreCase(token.getUsername())) {
             throw new MosTechEwsAuthenticationException("Authenticated username " + token.getUsername() + " does not match " + username);
         }
@@ -171,10 +172,10 @@ public class O365ManualAuthenticator implements ExchangeAuthenticator {
             }
 
         } catch (InterruptedException e) {
-            LOGGER.warn("Thread interrupted", e);
+            log.warn("Thread interrupted", e);
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            LOGGER.error(e + " " + e.getMessage(), e);
+            log.error(e + " " + e.getMessage(), e);
         }
         System.exit(0);
     }

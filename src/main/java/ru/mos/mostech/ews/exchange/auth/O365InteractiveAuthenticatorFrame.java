@@ -12,7 +12,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
@@ -39,8 +39,9 @@ import java.nio.charset.StandardCharsets;
  * Interactive authenticator UI based on OpenJFX.
  * Need access to internal urlhandler on recent JDK versions with: --add-exports java.base/sun.net.www.protocol.https=ALL-UNNAMED
  */
+@Slf4j
 public class O365InteractiveAuthenticatorFrame extends JFrame {
-    private static final Logger LOGGER = Logger.getLogger(O365InteractiveAuthenticatorFrame.class);
+    
 
     private O365InteractiveAuthenticator authenticator;
 
@@ -124,7 +125,7 @@ public class O365InteractiveAuthenticatorFrame extends JFrame {
             String message = stringWebEvent.getData();
             JOptionPane.showMessageDialog(O365InteractiveAuthenticatorFrame.this, message);
         }));
-        webViewEngine.setOnError(event -> LOGGER.error(event.getMessage()));
+        webViewEngine.setOnError(event -> log.error(event.getMessage()));
 
 
         webViewEngine.getLoadWorker().stateProperty().addListener((ov, oldState, newState) -> {
@@ -133,26 +134,26 @@ public class O365InteractiveAuthenticatorFrame extends JFrame {
                 loadProgress.setVisible(false);
                 location = webViewEngine.getLocation();
                 updateTitleAndFocus(location);
-                LOGGER.debug("Webview location: " + location);
+                log.debug("Webview location: " + location);
                 // override console.log
                 O365InteractiveJSLogger.register(webViewEngine);
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(dumpDocument(webViewEngine.getDocument()));
+                if (log.isDebugEnabled()) {
+                    log.debug(dumpDocument(webViewEngine.getDocument()));
                 }
                 if (location.startsWith(redirectUri)) {
-                    LOGGER.debug("Location starts with redirectUri, check code");
+                    log.debug("Location starts with redirectUri, check code");
 
                     authenticator.isAuthenticated = location.contains("code=") && location.contains("&session_state=");
                     if (!authenticator.isAuthenticated && location.contains("error=")) {
                         authenticator.errorCode = location.substring(location.indexOf("error="));
                     }
                     if (authenticator.isAuthenticated) {
-                        LOGGER.debug("Authenticated location: " + location);
+                        log.debug("Authenticated location: " + location);
                         String code = location.substring(location.indexOf("code=") + 5, location.indexOf("&session_state="));
                         String sessionState = location.substring(location.lastIndexOf('='));
 
-                        LOGGER.debug("Authentication Code: " + code);
-                        LOGGER.debug("Authentication session state: " + sessionState);
+                        log.debug("Authentication Code: " + code);
+                        log.debug("Authentication session state: " + sessionState);
                         authenticator.code = code;
                     }
                     close();
@@ -164,7 +165,7 @@ public class O365InteractiveAuthenticatorFrame extends JFrame {
                 }
                 close();
             } else {
-                LOGGER.debug(webViewEngine.getLoadWorker().getState() + " " + webViewEngine.getLoadWorker().getMessage() + " " + webViewEngine.getLocation() + " ");
+                log.debug(webViewEngine.getLoadWorker().getState() + " " + webViewEngine.getLoadWorker().getMessage() + " " + webViewEngine.getLocation() + " ");
             }
 
         });
@@ -219,7 +220,7 @@ public class O365InteractiveAuthenticatorFrame extends JFrame {
     }
 
     public void handleError(Throwable t) {
-        LOGGER.error(t + " " + t.getMessage());
+        log.error(t + " " + t.getMessage());
         authenticator.errorCode = t.getMessage();
         if (authenticator.errorCode == null) {
             authenticator.errorCode = t.toString();

@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.http;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -41,7 +42,6 @@ import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.client.methods.BaseDavRequest;
 import org.apache.jackrabbit.webdav.client.methods.HttpCopy;
 import org.apache.jackrabbit.webdav.client.methods.HttpMove;
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.exception.*;
@@ -54,8 +54,8 @@ import java.security.Security;
 import java.util.HashSet;
 import java.util.List;
 
+@Slf4j
 public class HttpClientAdapter implements Closeable {
-    static final Logger LOGGER = Logger.getLogger("ru.mt.ews.http.HttpClientAdapter");
 
     static final String[] SUPPORTED_PROTOCOLS = new String[]{"TLSv1", "TLSv1.1", "TLSv1.2"};
     static final Registry<ConnectionSocketFactory> SCHEME_REGISTRY;
@@ -114,7 +114,7 @@ public class HttpClientAdapter implements Closeable {
     BasicCookieStore cookieStore = new BasicCookieStore() {
         @Override
         public void addCookie(final Cookie cookie) {
-            LOGGER.debug("Add cookie " + cookie);
+            log.debug("Add cookie " + cookie);
             super.addCookie(cookie);
         }
     };
@@ -200,7 +200,7 @@ public class HttpClientAdapter implements Closeable {
                 proxyPassword = Settings.getProperty("mt.ews.proxyPassword");
             }
         } else if (isNoProxyFor(uri)) {
-            LOGGER.debug("no proxy for " + uri.getHost());
+            log.debug("no proxy for " + uri.getHost());
         } else if (enableProxy) {
             proxyHost = Settings.getProperty("mt.ews.proxyHost");
             proxyPort = Settings.getIntProperty("mt.ews.proxyPort");
@@ -210,20 +210,20 @@ public class HttpClientAdapter implements Closeable {
 
         if (proxyHost != null && !proxyHost.isEmpty() && (proxyUser != null && !proxyUser.isEmpty())) {
 
-                AuthScope authScope = new AuthScope(proxyHost, proxyPort, AuthScope.ANY_REALM);
-                if (provider == null) {
-                    provider = new BasicCredentialsProvider();
-                }
+            AuthScope authScope = new AuthScope(proxyHost, proxyPort, AuthScope.ANY_REALM);
+            if (provider == null) {
+                provider = new BasicCredentialsProvider();
+            }
 
-                // detect ntlm authentication (windows domain name in username)
-                int backslashIndex = proxyUser.indexOf('\\');
-                if (backslashIndex > 0) {
-                    provider.setCredentials(authScope, new NTCredentials(proxyUser.substring(backslashIndex + 1),
-                            proxyPassword, WORKSTATION_NAME,
-                            proxyUser.substring(0, backslashIndex)));
-                } else {
-                    provider.setCredentials(authScope, new NTCredentials(proxyUser, proxyPassword, WORKSTATION_NAME, ""));
-                }
+            // detect ntlm authentication (windows domain name in username)
+            int backslashIndex = proxyUser.indexOf('\\');
+            if (backslashIndex > 0) {
+                provider.setCredentials(authScope, new NTCredentials(proxyUser.substring(backslashIndex + 1),
+                        proxyPassword, WORKSTATION_NAME,
+                        proxyUser.substring(0, backslashIndex)));
+            } else {
+                provider.setCredentials(authScope, new NTCredentials(proxyUser, proxyPassword, WORKSTATION_NAME, ""));
+            }
 
         }
 
@@ -319,11 +319,11 @@ public class HttpClientAdapter implements Closeable {
      * @return proxy selector
      */
     private static List<Proxy> getProxyForURI(java.net.URI uri) {
-        LOGGER.debug("get Default proxy selector");
+        log.debug("get Default proxy selector");
         ProxySelector proxySelector = ProxySelector.getDefault();
-        LOGGER.debug("getProxyForURI(" + uri + ')');
+        log.debug("getProxyForURI(" + uri + ')');
         List<Proxy> proxies = proxySelector.select(uri);
-        LOGGER.debug("got system proxies:" + proxies);
+        log.debug("got system proxies:" + proxies);
         return proxies;
     }
 
@@ -351,7 +351,7 @@ public class HttpClientAdapter implements Closeable {
         try {
             httpClient.close();
         } catch (IOException e) {
-            LOGGER.warn("Exception closing http client", e);
+            log.warn("Exception closing http client", e);
         }
     }
 
@@ -404,8 +404,8 @@ public class HttpClientAdapter implements Closeable {
 
     public ResponseWrapper executeFollowRedirect(PostRequest request) throws IOException {
         ResponseWrapper responseWrapper = request;
-        LOGGER.debug(request.getMethod() + " " + request.getURI().toString());
-        LOGGER.debug(request.getParameters());
+        log.debug(request.getMethod() + " " + request.getURI().toString());
+        log.debug("{}", request.getParameters());
 
         int count = 0;
         int maxRedirect = Settings.getIntProperty("mt.ews.httpMaxRedirects", MAX_REDIRECTS);
@@ -414,7 +414,7 @@ public class HttpClientAdapter implements Closeable {
         URI redirectLocation = request.getRedirectLocation();
 
         while (count++ < maxRedirect && redirectLocation != null) {
-            LOGGER.debug("Redirect " + request.getURI() + " to " + redirectLocation);
+            log.debug("Redirect " + request.getURI() + " to " + redirectLocation);
             // replace uri with target location
             responseWrapper = new GetRequest(redirectLocation);
             executeGetRequest((GetRequest) responseWrapper);
@@ -426,7 +426,7 @@ public class HttpClientAdapter implements Closeable {
 
     public GetRequest executeFollowRedirect(GetRequest request) throws IOException {
         GetRequest result = request;
-        LOGGER.debug(request.getMethod() + " " + request.getURI().toString());
+        log.debug(request.getMethod() + " " + request.getURI().toString());
 
         int count = 0;
         int maxRedirect = Settings.getIntProperty("mt.ews.httpMaxRedirects", MAX_REDIRECTS);
@@ -435,7 +435,7 @@ public class HttpClientAdapter implements Closeable {
         URI redirectLocation = request.getRedirectLocation();
 
         while (count++ < maxRedirect && redirectLocation != null) {
-            LOGGER.debug("Redirect " + request.getURI() + " to " + redirectLocation);
+            log.debug("Redirect " + request.getURI() + " to " + redirectLocation);
             // replace uri with target location
             result = new GetRequest(redirectLocation);
             executeGetRequest(result);
@@ -502,7 +502,7 @@ public class HttpClientAdapter implements Closeable {
                 multiStatus = request.getResponseBodyAsMultiStatus(response);
             }
         } catch (DavException e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new IOException(e.getErrorCode() + " " + e.getStatusPhrase(), e);
         }
         return multiStatus;
@@ -579,7 +579,7 @@ public class HttpClientAdapter implements Closeable {
     public void setCredentials(String username, String password) {
         parseUserName(username);
         if (userid != null && password != null) {
-            LOGGER.debug("Creating NTCredentials for user " + userid + " workstation " + WORKSTATION_NAME + " domain " + domain);
+            log.debug("Creating NTCredentials for user " + userid + " workstation " + WORKSTATION_NAME + " domain " + domain);
             NTCredentials credentials = new NTCredentials(userid, password, WORKSTATION_NAME, domain);
             provider.setCredentials(AuthScope.ANY, credentials);
         }

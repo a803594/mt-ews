@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.http;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
@@ -20,14 +20,14 @@ import java.util.HashMap;
  * };
  * <p/>
  */
+@Slf4j
 public class KerberosLoginConfiguration extends Configuration {
-    protected static final Logger LOGGER = Logger.getLogger(KerberosLoginConfiguration.class);
     protected static final AppConfigurationEntry[] CLIENT_LOGIN_MODULE;
     protected static final AppConfigurationEntry[] SERVER_LOGIN_MODULE;
 
     static {
         HashMap<String, String> clientLoginModuleOptions = new HashMap<>();
-        if (LOGGER.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             clientLoginModuleOptions.put("debug", "true");
         }
 
@@ -47,7 +47,7 @@ public class KerberosLoginConfiguration extends Configuration {
                 clientLoginModuleOptions)};
 
         HashMap<String, String> serverLoginModuleOptions = new HashMap<>();
-        if (LOGGER.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             serverLoginModuleOptions.put("debug", "true");
         }
 

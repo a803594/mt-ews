@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.exchange.graph;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -29,6 +30,7 @@ import java.util.*;
 /**
  * Implement ExchangeSession based on Microsoft Graph
  */
+@Slf4j
 public class GraphExchangeSession extends ExchangeSession {
 
     protected class Folder extends ExchangeSession.Folder {
@@ -283,11 +285,11 @@ public class GraphExchangeSession extends ExchangeSession {
                 .setObjectId(parentFolderId.id)
                 .setChildType("childFolders")
                 .setExpandFields(FOLDER_PROPERTIES);
-        LOGGER.debug("appendSubFolders "+parentFolderId.mailbox+parentFolderPath);
+        log.debug("appendSubFolders "+parentFolderId.mailbox+parentFolderPath);
         if (condition != null && !condition.isEmpty()) {
             StringBuilder filter = new StringBuilder();
             condition.appendTo(filter);
-            LOGGER.debug("search filter "+filter);
+            log.debug("search filter "+filter);
             httpRequestBuilder.setFilter(filter.toString());
         }
 

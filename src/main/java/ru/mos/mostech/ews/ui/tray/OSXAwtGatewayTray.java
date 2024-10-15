@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.ui.tray;
 
-import org.apache.log4j.Level;
+import org.slf4j.event.Level;
 import ru.mos.mostech.ews.BundleMessage;
 
 import javax.swing.*;

@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.http.request;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -11,7 +12,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.AbstractHttpEntity;
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
@@ -27,9 +27,10 @@ import java.util.zip.GZIPInputStream;
 /**
  * Generic Rest request.
  */
+@Slf4j
 public class RestRequest extends HttpPost implements ResponseHandler<JSONObject> {
     private static final String JSON_CONTENT_TYPE = "application/json; charset=utf-8";
-    private static final Logger LOGGER = Logger.getLogger(RestRequest.class);
+    
 
     private HttpResponse response;
     private JSONObject jsonBody;
@@ -108,7 +109,7 @@ public class RestRequest extends HttpPost implements ResponseHandler<JSONObject>
                     jsonResponse = processResponseStream(inputStream);
                 }
             } catch (JSONException e) {
-                LOGGER.error("Error while parsing json response: " + e, e);
+                log.error("Error while parsing json response: " + e, e);
                 throw new IOException(e.getMessage(), e);
             }
         } else {

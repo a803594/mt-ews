@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.ui;
 
-import org.apache.log4j.Level;
+import org.slf4j.event.Level;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
 import ru.mos.mostech.ews.Settings;
@@ -19,7 +19,7 @@ import java.awt.event.ActionListener;
  * MT-EWS settings frame
  */
 public class SettingsFrame extends JFrame {
-    static final Level[] LOG_LEVELS = {Level.OFF, Level.FATAL, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG, Level.ALL};
+    static final Level[] LOG_LEVELS = {Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG};
 
     protected JTextField urlField;
     protected JTextField popPortField;

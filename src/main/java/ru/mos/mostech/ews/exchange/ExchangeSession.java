@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.exception.HttpNotFoundException;
@@ -26,9 +26,8 @@ import java.util.*;
 /**
  * Exchange session through Outlook Web Access (DAV)
  */
+@Slf4j
 public abstract class ExchangeSession {
-
-    protected static final Logger LOGGER = Logger.getLogger("mt.ews.exchange.ExchangeSession");
 
     /**
      * Reference GMT timezone to format dates
@@ -716,7 +715,7 @@ public abstract class ExchangeSession {
     protected void purgeOldestFolderMessages(String folderPath, int keepDelay) throws IOException {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH, -keepDelay);
-        LOGGER.debug("Delete messages in " + folderPath + " not modified since " + cal.getTime());
+        log.debug("Delete messages in " + folderPath + " not modified since " + cal.getTime());
 
         MessageList messages = searchMessages(folderPath, UID_MESSAGE_ATTRIBUTES,
                 lt("lastmodified", formatSearchDate(cal.getTime())));
@@ -752,7 +751,7 @@ public abstract class ExchangeSession {
         // detect duplicate send command
         String messageId = mimeMessage.getMessageID();
         if (lastSentMessageId != null && lastSentMessageId.equals(messageId)) {
-            LOGGER.debug("Dropping message id " + messageId + ": already sent");
+            log.debug("Dropping message id " + messageId + ": already sent");
             return;
         }
         lastSentMessageId = messageId;
@@ -840,8 +839,8 @@ public abstract class ExchangeSession {
                 // ctag stamp is limited to second, check message count
                 || !(currentFolder.count == newFolder.count)
         ) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Contenttag or count changed on " + currentFolder.folderPath +
+            if (log.isDebugEnabled()) {
+                log.debug("Contenttag or count changed on " + currentFolder.folderPath +
                         " ctag: " + currentFolder.ctag + " => " + newFolder.ctag +
                         " count: " + currentFolder.count + " => " + newFolder.count
                         + ", reloading messages");
@@ -1057,9 +1056,9 @@ public abstract class ExchangeSession {
 
     protected String encodeKeyword(String keyword) {
         String result = keyword;
-        if (keyword.indexOf('(') >= 0|| keyword.indexOf(')') >= 0) {
+        if (keyword.indexOf('(') >= 0 || keyword.indexOf(')') >= 0) {
             result = result.replaceAll("\\(", "_x0028_")
-                    .replaceAll("\\)", "_x0029_" );
+                    .replaceAll("\\)", "_x0029_");
         }
         return result;
     }
@@ -1144,6 +1143,7 @@ public abstract class ExchangeSession {
 
         /**
          * Special folder flag (Sent, Drafts, Trash, Junk).
+         *
          * @return true if folder is special
          */
         public boolean isSpecial() {
@@ -1197,7 +1197,7 @@ public abstract class ExchangeSession {
                 if (permanentUrlToImapUidMap.containsKey(message.getPermanentId())) {
                     long previousUid = permanentUrlToImapUidMap.get(message.getPermanentId());
                     if (message.getImapUid() != previousUid) {
-                        LOGGER.debug("Restoring IMAP uid " + message.getImapUid() + " -> " + previousUid + " for message " + message.getPermanentId());
+                        log.debug("Restoring IMAP uid " + message.getImapUid() + " -> " + previousUid + " for message " + message.getPermanentId());
                         message.setImapUid(previousUid);
                         sortNeeded = true;
                     }
@@ -1466,7 +1466,7 @@ public abstract class ExchangeSession {
                         && messageList.cachedMimeMessage != null) {
                     mimeContent = messageList.cachedMimeContent;
                     mimeMessage = messageList.cachedMimeMessage;
-                    LOGGER.debug("Got message content for " + imapUid + " from cache");
+                    log.debug("Got message content for " + imapUid + " from cache");
                 } else {
                     // load and parse message
                     mimeContent = getContent(this);
@@ -1481,7 +1481,7 @@ public abstract class ExchangeSession {
                         mimeContent = mimeContentCopy;
                         mimeMessage = new MimeMessage(null, new SharedByteArrayInputStream(mimeContent));
                     }
-                    LOGGER.debug("Downloaded full message content for IMAP UID " + imapUid + " (" + mimeContent.length + " bytes)");
+                    log.debug("Downloaded full message content for IMAP UID " + imapUid + " (" + mimeContent.length + " bytes)");
                 }
             }
         }
@@ -1982,7 +1982,7 @@ public abstract class ExchangeSession {
                     try {
                         contactPhoto = getContactPhoto(this);
                     } catch (IOException e) {
-                        LOGGER.warn("Unable to get photo from contact " + this.get("cn"));
+                        log.warn("Unable to get photo from contact " + this.get("cn"));
                     }
                 }
 
@@ -2037,7 +2037,7 @@ public abstract class ExchangeSession {
 
         protected HttpNotFoundException buildHttpNotFoundException(Exception e) {
             String message = "Unable to get event " + getName() + " subject: " + subject + " at " + permanentUrl + ": " + e.getMessage();
-            LOGGER.warn(message);
+            log.warn(message);
             return new HttpNotFoundException(message);
         }
 
@@ -2115,17 +2115,17 @@ public abstract class ExchangeSession {
         }
 
         protected void fixICS(byte[] icsContent, boolean fromServer) throws IOException {
-            if (LOGGER.isDebugEnabled() && fromServer) {
+            if (log.isDebugEnabled() && fromServer) {
                 dumpIndex++;
                 String icsBody = new String(icsContent, StandardCharsets.UTF_8);
                 dumpICS(icsBody, true, false);
-                LOGGER.debug("Vcalendar body received from server:\n" + icsBody);
+                log.debug("Vcalendar body received from server:\n" + icsBody);
             }
             vCalendar = new VCalendar(icsContent, getEmail(), getVTimezone());
             vCalendar.fixVCalendar(fromServer);
-            if (LOGGER.isDebugEnabled() && !fromServer) {
+            if (log.isDebugEnabled() && !fromServer) {
                 String resultString = vCalendar.toString();
-                LOGGER.debug("Fixed Vcalendar body to server:\n" + resultString);
+                log.debug("Fixed Vcalendar body to server:\n" + resultString);
                 dumpICS(resultString, false, true);
             }
         }
@@ -2157,12 +2157,12 @@ public abstract class ExchangeSession {
                         if (oldestFiles != null) {
                             for (File file : oldestFiles) {
                                 if (!file.delete()) {
-                                    LOGGER.warn("Unable to delete " + file.getAbsolutePath());
+                                    log.warn("Unable to delete " + file.getAbsolutePath());
                                 }
                             }
                         }
                     } catch (Exception ex) {
-                        LOGGER.warn("Error deleting ics dump: " + ex.getMessage());
+                        log.warn("Error deleting ics dump: " + ex.getMessage());
                     }
                 }
 
@@ -2178,13 +2178,13 @@ public abstract class ExchangeSession {
                         writer = new OutputStreamWriter(new FileOutputStream(filePath.toString()), StandardCharsets.UTF_8);
                         writer.write(icsBody);
                     } catch (IOException e) {
-                        LOGGER.error(e);
+                        log.error("", e);
                     } finally {
                         if (writer != null) {
                             try {
                                 writer.close();
                             } catch (IOException e) {
-                                LOGGER.error(e);
+                                log.error("", e);
                             }
                         }
                     }
@@ -2248,7 +2248,7 @@ public abstract class ExchangeSession {
                     NotificationDialog notificationDialog = new NotificationDialog(to,
                             cc, notificationSubject, description);
                     if (!notificationDialog.getSendNotification()) {
-                        LOGGER.debug("Notification canceled by user");
+                        log.debug("Notification canceled by user");
                         return null;
                     }
                     // get description from dialog
@@ -2268,7 +2268,7 @@ public abstract class ExchangeSession {
                 writer.writeHeader("Subject", notificationSubject);
 
 
-                if (LOGGER.isDebugEnabled()) {
+                if (log.isDebugEnabled()) {
                     StringBuilder logBuffer = new StringBuilder("Sending notification ");
                     if (to != null) {
                         logBuffer.append("to: ").append(to);
@@ -2276,7 +2276,7 @@ public abstract class ExchangeSession {
                     if (cc != null) {
                         logBuffer.append("cc: ").append(cc);
                     }
-                    LOGGER.debug(logBuffer.toString());
+                    log.debug(logBuffer.toString());
                 }
             } else {
                 // need to parse attendees and organizer to build recipients
@@ -2347,7 +2347,7 @@ public abstract class ExchangeSession {
     /**
      * Search contacts in provided folder.
      *
-     * @param folderPath Exchange folder path
+     * @param folderPath      Exchange folder path
      * @param includeDistList include distribution lists
      * @return list of contacts
      * @throws IOException on error
@@ -2479,7 +2479,7 @@ public abstract class ExchangeSession {
 
         Condition privateCondition = null;
         if (isSharedFolder(folderPath) && Settings.getBooleanProperty("mt.ews.excludePrivateEvents", true)) {
-            LOGGER.debug("Shared or public calendar: exclude private events");
+            log.debug("Shared or public calendar: exclude private events");
             privateCondition = isEqualTo("sensitivity", 0);
         }
 
@@ -2775,7 +2775,7 @@ public abstract class ExchangeSession {
                     properties.put("haspicture", "true");
                 }
             }
-            LOGGER.debug("Create or update contact " + itemName + ": " + properties);
+            log.debug("Create or update contact " + itemName + ": " + properties);
             // reset missing properties to null
             for (String key : CONTACT_ATTRIBUTES) {
                 if (!"imapUid".equals(key) && !"etag".equals(key) && !"urlcompname".equals(key)
@@ -2818,7 +2818,7 @@ public abstract class ExchangeSession {
                 cal.add(Calendar.HOUR_OF_DAY, 12);
                 result = ExchangeSession.getVcardBdayFormat().format(cal.getTime());
             } catch (ParseException e) {
-                LOGGER.warn("Invalid date: " + value);
+                log.warn("Invalid date: " + value);
             }
         }
         return result;
@@ -2839,7 +2839,7 @@ public abstract class ExchangeSession {
                 }
                 result = ExchangeSession.getExchangeZuluDateFormatMillisecond().format(parser.parse(value));
             } catch (ParseException e) {
-                LOGGER.warn("Invalid date: " + value);
+                log.warn("Invalid date: " + value);
             }
         }
 

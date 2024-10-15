@@ -4,8 +4,8 @@ DIT
 
 package ru.mos.mostech.ews.http;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.concurrent.Executors;
@@ -17,8 +17,8 @@ import java.util.concurrent.TimeUnit;
  * Single thread for all connection managers.
  * close idle connections
  */
+@Slf4j
 public class MosTechEwsIdleConnectionEvictor {
-    static final Logger LOGGER = Logger.getLogger(MosTechEwsIdleConnectionEvictor.class);
 
     // connection manager set
     private static final HashSet<HttpClientConnectionManager> connectionManagers = new HashSet<>();
@@ -33,11 +33,12 @@ public class MosTechEwsIdleConnectionEvictor {
             if (scheduler == null) {
                 scheduler = Executors.newScheduledThreadPool(1, new ThreadFactory() {
                     int count = 0;
+
                     @Override
                     public Thread newThread(Runnable r) {
                         Thread thread = new Thread(r, "PoolEvictor-" + count++);
                         thread.setDaemon(true);
-                        thread.setUncaughtExceptionHandler((t, e) -> LOGGER.error(e.getMessage(), e));
+                        thread.setUncaughtExceptionHandler((t, e) -> log.error(e.getMessage(), e));
                         return thread;
                     }
                 });
@@ -60,7 +61,7 @@ public class MosTechEwsIdleConnectionEvictor {
         synchronized (connectionManagers) {
             scheduler.shutdown();
             if (!scheduler.awaitTermination(sleepTimeMs, TimeUnit.MILLISECONDS)) {
-                LOGGER.warn("Timed out waiting for tasks to complete");
+                log.warn("Timed out waiting for tasks to complete");
             }
             scheduler = null;
         }

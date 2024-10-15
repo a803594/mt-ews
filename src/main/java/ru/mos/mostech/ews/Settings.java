@@ -3,7 +3,8 @@ DIT
  */
 package ru.mos.mostech.ews;
 
-import org.apache.log4j.*;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.event.Level;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 
 import java.io.*;
@@ -23,12 +24,12 @@ import static org.apache.http.util.TextUtils.isEmpty;
  * MT-EWS settings are stored in the .mt-ews.properties file in current
  * user home directory or in the file specified on the command line.
  */
+@Slf4j
 public final class Settings {
 
-    private static final Logger LOGGER = Logger.getLogger(Settings.class);
 
     public static final String OUTLOOK_URL = "https://outlook.office365.com";
-    public static final String O365_URL = OUTLOOK_URL+"/EWS/Exchange.asmx";
+    public static final String O365_URL = OUTLOOK_URL + "/EWS/Exchange.asmx";
 
     public static final String GRAPH_URL = "https://graph.microsoft.com";
 
@@ -149,7 +150,7 @@ public final class Settings {
         SETTINGS_PROPERTIES.put("mt.ews.folderSizeLimit", "");
         SETTINGS_PROPERTIES.put("mt.ews.enableKeepAlive", Boolean.FALSE.toString());
         SETTINGS_PROPERTIES.put("mt.ews.allowRemote", Boolean.FALSE.toString());
-        SETTINGS_PROPERTIES.put("mt.ews.bindAddress", "");
+        SETTINGS_PROPERTIES.put("mt.ews.bindAddress", "localhost");
         SETTINGS_PROPERTIES.put("mt.ews.useSystemProxies", Boolean.FALSE.toString());
         SETTINGS_PROPERTIES.put("mt.ews.enableProxy", Boolean.FALSE.toString());
         SETTINGS_PROPERTIES.put("mt.ews.enableKerberos", "false");
@@ -192,10 +193,10 @@ public final class Settings {
         SETTINGS_PROPERTIES.put("mt.ews.ssl.nosecureldap", Boolean.FALSE.toString());
 
         // logging
-        SETTINGS_PROPERTIES.put("log4j.rootLogger", Level.WARN.toString());
-        SETTINGS_PROPERTIES.put("log4j.logger.ru", Level.DEBUG.toString());
-        SETTINGS_PROPERTIES.put("log4j.logger.httpclient.wire", Level.WARN.toString());
-        SETTINGS_PROPERTIES.put("log4j.logger.httpclient", Level.WARN.toString());
+        SETTINGS_PROPERTIES.put("slf4j.rootLogger", Level.WARN.toString());
+        SETTINGS_PROPERTIES.put("slf4j.logger.ru", Level.DEBUG.toString());
+        SETTINGS_PROPERTIES.put("slf4j.logger.httpclient.wire", Level.WARN.toString());
+        SETTINGS_PROPERTIES.put("slf4j.logger.httpclient", Level.WARN.toString());
         SETTINGS_PROPERTIES.put("mt.ews.logFilePath", "");
     }
 
@@ -251,66 +252,6 @@ public final class Settings {
      * Update Log4J config from settings.
      */
     public static void updateLoggingConfig() {
-        String logFilePath = getLogFilePath();
-
-        try {
-            if (logFilePath != null && !logFilePath.isEmpty()) {
-                File logFile = new File(logFilePath);
-                // create parent directory if needed
-                File logFileDir = logFile.getParentFile();
-                if (logFileDir != null && !logFileDir.exists() && (!logFileDir.mkdirs())) {
-                        MosTechEwsTray.error(new BundleMessage("LOG_UNABLE_TO_CREATE_LOG_FILE_DIR"));
-                        throw new IOException();
-
-                }
-            } else {
-                logFilePath = "mt-ews.log";
-            }
-            synchronized (Logger.getRootLogger()) {
-                // Build file appender
-                FileAppender fileAppender = (FileAppender) Logger.getRootLogger().getAppender("FileAppender");
-                if (fileAppender == null) {
-                    String logFileSize = Settings.getProperty("mt.ews.logFileSize");
-                    if (logFileSize == null || logFileSize.isEmpty()) {
-                        logFileSize = "1MB";
-                    }
-                    // set log file size to 0 to use an external rotation mechanism, e.g. logrotate
-                    if ("0".equals(logFileSize)) {
-                        fileAppender = new FileAppender();
-                    } else {
-                        fileAppender = new RollingFileAppender();
-                        ((RollingFileAppender) fileAppender).setMaxBackupIndex(2);
-                        ((RollingFileAppender) fileAppender).setMaxFileSize(logFileSize);
-                    }
-                    fileAppender.setName("FileAppender");
-                    fileAppender.setEncoding("UTF-8");
-                    fileAppender.setLayout(new PatternLayout("%d{ISO8601} %-5p [%t] %c %x - %m%n"));
-                }
-                fileAppender.setFile(logFilePath, true, false, 8192);
-                Logger.getRootLogger().addAppender(fileAppender);
-            }
-
-            // disable ConsoleAppender in gui mode
-            ConsoleAppender consoleAppender = (ConsoleAppender) Logger.getRootLogger().getAppender("ConsoleAppender");
-            if (consoleAppender != null) {
-                if (Settings.getBooleanProperty("mt.ews.server")) {
-                    consoleAppender.setThreshold(Level.ALL);
-                } else {
-                    consoleAppender.setThreshold(Level.OFF);
-                }
-            }
-
-        } catch (IOException e) {
-            MosTechEwsTray.error(new BundleMessage("LOG_UNABLE_TO_SET_LOG_FILE_PATH"));
-        }
-
-        // update logging levels
-        Settings.setLoggingLevel("rootLogger", Settings.getLoggingLevel("rootLogger"));
-        Settings.setLoggingLevel("ru/mos/mostech/ews", Settings.getLoggingLevel("ru/mos/mostech/ews"));
-        // set logging levels for HttpClient 4
-        Settings.setLoggingLevel("org.apache.http.wire", Settings.getLoggingLevel("httpclient.wire"));
-        Settings.setLoggingLevel("org.apache.http.conn.ssl", Settings.getLoggingLevel("httpclient.wire"));
-        Settings.setLoggingLevel("org.apache.http", Settings.getLoggingLevel("httpclient"));
     }
 
     /**
@@ -332,7 +273,7 @@ public final class Settings {
                 try {
                     Files.createFile(path, permissions);
                 } catch (IOException e) {
-                    LOGGER.error(e.getMessage());
+                    log.error("", e.getMessage());
                 }
             }
 
@@ -574,7 +515,7 @@ public final class Settings {
                 properties.store(fos, "Oauth tokens");
             }
         } catch (IOException e) {
-            Logger.getLogger(Settings.class).warn(e + " " + e.getMessage());
+            log.warn(e + " " + e.getMessage());
         }
     }
 
@@ -594,7 +535,7 @@ public final class Settings {
             }
             return properties.getProperty(username);
         } catch (IOException e) {
-            Logger.getLogger(Settings.class).warn(e + " " + e.getMessage());
+            log.warn(e + " " + e.getMessage());
         }
         return null;
     }
@@ -603,11 +544,11 @@ public final class Settings {
         File file = new File(tokenFilePath);
         File parentFile = file.getParentFile();
         if (parentFile != null && (parentFile.mkdirs())) {
-                LOGGER.info("Created token file directory "+parentFile.getAbsolutePath());
+            log.info("Created token file directory " + parentFile.getAbsolutePath());
 
         }
         if (file.createNewFile()) {
-            LOGGER.info("Created token file "+tokenFilePath);
+            log.info("Created token file " + tokenFilePath);
         }
     }
 
@@ -634,16 +575,7 @@ public final class Settings {
      * @return logging level
      */
     public static synchronized Level getLoggingLevel(String category) {
-        String prefix = getLoggingPrefix(category);
-        String currentValue = SETTINGS_PROPERTIES.getProperty(prefix + category);
-
-        if (currentValue != null && !currentValue.isEmpty()) {
-            return Level.toLevel(currentValue);
-        } else if ("rootLogger".equals(category)) {
-            return Logger.getRootLogger().getLevel();
-        } else {
-            return Logger.getLogger(category).getLevel();
-        }
+        return Level.DEBUG;
     }
 
     /**
@@ -679,15 +611,7 @@ public final class Settings {
      * @param level    logging level
      */
     public static synchronized void setLoggingLevel(String category, Level level) {
-        if (level != null) {
-            String prefix = getLoggingPrefix(category);
-            SETTINGS_PROPERTIES.setProperty(prefix + category, level.toString());
-            if ("rootLogger".equals(category)) {
-                Logger.getRootLogger().setLevel(level);
-            } else {
-                Logger.getLogger(category).setLevel(level);
-            }
-        }
+
     }
 
     /**
@@ -737,7 +661,7 @@ public final class Settings {
         } else if (tld == null) {
             return O365_URL;
         } else {
-            return  "https://outlook.office365."+tld+"/EWS/Exchange.asmx";
+            return "https://outlook.office365." + tld + "/EWS/Exchange.asmx";
         }
     }
 
@@ -749,7 +673,7 @@ public final class Settings {
         } else if (tld == null) {
             return O365_LOGIN_URL;
         } else {
-            return  "https://login.microsoftonline."+tld+"/";
+            return "https://login.microsoftonline." + tld + "/";
         }
     }
 

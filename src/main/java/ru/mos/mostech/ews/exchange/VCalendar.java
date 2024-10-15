@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.util.StringUtil;
 
@@ -16,8 +16,9 @@ import java.util.*;
 /**
  * VCalendar object.
  */
+@Slf4j
 public class VCalendar extends VObject {
-    protected static final Logger LOGGER = Logger.getLogger(VCalendar.class);
+    
     protected VObject firstVevent;
     protected VObject vTimezone;
     protected String email;
@@ -181,7 +182,7 @@ public class VCalendar extends VObject {
                         tzid = ResourceBundle.getBundle("timezones").getString(currentTzid);
                         vObject.setPropertyValue("TZID", tzid);
                     } catch (MissingResourceException e) {
-                        LOGGER.debug("Timezone " + currentTzid + " not found in rename table");
+                        log.debug("Timezone " + currentTzid + " not found in rename table");
                     }
                 }
             }
@@ -437,7 +438,7 @@ public class VCalendar extends VObject {
             property.removeParam("VALUE");
             String value = property.getValue();
             if (value.length() != 8) {
-                LOGGER.warn("Invalid date value in allday event: " + value);
+                log.warn("Invalid date value in allday event: " + value);
             }
             property.setValue(property.getValue() + "T000000");
         }
@@ -462,7 +463,7 @@ public class VCalendar extends VObject {
                     SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
                     value = dateFormatter.format(calendar.getTime());
                 } catch (ParseException e) {
-                    LOGGER.warn("Invalid date value in allday event: " + value);
+                    log.warn("Invalid date value in allday event: " + value);
                 }
             }
             property.setValue(value);

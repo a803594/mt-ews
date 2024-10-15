@@ -8,7 +8,6 @@ import org.apache.jackrabbit.webdav.header.DepthHeader;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameIterator;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
-import org.apache.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,7 +21,7 @@ import java.util.Map;
  * Does not load full DOM in memory.
  */
 public class ExchangePropFindRequest extends ExchangeDavRequest {
-    protected static final Logger LOGGER = Logger.getLogger(ExchangePropFindRequest.class);
+    
 
     protected final DavPropertyNameSet propertyNameSet;
 

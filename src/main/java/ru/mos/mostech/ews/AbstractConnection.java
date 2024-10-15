@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.exchange.ExchangeSession;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Generic connection common to pop3 and smtp implementations
  */
+@Slf4j
 public abstract class AbstractConnection extends Thread implements Closeable {
 
     protected enum State {
@@ -138,7 +139,7 @@ public abstract class AbstractConnection extends Thread implements Closeable {
     }
 
     public void logConnection(String action, String userName) {
-        Logger.getLogger(AbstractConnection.class).info(action+" - "+client.getInetAddress().getHostAddress()+":"+client.getPort()+" " + userName);
+        log.info(action+" - "+client.getInetAddress().getHostAddress()+":"+client.getPort()+" " + userName);
     }
 
     /**

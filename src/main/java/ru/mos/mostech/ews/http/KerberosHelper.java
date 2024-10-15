@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.http;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.ietf.jgss.*;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.ui.CredentialPromptDialog;
@@ -25,8 +25,9 @@ import java.security.Security;
 /**
  * Kerberos helper class.
  */
+@Slf4j
 public class KerberosHelper {
-    protected static final Logger LOGGER = Logger.getLogger(KerberosHelper.class);
+    
     protected static final Object LOCK = new Object();
     protected static final KerberosCallbackHandler KERBEROS_CALLBACK_HANDLER;
     private static LoginContext clientLoginContext;
@@ -135,7 +136,7 @@ public class KerberosHelper {
      * @throws LoginException on error
      */
     public static byte[] initSecurityContext(final String protocol, final String host, final GSSCredential delegatedCredentials, final byte[] token) throws GSSException, LoginException {
-        LOGGER.debug("KerberosHelper.initSecurityContext " + protocol + '@' + host + ' ' + token.length + " bytes token");
+        log.debug("KerberosHelper.initSecurityContext " + protocol + '@' + host + ' ' + token.length + " bytes token");
 
         synchronized (LOCK) {
             // check cached TGT
@@ -143,7 +144,7 @@ public class KerberosHelper {
                 for (Object ticket : clientLoginContext.getSubject().getPrivateCredentials(KerberosTicket.class)) {
                     KerberosTicket kerberosTicket = (KerberosTicket) ticket;
                     if (kerberosTicket.getServer().getName().startsWith("krbtgt") && !kerberosTicket.isCurrent()) {
-                        LOGGER.debug("KerberosHelper.clientLogin cached TGT expired, try to relogin");
+                        log.debug("KerberosHelper.clientLogin cached TGT expired, try to relogin");
                         clientLoginContext = null;
                     }
                 }
@@ -157,27 +158,27 @@ public class KerberosHelper {
             // try to renew almost expired tickets
             for (Object ticket : clientLoginContext.getSubject().getPrivateCredentials(KerberosTicket.class)) {
                 KerberosTicket kerberosTicket = (KerberosTicket) ticket;
-                LOGGER.debug("KerberosHelper.clientLogin ticket for " + kerberosTicket.getServer().getName() + " expires at " + kerberosTicket.getEndTime());
+                log.debug("KerberosHelper.clientLogin ticket for " + kerberosTicket.getServer().getName() + " expires at " + kerberosTicket.getEndTime());
                 if (kerberosTicket.getEndTime().getTime() < System.currentTimeMillis() + 10000) {
                     if (kerberosTicket.isRenewable()) {
                         try {
                             kerberosTicket.refresh();
                         } catch (RefreshFailedException e) {
-                            LOGGER.debug("KerberosHelper.clientLogin failed to renew ticket " + kerberosTicket);
+                            log.debug("KerberosHelper.clientLogin failed to renew ticket " + kerberosTicket);
                         }
                     } else {
-                        LOGGER.debug("KerberosHelper.clientLogin ticket is not renewable");
+                        log.debug("KerberosHelper.clientLogin ticket is not renewable");
                     }
                 }
             }
 
             Object result = internalInitSecContext(protocol, host, delegatedCredentials, token);
             if (result instanceof GSSException) {
-                LOGGER.info("KerberosHelper.initSecurityContext exception code " + ((GSSException) result).getMajor() + " minor code " + ((GSSException) result).getMinor() + " message " + ((Throwable) result).getMessage());
+                log.info("KerberosHelper.initSecurityContext exception code " + ((GSSException) result).getMajor() + " minor code " + ((GSSException) result).getMinor() + " message " + ((Throwable) result).getMessage());
                 throw (GSSException) result;
             }
 
-            LOGGER.debug("KerberosHelper.initSecurityContext return " + ((byte[]) result).length + " bytes token");
+            log.debug("KerberosHelper.initSecurityContext return " + ((byte[]) result).length + " bytes token");
             return (byte[]) result;
         }
     }
@@ -206,7 +207,7 @@ public class KerberosHelper {
                     try {
                         context.dispose();
                     } catch (GSSException e) {
-                        LOGGER.debug("KerberosHelper.internalInitSecContext " + e + ' ' + e.getMessage());
+                        log.debug("KerberosHelper.internalInitSecContext " + e + ' ' + e.getMessage());
                     }
                 }
             }
@@ -286,9 +287,9 @@ public class KerberosHelper {
                 securityContext.token = context.acceptSecContext(token, 0, token.length);
                 if (context.isEstablished()) {
                     securityContext.principal = context.getSrcName().toString();
-                    LOGGER.debug("Authenticated user: " + securityContext.principal);
+                    log.debug("Authenticated user: " + securityContext.principal);
                     if (!context.getCredDelegState()) {
-                        LOGGER.debug("Credentials can not be delegated");
+                        log.debug("Credentials can not be delegated");
                     } else {
                         // Get client delegated credentials from context (gateway mode)
                         securityContext.clientCredential = context.getDelegCred();
@@ -302,14 +303,14 @@ public class KerberosHelper {
                     try {
                         context.dispose();
                     } catch (GSSException e) {
-                        LOGGER.debug("KerberosHelper.acceptSecurityContext " + e + ' ' + e.getMessage());
+                        log.debug("KerberosHelper.acceptSecurityContext " + e + ' ' + e.getMessage());
                     }
                 }
             }
             return innerResult;
         });
         if (result instanceof GSSException) {
-            LOGGER.info("KerberosHelper.acceptSecurityContext exception code " + ((GSSException) result).getMajor() + " minor code " + ((GSSException) result).getMinor() + " message " + ((Throwable) result).getMessage());
+            log.info("KerberosHelper.acceptSecurityContext exception code " + ((GSSException) result).getMajor() + " minor code " + ((GSSException) result).getMinor() + " message " + ((Throwable) result).getMessage());
             throw (GSSException) result;
         }
         return (SecurityContext) result;

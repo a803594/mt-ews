@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.http.request;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.property.DefaultDavProperty;
 import org.apache.jackrabbit.webdav.xml.Namespace;
-import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.exchange.XMLStreamUtil;
 
 import javax.xml.stream.XMLStreamConstants;
@@ -24,8 +24,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public abstract class ExchangeDavRequest extends HttpPost implements ResponseHandler<List<MultiStatusResponse>> {
-    protected static final Logger LOGGER = Logger.getLogger(ExchangeDavRequest.class);
+    
     private static final String XML_CONTENT_TYPE = "text/xml; charset=UTF-8";
 
     private HttpResponse response;
@@ -124,7 +125,7 @@ public abstract class ExchangeDavRequest extends HttpPost implements ResponseHan
                 }
 
             } catch (IOException | XMLStreamException e) {
-                LOGGER.error("Error while parsing soap response: " + e, e);
+                log.error("Error while parsing soap response: " + e, e);
             }
         }
         return responses;

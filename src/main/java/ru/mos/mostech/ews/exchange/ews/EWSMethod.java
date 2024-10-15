@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -10,8 +11,6 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ContentType;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.codehaus.stax2.typed.TypedXMLStreamReader;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
@@ -32,9 +31,10 @@ import java.util.zip.GZIPInputStream;
 /**
  * EWS SOAP method.
  */
+@Slf4j
 public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSMethod> {
     protected static final String CONTENT_TYPE = ContentType.create("text/xml", StandardCharsets.UTF_8).toString();
-    protected static final Logger LOGGER = Logger.getLogger(EWSMethod.class);
+
     protected static final int CHUNK_LENGTH = 131072;
 
     protected FolderQueryTraversal traversal;
@@ -104,8 +104,7 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
         this.itemType = itemType;
         this.methodName = methodName;
         this.responseCollectionName = responseCollectionName;
-        if (Settings.getBooleanProperty("mt.ews.acceptEncodingGzip", true) &&
-                !Level.DEBUG.toString().equals(Settings.getProperty("log4j.logger.httpclient.wire"))) {
+        if (Settings.getBooleanProperty("mt.ews.acceptEncodingGzip", true)) {
             setHeader("Accept-Encoding", "gzip");
         }
 
@@ -764,14 +763,14 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
             throw new EWSThrottlingException(errorDetail);
         }
         if (errorDetail != null && (!"ErrorAccessDenied".equals(errorDetail)
-                    && !"ErrorMailRecipientNotFound".equals(errorDetail)
-                    && !"ErrorItemNotFound".equals(errorDetail)
-                    && !"ErrorCalendarOccurrenceIsDeletedFromRecurrence".equals(errorDetail)
-            )) {
-                throw new EWSException(errorDetail
-                        + ' ' + ((errorDescription != null) ? errorDescription : "")
-                        + ' ' + ((errorValue != null) ? errorValue : "")
-                        + "\n request: " + new String(generateSoapEnvelope(), StandardCharsets.UTF_8));
+                && !"ErrorMailRecipientNotFound".equals(errorDetail)
+                && !"ErrorItemNotFound".equals(errorDetail)
+                && !"ErrorCalendarOccurrenceIsDeletedFromRecurrence".equals(errorDetail)
+        )) {
+            throw new EWSException(errorDetail
+                    + ' ' + ((errorDescription != null) ? errorDescription : "")
+                    + ' ' + ((errorValue != null) ? errorValue : "")
+                    + "\n request: " + new String(generateSoapEnvelope(), StandardCharsets.UTF_8));
 
         }
         if (getStatusCode() == HttpStatus.SC_BAD_REQUEST || getStatusCode() == HttpStatus.SC_INSUFFICIENT_STORAGE) {
@@ -859,7 +858,7 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
                         try {
                             backOffMilliseconds = Long.parseLong(reader.getElementText());
                         } catch (NumberFormatException e) {
-                            LOGGER.error("Unable to parse BackOffMilliseconds");
+                            log.error("Unable to parse BackOffMilliseconds");
                         }
                     }
                 }
@@ -1184,7 +1183,7 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
                     processResponseStream(inputStream);
                 }
             } catch (IOException e) {
-                LOGGER.error("Error while parsing soap response: " + e, e);
+                log.error("Error while parsing soap response: " + e, e);
             }
         }
         return this;
@@ -1207,8 +1206,8 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
                         MosTechEwsTray.switchIcon();
                         lastLogCount = totalCount;
                     }
-                    /*if (count > 0 && LOGGER.isDebugEnabled()) {
-                        LOGGER.debug(new String(buffer, offset, count, "UTF-8"));
+                    /*if (count > 0 && log.isDebugEnabled()) {
+                        log.debug(new String(buffer, offset, count, "UTF-8"));
                     }*/
                     return count;
                 }
@@ -1245,21 +1244,21 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
             }
         } catch (XMLStreamException e) {
             errorDetail = e.getMessage();
-            LOGGER.error("Error while parsing soap response: " + e, e);
+            log.error("Error while parsing soap response: " + e, e);
             if (reader != null) {
                 try {
                     String content = reader.getText();
                     if (content != null && content.length() > 4096) {
-                        content = content.substring(0, 4096)+" ...";
+                        content = content.substring(0, 4096) + " ...";
                     }
-                    LOGGER.debug("Current text: " + content);
+                    log.debug("Current text: " + content);
                 } catch (IllegalStateException ise) {
-                    LOGGER.error(e + " " + e.getMessage());
+                    log.error(e + " " + e.getMessage());
                 }
             }
         }
         if (errorDetail != null) {
-            LOGGER.debug(errorDetail);
+            log.debug(errorDetail);
         }
     }
 

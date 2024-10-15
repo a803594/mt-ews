@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import ru.mos.mostech.ews.BundleMessage;
@@ -38,6 +39,7 @@ import java.util.*;
  * EWS Exchange adapter.
  * Compatible with Exchange 2007, 2010 and 2013.
  */
+@Slf4j
 public class EwsExchangeSession extends ExchangeSession {
 
     protected static final int PAGE_SIZE = 500;
@@ -233,7 +235,7 @@ public class EwsExchangeSession extends ExchangeSession {
                     email = convertIdItem.get("Mailbox");
                     alias = email.substring(0, email.indexOf('@'));
                 } else {
-                    LOGGER.error("Unable to resolve email from root folder");
+                    log.error("Unable to resolve email from root folder");
                     throw new IOException();
                 }
 
@@ -260,10 +262,10 @@ public class EwsExchangeSession extends ExchangeSession {
             folderIdMap.put(internalGetFolder(JUNK).folderId.value, JUNK);
             folderIdMap.put(internalGetFolder(UNSENT).folderId.value, UNSENT);
         } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new MosTechEwsAuthenticationException("EXCEPTION_EWS_NOT_AVAILABLE");
         }
-        LOGGER.debug("Current user email is " + email + ", alias is " + alias + " on " + serverVersion);
+        log.debug("Current user email is " + email + ", alias is " + alias + " on " + serverVersion);
     }
 
     protected String getEmailSuffixFromHostname() {
@@ -329,7 +331,7 @@ public class EwsExchangeSession extends ExchangeSession {
                     result = new ByteArrayInputStream(messageHeaders.getBytes(StandardCharsets.UTF_8));
                 }
             } catch (Exception e) {
-                LOGGER.warn(e.getMessage());
+                log.warn(e.getMessage());
             }
 
             return result;
@@ -429,7 +431,7 @@ public class EwsExchangeSession extends ExchangeSession {
 
     @Override
     public void deleteMessage(ExchangeSession.Message message) throws IOException {
-        LOGGER.debug("Delete " + message.imapUid);
+        log.debug("Delete " + message.imapUid);
         DeleteItemMethod deleteItemMethod = new DeleteItemMethod(((EwsExchangeSession.Message) message).itemId, DeleteType.HardDelete, SendMeetingCancellations.SendToNone);
         executeMethod(deleteItemMethod);
     }
@@ -492,13 +494,13 @@ public class EwsExchangeSession extends ExchangeSession {
             executeMethod(getItemMethod);
             mimeContent = getItemMethod.getMimeContent();
         } catch (EWSException e) {
-            LOGGER.warn("GetItem with MimeContent failed: " + e.getMessage());
+            log.warn("GetItem with MimeContent failed: " + e.getMessage());
         }
         if (getItemMethod.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
             throw new HttpNotFoundException("Item " + itemId + " not found");
         }
         if (mimeContent == null) {
-            LOGGER.warn("MimeContent not available, trying to rebuild from properties");
+            log.warn("MimeContent not available, trying to rebuild from properties");
             try {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 getItemMethod = new GetItemMethod(BaseShape.ID_ONLY, itemId, false);
@@ -531,13 +533,13 @@ public class EwsExchangeSession extends ExchangeSession {
                 mimeMessage.setContent(propertyValue, "text/html; charset=UTF-8");
 
                 mimeMessage.writeTo(baos);
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Rebuilt message content: " + new String(baos.toByteArray(), StandardCharsets.UTF_8));
+                if (log.isDebugEnabled()) {
+                    log.debug("Rebuilt message content: " + new String(baos.toByteArray(), StandardCharsets.UTF_8));
                 }
                 mimeContent = baos.toByteArray();
 
             } catch (IOException | MessagingException e2) {
-                LOGGER.warn(e2);
+                log.warn("",e2);
             }
             if (mimeContent == null) {
                 throw new IOException("GetItem returned null MimeContent");
@@ -573,7 +575,7 @@ public class EwsExchangeSession extends ExchangeSession {
 
         message.keywords = response.get(Field.get("keywords").getResponseName());
 
-        if (LOGGER.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             StringBuilder buffer = new StringBuilder();
             buffer.append("Message");
             if (message.imapUid != 0) {
@@ -584,7 +586,7 @@ public class EwsExchangeSession extends ExchangeSession {
             }
             buffer.append(" ItemId: ").append(message.itemId.id);
             buffer.append(" ChangeKey: ").append(message.itemId.changeKey);
-            LOGGER.debug(buffer.toString());
+            log.debug(buffer.toString());
         }
         return message;
     }
@@ -634,8 +636,8 @@ public class EwsExchangeSession extends ExchangeSession {
         executeMethod(findItemMethod);
         List<EWSMethod.Item> results = new ArrayList<>(findItemMethod.getResponseItems());
         resultCount = results.size();
-        if (resultCount > 0 && LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Folder " + folderPath + " - Search items count: " + resultCount + " maxCount: " + maxCount
+        if (resultCount > 0 && log.isDebugEnabled()) {
+            log.debug("Folder " + folderPath + " - Search items count: " + resultCount + " maxCount: " + maxCount
                     + " highest uid: " + results.get(0).getLong(Field.get("imapUid").getResponseName())
                     + " lowest uid: " + results.get(resultCount - 1).getLong(Field.get("imapUid").getResponseName()));
         }
@@ -693,13 +695,13 @@ public class EwsExchangeSession extends ExchangeSession {
                 }
             }
             resultCount = results.size();
-            if (resultCount > 0 && LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Folder " + folderPath + " - Search items current count: " + resultCount + " fetchCount: " + getPageSize()
+            if (resultCount > 0 && log.isDebugEnabled()) {
+                log.debug("Folder " + folderPath + " - Search items current count: " + resultCount + " fetchCount: " + getPageSize()
                         + " highest uid: " + results.get(resultCount - 1).getLong(Field.get("imapUid").getResponseName())
                         + " lowest uid: " + results.get(0).getLong(Field.get("imapUid").getResponseName()));
             }
             if (Thread.interrupted()) {
-                LOGGER.debug("Folder " + folderPath + " - Search items failed: Interrupted by client");
+                log.debug("Folder " + folderPath + " - Search items failed: Interrupted by client");
                 throw new IOException("Search items failed: Interrupted by client");
             }
         } while (!(findItemMethod.includesLastItemInRange));
@@ -1143,7 +1145,7 @@ public class EwsExchangeSession extends ExchangeSession {
             DeleteFolderMethod deleteFolderMethod = new DeleteFolderMethod(folderId);
             executeMethod(deleteFolderMethod);
         } else {
-            LOGGER.debug("Folder " + folderPath + " not found");
+            log.debug("Folder " + folderPath + " not found");
         }
     }
 
@@ -1396,9 +1398,9 @@ public class EwsExchangeSession extends ExchangeSession {
                 //noinspection VariableNotUsedInsideIf
                 if (etag == null) {
                     itemResult.status = HttpStatus.SC_CREATED;
-                    LOGGER.debug("Created contact " + getHref());
+                    log.debug("Created contact " + getHref());
                 } else {
-                    LOGGER.debug("Updated contact " + getHref());
+                    log.debug("Updated contact " + getHref());
                 }
             } else {
                 return itemResult;
@@ -1483,7 +1485,7 @@ public class EwsExchangeSession extends ExchangeSession {
                         } catch (IOException e) {
                             throw new MosTechEwsException("EXCEPTION_INVALID_DATE", value);
                         }
-                        LOGGER.debug("Looking for occurrence " + convertedValue);
+                        log.debug("Looking for occurrence " + convertedValue);
 
                         int instanceIndex = 0;
 
@@ -1498,7 +1500,7 @@ public class EwsExchangeSession extends ExchangeSession {
                                 executeMethod(getItemMethod);
                                 if (getItemMethod.getResponseItem() != null) {
                                     String itemOriginalStart = getItemMethod.getResponseItem().get(Field.get("originalstart").getResponseName());
-                                    LOGGER.debug("Occurrence " + instanceIndex + " itemOriginalStart " + itemOriginalStart + " looking for " + convertedValue);
+                                    log.debug("Occurrence " + instanceIndex + " itemOriginalStart " + itemOriginalStart + " looking for " + convertedValue);
                                     if (convertedValue.equals(itemOriginalStart)) {
                                         // found item, delete it
                                         DeleteItemMethod deleteItemMethod = new DeleteItemMethod(new ItemId(getItemMethod.getResponseItem()),
@@ -1511,7 +1513,7 @@ public class EwsExchangeSession extends ExchangeSession {
                                     }
                                 }
                             } catch (IOException e) {
-                                LOGGER.warn("Error looking for occurrence " + convertedValue + ": " + e.getMessage());
+                                log.warn("Error looking for occurrence " + convertedValue + ": " + e.getMessage());
                                 // after end of recurrence
                                 break;
                             }
@@ -1539,7 +1541,7 @@ public class EwsExchangeSession extends ExchangeSession {
                 } catch (IOException e) {
                     throw new MosTechEwsException("EXCEPTION_INVALID_DATE", originalDateProperty.getValue());
                 }
-                LOGGER.debug("Looking for occurrence " + convertedValue);
+                log.debug("Looking for occurrence " + convertedValue);
                 int instanceIndex = 0;
 
                 // let's try to find occurence
@@ -1572,7 +1574,7 @@ public class EwsExchangeSession extends ExchangeSession {
                             }
                         }
                     } catch (IOException e) {
-                        LOGGER.warn("Error looking for occurrence " + convertedValue + ": " + e.getMessage());
+                        log.warn("Error looking for occurrence " + convertedValue + ": " + e.getMessage());
                         // after end of recurrence
                         break;
                     }
@@ -1772,10 +1774,10 @@ public class EwsExchangeSession extends ExchangeSession {
                         || !(ismozack || ismozsnooze);
                 isMozDismiss = ismozack || ismozsnooze;
 
-                LOGGER.debug("Existing item found with etag: " + currentEtag + " client etag: " + etag + " id: " + currentItemId.id);
+                log.debug("Existing item found with etag: " + currentEtag + " client etag: " + etag + " id: " + currentItemId.id);
             }
             if (isMeetingResponse) {
-                LOGGER.debug("Ignore etag check, meeting response");
+                log.debug("Ignore etag check, meeting response");
             } else if ("*".equals(noneMatch) && !Settings.getBooleanProperty("mt.ews.ignoreNoneMatchStar", true)) {
                 // create requested
                 //noinspection VariableNotUsedInsideIf
@@ -1856,7 +1858,7 @@ public class EwsExchangeSession extends ExchangeSession {
 
                             NotificationDialog notificationDialog = new NotificationDialog(notificationSubject, "");
                             if (!notificationDialog.getSendNotification()) {
-                                LOGGER.debug("Notification canceled by user");
+                                log.debug("Notification canceled by user");
                                 sendMeetingInvitations = SendMeetingInvitations.SendToNone;
                                 messageDisposition = MessageDisposition.SaveOnly;
                             }
@@ -2023,9 +2025,9 @@ public class EwsExchangeSession extends ExchangeSession {
                 //noinspection VariableNotUsedInsideIf
                 if (currentItemId == null) {
                     itemResult.status = HttpStatus.SC_CREATED;
-                    LOGGER.debug("Created event " + getHref());
+                    log.debug("Created event " + getHref());
                 } else {
-                    LOGGER.warn("Overwritten event " + getHref());
+                    log.warn("Overwritten event " + getHref());
                 }
             }
 
@@ -2072,8 +2074,8 @@ public class EwsExchangeSession extends ExchangeSession {
         @Override
         public byte[] getEventContent() throws IOException {
             byte[] content;
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Get event: " + itemName);
+            if (log.isDebugEnabled()) {
+                log.debug("Get event: " + itemName);
             }
             try {
                 GetItemMethod getItemMethod;
@@ -2311,11 +2313,11 @@ public class EwsExchangeSession extends ExchangeSession {
                     event.getEventContent();
                     events.add(event);
                 } catch (HttpNotFoundException e) {
-                    LOGGER.warn("Ignore invalid event " + event.getHref());
+                    log.warn("Ignore invalid event " + event.getHref());
                 }
                 // exclude exceptions
             } else if (event.isException) {
-                LOGGER.debug("Exclude recurrence exception " + event.getHref());
+                log.debug("Exclude recurrence exception " + event.getHref());
             } else {
                 events.add(event);
             }
@@ -2490,7 +2492,7 @@ public class EwsExchangeSession extends ExchangeSession {
                     }
                 }
             } catch (IOException e) {
-                LOGGER.debug("Error loading contact image from AD " + e + " " + e.getMessage());
+                log.debug("Error loading contact image from AD " + e + " " + e.getMessage());
             }
         }
 
@@ -2540,7 +2542,7 @@ public class EwsExchangeSession extends ExchangeSession {
 
                     NotificationDialog notificationDialog = new NotificationDialog(notificationSubject, "");
                     if (!notificationDialog.getSendNotification()) {
-                        LOGGER.debug("Notification canceled by user");
+                        log.debug("Notification canceled by user");
                         sendMeetingInvitations = SendMeetingInvitations.SendToNone;
                         messageDisposition = MessageDisposition.SaveOnly;
                     }
@@ -2656,7 +2658,7 @@ public class EwsExchangeSession extends ExchangeSession {
             // failover: use timezone id from settings file
             // last failover: use GMT
             if (timezoneId == null) {
-                LOGGER.warn("Unable to get user timezone, using GMT Standard Time. Set mt.ews.timezoneId setting to override this.");
+                log.warn("Unable to get user timezone, using GMT Standard Time. Set mt.ews.timezoneId setting to override this.");
                 timezoneId = "GMT Standard Time";
             }
 
@@ -2687,7 +2689,7 @@ public class EwsExchangeSession extends ExchangeSession {
             // delete temporary folder
             deleteFolder("mt-ews-temp");
         } catch (IOException e) {
-            LOGGER.warn("Unable to get VTIMEZONE info: " + e, e);
+            log.warn("Unable to get VTIMEZONE info: " + e, e);
         }
     }
 
@@ -2719,7 +2721,7 @@ public class EwsExchangeSession extends ExchangeSession {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("Error parsing options page at " + optionsPath);
+            log.error("Error parsing options page at " + optionsPath);
         }
 
         return result;
@@ -2878,11 +2880,11 @@ public class EwsExchangeSession extends ExchangeSession {
         long throttlingDelay = throttlingTimestamp - System.currentTimeMillis();
         try {
             if (throttlingDelay > 0) {
-                LOGGER.warn("Throttling active on server, waiting " + (throttlingDelay / 1000) + " seconds");
+                log.warn("Throttling active on server, waiting " + (throttlingDelay / 1000) + " seconds");
                 try {
                     Thread.sleep(throttlingDelay);
                 } catch (InterruptedException e1) {
-                    LOGGER.error("Throttling delay interrupted " + e1.getMessage());
+                    log.error("Throttling delay interrupted " + e1.getMessage());
                     Thread.currentThread().interrupt();
                 }
             }
@@ -2896,11 +2898,11 @@ public class EwsExchangeSession extends ExchangeSession {
             }
             throttlingTimestamp = System.currentTimeMillis() + throttlingDelay;
 
-            LOGGER.warn("Throttling active on server, waiting " + (throttlingDelay / 1000) + " seconds");
+            log.warn("Throttling active on server, waiting " + (throttlingDelay / 1000) + " seconds");
             try {
                 Thread.sleep(throttlingDelay);
             } catch (InterruptedException e1) {
-                LOGGER.error("Throttling delay interrupted " + e1.getMessage());
+                log.error("Throttling delay interrupted " + e1.getMessage());
                 Thread.currentThread().interrupt();
             }
             // retry once
@@ -2968,11 +2970,11 @@ public class EwsExchangeSession extends ExchangeSession {
         contact.setName(response.get("Name"));
         contact.put("imapUid", response.get("Name"));
         contact.put("uid", response.get("Name"));
-        if (LOGGER.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             for (Map.Entry<String, String> entry : response.entrySet()) {
                 String key = entry.getKey();
                 if (!IGNORE_ATTRIBUTE_SET.contains(key) && !GALFIND_ATTRIBUTE_MAP.containsValue(key)) {
-                    LOGGER.debug("Unsupported ResolveNames " + contact.getName() + " response attribute: " + key + " value: " + entry.getValue());
+                    log.debug("Unsupported ResolveNames " + contact.getName() + " response attribute: " + key + " value: " + entry.getValue());
                 }
             }
         }
@@ -3018,8 +3020,8 @@ public class EwsExchangeSession extends ExchangeSession {
                 ResolveNamesMethod resolveNamesMethod = new ResolveNamesMethod(searchValue);
                 executeMethod(resolveNamesMethod);
                 List<EWSMethod.Item> responses = resolveNamesMethod.getResponseItems();
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("ResolveNames(" + searchValue + ") returned " + responses.size() + " results");
+                if (log.isDebugEnabled()) {
+                    log.debug("ResolveNames(" + searchValue + ") returned " + responses.size() + " results");
                 }
                 for (EWSMethod.Item response : responses) {
                     Contact contact = buildGalfindContact(response);
@@ -3114,7 +3116,7 @@ public class EwsExchangeSession extends ExchangeSession {
                 calendarValue.set(Calendar.SECOND, 0);
                 result = ExchangeSession.getExchangeZuluDateFormat().format(calendarValue.getTime());
             } catch (ParseException e) {
-                LOGGER.warn("Invalid date: " + value);
+                log.warn("Invalid date: " + value);
             }
         }
 

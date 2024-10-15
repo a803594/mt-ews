@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.util.ResourceBundle;
 /**
  * Internationalization message.
  */
+@Slf4j
 public class BundleMessage implements Serializable {
     /**
      * Root locale to get english messages for logging.

@@ -119,7 +119,7 @@ public class AboutFrame extends JFrame {
      * Update about frame content with current released version.
      */
     public void update() {
-        jEditorPane.setText(getContent(MosTechEws.getReleasedVersion()));
+        jEditorPane.setText(getContent(""));
         pack();
     }
 

@@ -3,7 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.caldav.CaldavServer;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.exchange.ExchangeSessionFactory;
@@ -21,8 +21,8 @@ import java.util.ArrayList;
 /**
  * DavGateway main class
  */
+@Slf4j
 public final class MosTechEws {
-    private static final Logger LOGGER = Logger.getLogger(MosTechEws.class);
     private static final Object LOCK = new Object();
     private static boolean shutdown = false;
 
@@ -61,10 +61,10 @@ public final class MosTechEws {
                         .getDeclaredConstructor().newInstance();
                 authenticator.setUsername("");
                 authenticator.authenticate();
-                LOGGER.debug(authenticator.getToken().getRefreshToken());
+                log.debug(authenticator.getToken().getRefreshToken());
             } catch (IOException | ClassNotFoundException | NoSuchMethodException | InstantiationException |
                      IllegalAccessException | InvocationTargetException e) {
-                LOGGER.error(e + " " + e.getMessage());
+                log.error(e + " " + e.getMessage());
             }
             // force shutdown on Linux
             System.exit(0);
@@ -72,7 +72,7 @@ public final class MosTechEws {
 
             if (GraphicsEnvironment.isHeadless()) {
                 // force server mode
-                LOGGER.debug("Headless mode, do not create GUI");
+                log.debug("Headless mode, do not create GUI");
                 server = true;
             }
             if (server) {
@@ -81,9 +81,9 @@ public final class MosTechEws {
             }
 
             if (Settings.getBooleanProperty("mt.ews.server")) {
-                LOGGER.debug("Start MT-EWS in server mode");
+                log.debug("Start MT-EWS in server mode");
             } else {
-                LOGGER.debug("Start MT-EWS in GUI mode");
+                log.debug("Start MT-EWS in GUI mode");
                 if (!notray) {
                     SimpleUi.start();
                 }
@@ -139,23 +139,21 @@ public final class MosTechEws {
             SERVER_LIST.add(new CaldavServer(caldavPort));
         }
 
-        BundleMessage.BundleMessageList messages = new BundleMessage.BundleMessageList();
         BundleMessage.BundleMessageList errorMessages = new BundleMessage.BundleMessageList();
         for (AbstractServer server : SERVER_LIST) {
             try {
                 server.bind();
                 server.start();
-                messages.add(new BundleMessage("LOG_PROTOCOL_PORT", server.getProtocolName(), server.getPort()));
+                MosTechEwsTray.info(new BundleMessage("LOG_MT_EWS_GATEWAY_LISTENING",
+                        new BundleMessage("LOG_PROTOCOL_PORT", server.getProtocolName(),
+                                server.getPort()),
+                        Settings.getProperty("mt.ews.bindAddress")));
             } catch (MosTechEwsException e) {
-                errorMessages.add(e.getBundleMessage());
+                log.error("Ошибка при запуске приложения", e);
+                System.exit(98);
             }
         }
 
-        final String currentVersion = getCurrentVersion();
-        boolean showStartupBanner = Settings.getBooleanProperty("mt.ews.showStartupBanner", true);
-        if (showStartupBanner) {
-            MosTechEwsTray.info(new BundleMessage("LOG_MT_EWS_GATEWAY_LISTENING", currentVersion, messages));
-        }
         if (!errorMessages.isEmpty()) {
             MosTechEwsTray.error(new BundleMessage("LOG_MESSAGE", errorMessages));
         }

@@ -4,9 +4,9 @@ DIT
 
 package ru.mos.mostech.ews.exchange.auth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import ru.mos.mostech.ews.Settings;
@@ -26,8 +26,9 @@ import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class O365Authenticator implements ExchangeAuthenticator {
-    protected static final Logger LOGGER = Logger.getLogger(O365Authenticator.class);
+    
 
     private String tenantId;
     // Office 365 username
@@ -165,13 +166,13 @@ public class O365Authenticator implements ExchangeAuthenticator {
 
                 JSONObject credentialType = httpClientAdapter.executeRestRequest(getCredentialMethod);
 
-                LOGGER.debug("CredentialType=" + credentialType);
+                log.debug("CredentialType=" + credentialType);
 
                 JSONObject credentials = credentialType.getJSONObject("Credentials");
                 String federationRedirectUrl = credentials.optString("FederationRedirectUrl");
 
                 if (federationRedirectUrl != null && !federationRedirectUrl.isEmpty()) {
-                    LOGGER.debug("Detected ADFS, redirecting to " + federationRedirectUrl);
+                    log.debug("Detected ADFS, redirecting to " + federationRedirectUrl);
                     code = authenticateRedirectADFS(httpClientAdapter, federationRedirectUrl, url);
                 } else {
                     PostRequest logonMethod = new PostRequest(Settings.getO365LoginUrl() + tenantId + "/login");
@@ -199,11 +200,11 @@ public class O365Authenticator implements ExchangeAuthenticator {
                         // extract response
                         config = extractConfig(logonMethod.getResponseBodyAsString());
                         if (config.optJSONArray("arrScopes") != null || config.optJSONArray("urlPostRedirect") != null) {
-                            LOGGER.warn("Authentication successful but user consent or validation needed, please open the following url in a browser");
-                            LOGGER.warn(url);
+                            log.warn("Authentication successful but user consent or validation needed, please open the following url in a browser");
+                            log.warn(url);
                             throw new MosTechEwsAuthenticationException("EXCEPTION_AUTHENTICATION_FAILED");
                         } else if (config.optString("strServiceExceptionMessage") != null) {
-                            LOGGER.debug("O365 returned error: " + config.optString("strServiceExceptionMessage"));
+                            log.debug("O365 returned error: " + config.optString("strServiceExceptionMessage"));
                             throw new MosTechEwsAuthenticationException("EXCEPTION_AUTHENTICATION_FAILED");
                         } else if ("50126".equals(config.optString("sErrorCode"))) {
                             throw new MosTechEwsAuthenticationException("EXCEPTION_AUTHENTICATION_FAILED");
@@ -219,11 +220,11 @@ public class O365Authenticator implements ExchangeAuthenticator {
                     }
                 }
             }
-            LOGGER.debug("Authentication Code: " + code);
+            log.debug("Authentication Code: " + code);
 
             token = O365Token.build(tenantId, clientId, redirectUri, code, password);
 
-            LOGGER.debug("Authenticated username: " + token.getUsername());
+            log.debug("Authenticated username: " + token.getUsername());
             if (!username.equalsIgnoreCase(token.getUsername())) {
                 throw new IOException("Authenticated username " + token.getUsername() + " does not match " + username);
             }
@@ -246,7 +247,7 @@ public class O365Authenticator implements ExchangeAuthenticator {
         URI location;
 
         if (responseBodyAsString.contains("login.microsoftonline.com")) {
-            LOGGER.info("Already authenticated through Basic or NTLM");
+            log.info("Already authenticated through Basic or NTLM");
         } else {
             // parse form to get target url, authenticate as userid
             PostRequest logonMethod = new PostRequest(extract("method=\"post\" action=\"([^\"]+)\"", responseBodyAsString));
@@ -288,15 +289,15 @@ public class O365Authenticator implements ExchangeAuthenticator {
         responseBodyAsString = httpClientAdapter.executePostRequest(targetMethod);
         location = targetMethod.getRedirectLocation();
 
-        LOGGER.debug(targetMethod.getURI().toString());
-        LOGGER.debug(targetMethod.getReasonPhrase());
-        LOGGER.debug(responseBodyAsString);
+        log.debug(targetMethod.getURI().toString());
+        log.debug(targetMethod.getReasonPhrase());
+        log.debug(responseBodyAsString);
 
         if (targetMethod.getStatusCode() == HttpStatus.SC_OK) {
             JSONObject config = extractConfig(responseBodyAsString);
             if (config.optJSONArray("arrScopes") != null || config.optJSONArray("urlPostRedirect") != null) {
-                LOGGER.warn("Authentication successful but user consent or validation needed, please open the following url in a browser");
-                LOGGER.warn(authorizeUrl);
+                log.warn("Authentication successful but user consent or validation needed, please open the following url in a browser");
+                log.warn(authorizeUrl);
                 throw new MosTechEwsAuthenticationException("EXCEPTION_AUTHENTICATION_FAILED");
             }
         } else if (targetMethod.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY || location == null) {
@@ -314,7 +315,7 @@ public class O365Authenticator implements ExchangeAuthenticator {
 
         if (query.contains("code=") && query.contains("&session_state=")) {
             String code = query.substring(query.indexOf("code=") + 5, query.indexOf("&session_state="));
-            LOGGER.debug("Authentication Code: " + code);
+            log.debug("Authentication Code: " + code);
             return code;
         }
         throw new IOException("Unknown ADFS authentication failure");
@@ -322,12 +323,12 @@ public class O365Authenticator implements ExchangeAuthenticator {
 
     private URI processDeviceLogin(HttpClientAdapter httpClient, URI location) throws IOException, JSONException {
         URI result = location;
-        LOGGER.debug("Proceed to device authentication, must have access to a client certificate signed by MS-Organization-Access");
+        log.debug("Proceed to device authentication, must have access to a client certificate signed by MS-Organization-Access");
         if (Settings.isWindows() &&
                 (System.getProperty("java.version").compareTo("13") < 0
                         || !"MSCAPI".equals(Settings.getProperty("mt.ews.ssl.clientKeystoreType")))
         ) {
-            LOGGER.warn("MSCAPI and Java version 13 or higher required to access TPM protected client certificate on Windows");
+            log.warn("MSCAPI and Java version 13 or higher required to access TPM protected client certificate on Windows");
         }
         GetRequest deviceLoginMethod = new GetRequest(location);
 
@@ -361,7 +362,7 @@ public class O365Authenticator implements ExchangeAuthenticator {
 
     private URI handleMfa(HttpClientAdapter httpClientAdapter, PostRequest logonMethod, String username, String clientRequestId) throws IOException, JSONException {
         JSONObject config = extractConfig(logonMethod.getResponseBodyAsString());
-        LOGGER.debug("Config=" + config);
+        log.debug("Config=" + config);
 
         String urlBeginAuth = config.getString("urlBeginAuth");
         String urlEndAuth = config.getString("urlEndAuth");
@@ -372,9 +373,9 @@ public class O365Authenticator implements ExchangeAuthenticator {
 
         for (int i = 0; i < config.getJSONArray("arrUserProofs").length(); i++) {
             JSONObject authMethod = (JSONObject) config.getJSONArray("arrUserProofs").get(i);
-            LOGGER.debug("Authentication method: " + authMethod.getString("authMethodId"));
+            log.debug("Authentication method: " + authMethod.getString("authMethodId"));
             if ("PhoneAppNotification".equals(authMethod.getString("authMethodId"))) {
-                LOGGER.debug("Found phone app auth method " + authMethod.getString("display"));
+                log.debug("Found phone app auth method " + authMethod.getString("display"));
                 isMFAMethodSupported = true;
             }
         }
@@ -416,7 +417,7 @@ public class O365Authenticator implements ExchangeAuthenticator {
         beginAuthMethod.setJsonBody(beginAuthJson);
 
         config = httpClientAdapter.executeRestRequest(beginAuthMethod);
-        LOGGER.debug(config);
+        log.debug("{}", config);
 
         if (!config.getBoolean("Success")) {
             throw new IOException("Authentication failed: " + config);
@@ -428,7 +429,7 @@ public class O365Authenticator implements ExchangeAuthenticator {
         // display number matching value to user
         NumberMatchingFrame numberMatchingFrame = null;
         if (entropy != null) {
-            LOGGER.info("Number matching value for " + username + ": " + entropy);
+            log.info("Number matching value for " + username + ": " + entropy);
             if (!Settings.getBooleanProperty("mt.ews.server") && !GraphicsEnvironment.isHeadless()) {
                 numberMatchingFrame = new NumberMatchingFrame(entropy);
             }
@@ -446,7 +447,7 @@ public class O365Authenticator implements ExchangeAuthenticator {
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
-                    LOGGER.debug("Interrupted");
+                    log.debug("Interrupted");
                     Thread.currentThread().interrupt();
                 }
 
@@ -469,7 +470,7 @@ public class O365Authenticator implements ExchangeAuthenticator {
                 endAuthMethod.setJsonBody(endAuthJson);
 
                 config = httpClientAdapter.executeRestRequest(endAuthMethod);
-                LOGGER.debug(config);
+                log.debug("{}", config);
                 String resultValue = config.getString("ResultValue");
                 if ("PhoneAppDenied".equals(resultValue) || "PhoneAppNoResponse".equals(resultValue)) {
                     throw new MosTechEwsAuthenticationException("EXCEPTION_AUTHENTICATION_FAILED_REASON", resultValue);
@@ -516,7 +517,7 @@ public class O365Authenticator implements ExchangeAuthenticator {
     }
 
     private String executeFollowRedirect(HttpClientAdapter httpClientAdapter, GetRequest getRequest) throws IOException {
-        LOGGER.debug(getRequest.getURI());
+        log.debug("{}", getRequest.getURI());
         ResponseWrapper responseWrapper = httpClientAdapter.executeFollowRedirect(getRequest);
         if (responseWrapper.getURI().getHost().endsWith("okta.com")) {
             throw new MosTechEwsAuthenticationException("LOG_MESSAGE", "Okta authentication not supported, please try O365Interactive");
@@ -528,7 +529,7 @@ public class O365Authenticator implements ExchangeAuthenticator {
         try {
             return new JSONObject(extract("Config=([^\n]+);", content));
         } catch (JSONException e1) {
-            LOGGER.debug(content);
+            log.debug(content);
             throw new IOException("Unable to extract config from response body");
         }
     }

@@ -4,7 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.exchange.auth;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,8 +18,9 @@ import java.util.Map;
 /**
  * Wrapper for HttpURLConnection to fix missing content type and add logging.
  */
+@Slf4j
 public class HttpURLConnectionWrapper extends HttpURLConnection {
-    private static final Logger LOGGER = Logger.getLogger(HttpURLConnectionWrapper.class);
+    
     HttpURLConnection httpURLConnection;
 
     HttpURLConnectionWrapper(HttpURLConnection httpURLConnection, URL url) {
@@ -59,7 +60,7 @@ public class HttpURLConnectionWrapper extends HttpURLConnection {
 
     @Override
     public Map<String, List<String>> getHeaderFields() {
-        LOGGER.debug(httpURLConnection.getHeaderFields());
+        log.debug("{}", httpURLConnection.getHeaderFields());
         return httpURLConnection.getHeaderFields();
     }
 
@@ -93,7 +94,7 @@ public class HttpURLConnectionWrapper extends HttpURLConnection {
         try {
             httpURLConnection.connect();
         } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+            log.error(e.getMessage());
             throw e;
         }
     }
@@ -142,7 +143,7 @@ public class HttpURLConnectionWrapper extends HttpURLConnection {
         final String contentType = httpURLConnection.getContentType();
         // workaround for missing content type
         if (contentType == null && getContentLength() > 0) {
-            LOGGER.debug("Fix missing content-type at "+url.toString());
+            log.debug("Fix missing content-type at "+url.toString());
             return "text/html";
         }
         return contentType;

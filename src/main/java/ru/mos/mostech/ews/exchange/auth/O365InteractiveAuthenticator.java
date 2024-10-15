@@ -3,8 +3,8 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.auth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.exception.MosTechEwsAuthenticationException;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
@@ -22,10 +22,11 @@ import java.net.PasswordAuthentication;
 import java.net.URI;
 import java.security.Security;
 
+@Slf4j
 public class O365InteractiveAuthenticator implements ExchangeAuthenticator {
 
     private static final int MAX_COUNT = 300;
-    private static final Logger LOGGER = Logger.getLogger(O365InteractiveAuthenticator.class);
+    
 
     static {
         // disable HTTP/2 loader on Java 14 and later to enable custom socket factory
@@ -107,14 +108,14 @@ public class O365InteractiveAuthenticator implements ExchangeAuthenticator {
                     String proxyUser = Settings.getProperty("mt.ews.proxyUser");
                     String proxyPassword = Settings.getProperty("mt.ews.proxyPassword");
                     if (proxyUser != null && proxyPassword != null) {
-                        LOGGER.debug("Proxy authentication with user " + proxyUser);
+                        log.debug("Proxy authentication with user " + proxyUser);
                         return new PasswordAuthentication(proxyUser, proxyPassword.toCharArray());
                     } else {
-                        LOGGER.debug("Missing proxy credentials ");
+                        log.debug("Missing proxy credentials ");
                         return null;
                     }
                 } else {
-                    LOGGER.debug("Password authentication with user " + username);
+                    log.debug("Password authentication with user " + username);
                     return new PasswordAuthentication(username, password.toCharArray());
                 }
             }
@@ -124,7 +125,7 @@ public class O365InteractiveAuthenticator implements ExchangeAuthenticator {
         try {
             Class.forName("javafx.application.Platform");
         } catch (ClassNotFoundException e) {
-            LOGGER.warn("Unable to load JavaFX (OpenJFX), switch to manual mode");
+            log.warn("Unable to load JavaFX (OpenJFX), switch to manual mode");
             isJFXAvailable = false;
         }
 
@@ -135,9 +136,9 @@ public class O365InteractiveAuthenticator implements ExchangeAuthenticator {
                     o365InteractiveAuthenticatorFrame.setO365InteractiveAuthenticator(O365InteractiveAuthenticator.this);
                     o365InteractiveAuthenticatorFrame.authenticate(initUrl, redirectUri);
                 } catch (NoClassDefFoundError e) {
-                    LOGGER.warn("Unable to load JavaFX (OpenJFX)");
+                    log.warn("Unable to load JavaFX (OpenJFX)");
                 } catch (IllegalAccessError e) {
-                    LOGGER.warn("Unable to load JavaFX (OpenJFX), append --add-exports java.base/sun.net.www.protocol.https=ALL-UNNAMED to java options");
+                    log.warn("Unable to load JavaFX (OpenJFX), append --add-exports java.base/sun.net.www.protocol.https=ALL-UNNAMED to java options");
                 }
 
             });
@@ -179,13 +180,13 @@ public class O365InteractiveAuthenticator implements ExchangeAuthenticator {
         if (isAuthenticated) {
             token = O365Token.build(tenantId, clientId, redirectUri, code, password);
 
-            LOGGER.debug("Authenticated username: " + token.getUsername());
+            log.debug("Authenticated username: " + token.getUsername());
             if (username != null && !username.isEmpty() && !username.equalsIgnoreCase(token.getUsername())) {
                 throw new MosTechEwsAuthenticationException("Authenticated username " + token.getUsername() + " does not match " + username);
             }
 
         } else {
-            LOGGER.error("Authentication failed " + errorCode);
+            log.error("Authentication failed " + errorCode);
             throw new MosTechEwsException("EXCEPTION_AUTHENTICATION_FAILED_REASON", errorCode);
         }
     }
@@ -217,7 +218,7 @@ public class O365InteractiveAuthenticator implements ExchangeAuthenticator {
                     checkMethod.handleResponse(response);
                     checkMethod.checkSuccess();
                 }
-                LOGGER.info("Retrieved folder id " + checkMethod.getResponseItem().get("FolderId"));
+                log.info("Retrieved folder id " + checkMethod.getResponseItem().get("FolderId"));
 
                 // loop to check expiration
                 int i = 0;
@@ -230,16 +231,16 @@ public class O365InteractiveAuthenticator implements ExchangeAuthenticator {
                         getUserConfigurationMethod.handleResponse(response);
                         getUserConfigurationMethod.checkSuccess();
                     }
-                    LOGGER.info(getUserConfigurationMethod.getResponseItem());
+                    log.info("{}", getUserConfigurationMethod.getResponseItem());
 
                     Thread.sleep(5000);
                 }
             }
         } catch (InterruptedException e) {
-            LOGGER.warn("Thread interrupted", e);
+            log.warn("Thread interrupted", e);
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            LOGGER.error(e + " " + e.getMessage(), e);
+            log.error(e + " " + e.getMessage(), e);
         }
         System.exit(0);
     }

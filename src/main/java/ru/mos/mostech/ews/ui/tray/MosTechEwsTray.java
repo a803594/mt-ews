@@ -3,11 +3,8 @@ DIT
  */
 package ru.mos.mostech.ews.ui.tray;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.lf5.LF5Appender;
-import org.apache.log4j.lf5.LogLevel;
-import org.apache.log4j.lf5.viewer.LogBrokerMonitor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.event.Level;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.exchange.NetworkDownException;
@@ -22,8 +19,8 @@ import java.net.URL;
 /**
  * Tray icon handler
  */
+@Slf4j
 public final class MosTechEwsTray {
-    private static final Logger LOGGER = Logger.getLogger("ru/mos/mostech/ews");
     private static final long ICON_SWITCH_MINIMUM_DELAY = 250;
     private static long lastIconSwitch;
 
@@ -82,7 +79,7 @@ public final class MosTechEwsTray {
      * @param level   log level
      */
     private static void displayMessage(BundleMessage message, Level level) {
-        LOGGER.log(level, message.formatLog());
+        log.info("{}, {}", level, message.formatLog());
         if (mtEwsGatewayTray != null && !Settings.getBooleanProperty("mt.ews.disableGuiNotifications")) {
             mtEwsGatewayTray.displayMessage(message.format(), level);
         }
@@ -97,9 +94,9 @@ public final class MosTechEwsTray {
      */
     private static void displayMessage(BundleMessage message, Exception e, Level level) {
         if (e instanceof NetworkDownException) {
-            LOGGER.log(level, BundleMessage.getExceptionLogMessage(message, e));
+            log.info("{}, {}", level, BundleMessage.getExceptionLogMessage(message, e));
         } else {
-            LOGGER.log(level, BundleMessage.getExceptionLogMessage(message, e), e);
+            log.info("{}", BundleMessage.getExceptionLogMessage(message, e), e);
         }
         if (mtEwsGatewayTray != null && !Settings.getBooleanProperty("mt.ews.disableGuiNotifications")
                 && (!(e instanceof NetworkDownException))) {
@@ -216,7 +213,7 @@ public final class MosTechEwsTray {
         String currentDesktop = System.getenv("XDG_CURRENT_DESKTOP");
         String javaVersion = System.getProperty("java.version");
         String arch = System.getProperty("sun.arch.data.model");
-        LOGGER.debug("OS Name: " + System.getProperty("os.name") +
+        log.debug("OS Name: " + System.getProperty("os.name") +
                 " Java version: " + javaVersion + ((arch != null) ? ' ' + arch : "") +
                 " System tray " + (SystemTray.isSupported() ? "" : "not ") + "supported " +
                 ((currentDesktop == null) ? "" : "Current Desktop: " + currentDesktop)
@@ -231,13 +228,13 @@ public final class MosTechEwsTray {
         if (!Settings.getBooleanProperty("mt.ews.server")) {
             if (!notray) {
                 if ("Unity".equals(currentDesktop)) {
-                    LOGGER.info("Detected Unity desktop, please follow instructions to restore normal systray " +
+                    log.info("Detected Unity desktop, please follow instructions to restore normal systray " +
                             "or run MT-EWS in server mode");
                 } else if (currentDesktop != null && currentDesktop.contains("GNOME")) {
-                    LOGGER.info("Detected Gnome desktop, please follow instructions to restore normal systray or run MT-EWS in server mode");
+                    log.info("Detected Gnome desktop, please follow instructions to restore normal systray or run MT-EWS in server mode");
                 }
                 if (Settings.O365_INTERACTIVE.equals(Settings.getProperty("mt.ews.mode"))) {
-                    LOGGER.info("O365Interactive is not compatible with SWT, do not try to create SWT tray");
+                    log.info("O365Interactive is not compatible with SWT, do not try to create SWT tray");
                 }
                 // try java6 tray support, except on Linux
                 if (mtEwsGatewayTray == null /*&& !isLinux()*/) {
@@ -404,19 +401,6 @@ public final class MosTechEwsTray {
      * Open logging window.
      */
     public static void showLogs() {
-        Logger rootLogger = Logger.getRootLogger();
-        LF5Appender lf5Appender = (LF5Appender) rootLogger.getAppender("LF5Appender");
-        if (lf5Appender == null) {
-            LogBrokerMonitor logBrokerMonitor = new LogBrokerMonitor(LogLevel.getLog4JLevels()) {
-                @Override
-                protected void closeAfterConfirm() {
-                    hide();
-                }
-            };
-            lf5Appender = new LF5Appender(logBrokerMonitor);
-            lf5Appender.setName("LF5Appender");
-            rootLogger.addAppender(lf5Appender);
-        }
-        lf5Appender.getLogBrokerMonitor().show();
+        throw new UnsupportedOperationException();
     }
 }
