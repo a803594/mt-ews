@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.ui;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 
@@ -13,6 +14,8 @@ import java.awt.*;
 /**
  * Display number matching value during O365 MFA process.
  */
+
+@Slf4j
 public class NumberMatchingFrame extends JFrame {
 
     /**

@@ -3,6 +3,8 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
@@ -10,6 +12,8 @@ import java.io.Writer;
 /**
  * Item id.
  */
+
+@Slf4j
 public class ItemId implements Serializable {
     protected final String name;
     protected final String id;

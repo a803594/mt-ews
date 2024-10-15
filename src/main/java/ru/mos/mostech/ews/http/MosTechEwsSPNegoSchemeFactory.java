@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.http;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.auth.AuthScheme;
 import org.apache.http.auth.AuthSchemeFactory;
 import org.apache.http.auth.AuthSchemeProvider;
@@ -13,6 +14,8 @@ import org.apache.http.protocol.HttpContext;
 /**
  * Override native SPNegoSchemeFactory to load MT-EWS specific Kerberos settings.
  */
+
+@Slf4j
 public class MosTechEwsSPNegoSchemeFactory implements AuthSchemeFactory, AuthSchemeProvider {
 
     private final boolean stripPort;

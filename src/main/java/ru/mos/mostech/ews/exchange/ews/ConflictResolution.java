@@ -7,6 +7,8 @@ package ru.mos.mostech.ews.exchange.ews;
  * Item update conflict resolution
  */
 @SuppressWarnings({"UnusedDeclaration"})
+
+@Slf4j
 public final class ConflictResolution extends AttributeOption {
     private ConflictResolution(String value) {
         super("ConflictResolution", value);

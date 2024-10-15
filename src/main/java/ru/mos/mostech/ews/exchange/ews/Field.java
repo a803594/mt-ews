@@ -3,12 +3,16 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * EWS MAPI fields;
  */
+
+@Slf4j
 public final class Field {
     private static final Map<String, FieldURI> FIELD_MAP = new HashMap<>();
 

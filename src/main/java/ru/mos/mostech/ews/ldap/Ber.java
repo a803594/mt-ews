@@ -4,6 +4,8 @@
 
 package ru.mos.mostech.ews.ldap;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,11 +13,15 @@ import java.nio.charset.StandardCharsets;
 
 
 /**
+
+@Slf4j
  * Base class that defines common fields, constants, and debug method.
  *
  * @author Jagane Sundar
  */
 @SuppressWarnings("unused")
+
+@Slf4j
 public abstract class Ber {
 
     protected byte[] buf;
@@ -73,6 +79,8 @@ public abstract class Ber {
 
     public static final int ASN_ENUMERATED      = 0x0a;
 
+
+@Slf4j
     final static class EncodeException extends IOException {
         private static final long serialVersionUID = -5247359637775781768L;
         EncodeException(String msg) {
@@ -80,6 +88,8 @@ public abstract class Ber {
         }
     }
 
+
+@Slf4j
     final static class DecodeException extends IOException {
         private static final long serialVersionUID = 8735036969244425583L;
         DecodeException(String msg) {

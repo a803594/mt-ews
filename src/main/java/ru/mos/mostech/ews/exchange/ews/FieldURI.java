@@ -6,6 +6,8 @@ package ru.mos.mostech.ews.exchange.ews;
 /**
  * Field URI.
  */
+
+@Slf4j
 public interface FieldURI {
 
     /**

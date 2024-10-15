@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.XMLStreamUtil;
 
 import javax.xml.stream.XMLStreamReader;
@@ -12,6 +13,8 @@ import java.io.Writer;
 /**
  * GetUserAvailability method.
  */
+
+@Slf4j
 public class GetUserAvailabilityMethod extends EWSMethod {
     protected final String attendee;
     protected final String start;

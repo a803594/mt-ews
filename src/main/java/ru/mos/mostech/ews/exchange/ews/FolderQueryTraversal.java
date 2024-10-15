@@ -6,6 +6,8 @@ package ru.mos.mostech.ews.exchange.ews;
 /**
  * Folder folderQueryTraversalType search mode.
  */
+
+@Slf4j
 public final class FolderQueryTraversal extends AttributeOption {
 
     private FolderQueryTraversal(String value) {

@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.exchange.auth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
@@ -26,6 +27,8 @@ import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+@Slf4j
 public class O365Authenticator implements ExchangeAuthenticator {
     protected static final Logger LOGGER = Logger.getLogger(O365Authenticator.class);
 

@@ -5,12 +5,18 @@ DIT
 package ru.mos.mostech.ews.exchange.auth;
 
 import javafx.scene.web.WebEngine;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
+import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Method;
+import lombok.extern.slf4j.Slf4j;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
+
+@Slf4j
 public class O365InteractiveJSLogger {
     private static final Logger LOGGER = Logger.getLogger(O365InteractiveJSLogger.class);
     public void log(String message) {

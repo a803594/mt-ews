@@ -7,6 +7,8 @@ package ru.mos.mostech.ews.exchange.ews;
 /**
  * Exchange throttling error.
  */
+
+@Slf4j
 public class EWSThrottlingException extends EWSException {
     /**
      * Create EWS throttling Exception with detailed error message

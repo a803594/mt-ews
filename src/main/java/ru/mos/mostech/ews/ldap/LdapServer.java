@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.ldap;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.AbstractServer;
 import ru.mos.mostech.ews.Settings;
@@ -12,6 +13,8 @@ import java.net.Socket;
 /**
  * LDAP server, handle LDAP directory requests.
  */
+
+@Slf4j
 public class LdapServer extends AbstractServer {
     /**
      * Default LDAP port

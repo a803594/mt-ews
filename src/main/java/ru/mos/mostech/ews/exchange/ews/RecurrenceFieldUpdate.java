@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.exchange.ExchangeSession;
 
@@ -18,6 +19,8 @@ import java.util.Locale;
 /**
  * Handle calendar item recurrence update
  */
+
+@Slf4j
 public class RecurrenceFieldUpdate extends FieldUpdate {
     public static final Logger LOGGER = Logger.getLogger(RecurrenceFieldUpdate.class);
     static final HashMap<String, String> calDayToDayOfWeek = new HashMap<>();
@@ -58,6 +61,8 @@ public class RecurrenceFieldUpdate extends FieldUpdate {
         }
     }
 
+
+@Slf4j
     public enum RecurrencePattern {DailyRecurrence, WeeklyRecurrence,  AbsoluteMonthlyRecurrence, AbsoluteYearlyRecurrence}
 
     RecurrencePattern recurrencePattern;

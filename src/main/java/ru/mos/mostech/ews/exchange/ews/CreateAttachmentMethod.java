@@ -6,6 +6,8 @@ package ru.mos.mostech.ews.exchange.ews;
 /**
  * Create Attachment Method.
  */
+
+@Slf4j
 public class CreateAttachmentMethod extends EWSMethod {
     /**
      * Create attachment method.

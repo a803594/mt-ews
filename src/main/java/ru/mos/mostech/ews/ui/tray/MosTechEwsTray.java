@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.ui.tray;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.lf5.LF5Appender;
@@ -22,6 +23,8 @@ import java.net.URL;
 /**
  * Tray icon handler
  */
+
+@Slf4j
 public final class MosTechEwsTray {
     private static final Logger LOGGER = Logger.getLogger("ru/mos/mostech/ews");
     private static final long ICON_SWITCH_MINIMUM_DELAY = 250;
@@ -296,6 +299,8 @@ public final class MosTechEwsTray {
     }
 
     /**
+
+@Slf4j
      * Load image with current class loader.
      *
      * @param fileName image resource file name

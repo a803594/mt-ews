@@ -6,6 +6,8 @@ package ru.mos.mostech.ews.exchange.ews;
 /**
  * Create Folder method.
  */
+
+@Slf4j
 public class CreateFolderMethod extends EWSMethod {
     /**
      * Update folder method.

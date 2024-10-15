@@ -6,7 +6,11 @@ package ru.mos.mostech.ews.exchange.ews;
 /**
  * Sort order.
  */
+
+@Slf4j
 public class FieldOrder {
+
+@Slf4j
     protected enum Order {
         Descending, Ascending
     }

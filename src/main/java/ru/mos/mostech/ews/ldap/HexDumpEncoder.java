@@ -4,10 +4,14 @@
 
 package ru.mos.mostech.ews.ldap;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 
 /**
+
+@Slf4j
  * This class encodes a buffer into the classic: "Hexadecimal Dump" format of
  * the past. It is useful for analyzing the contents of binary buffers.
  * The format produced is as follows:
@@ -21,6 +25,8 @@ import java.nio.ByteBuffer;
  * @author      Chuck McManis
  */
 
+
+@Slf4j
 public class HexDumpEncoder {
 
     private int offset;
@@ -195,6 +201,8 @@ public class HexDumpEncoder {
 
         if (buf == null) {
             /*
+
+@Slf4j
              * This class doesn't have a concept of encode(buf, len, off),
              * so if we have a partial buffer, we must reallocate
              * space.

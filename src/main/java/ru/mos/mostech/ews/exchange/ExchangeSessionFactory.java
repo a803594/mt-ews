@@ -4,37 +4,62 @@ DIT
 package ru.mos.mostech.ews.exchange;
 
 import org.apache.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsAuthenticationException;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.WebdavNotAvailableException;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.auth.ExchangeAuthenticator;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.auth.ExchangeFormAuthenticator;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.dav.MosTechEwsExchangeSession;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ews.EwsExchangeSession;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.request.GetRequest;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
+import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import java.net.NetworkInterface;
+import lombok.extern.slf4j.Slf4j;
 import java.net.SocketException;
+import lombok.extern.slf4j.Slf4j;
 import java.net.UnknownHostException;
+import lombok.extern.slf4j.Slf4j;
 import java.util.Enumeration;
+import lombok.extern.slf4j.Slf4j;
 import java.util.HashMap;
+import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Create ExchangeSession instances.
  */
+
+@Slf4j
 public final class ExchangeSessionFactory {
     private static final Object LOCK = new Object();
     private static final Map<PoolKey, ExchangeSession> POOL_MAP = new HashMap<>();
     private static boolean configChecked;
     private static boolean errorSent;
 
+
+@Slf4j
     static class PoolKey {
         final String url;
         final String userName;
@@ -351,6 +376,8 @@ public final class ExchangeSessionFactory {
     }
 
     /**
+
+@Slf4j
      * Check if at least one network interface is up and active (i.e. has an address)
      *
      * @return true if network available

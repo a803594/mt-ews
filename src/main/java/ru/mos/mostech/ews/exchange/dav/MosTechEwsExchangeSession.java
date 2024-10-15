@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.dav;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Consts;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -62,7 +63,11 @@ import java.util.zip.GZIPInputStream;
  * Compatible with Exchange 2003 and 2007 with webdav available.
  */
 @SuppressWarnings("rawtypes")
+
+@Slf4j
 public class MosTechEwsExchangeSession extends ExchangeSession {
+
+@Slf4j
     protected enum FolderQueryTraversal {
         Shallow, Deep
     }
@@ -843,6 +848,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         }
     }
 
+
+@Slf4j
     protected static class MultiCondition extends ExchangeSession.MultiCondition {
         protected MultiCondition(Operator operator, Condition... condition) {
             super(operator, condition);
@@ -869,6 +876,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         }
     }
 
+
+@Slf4j
     protected static class NotCondition extends ExchangeSession.NotCondition {
         protected NotCondition(Condition condition) {
             super(condition);
@@ -897,6 +906,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         OPERATOR_MAP.put(Operator.Contains, " = ");
     }
 
+
+@Slf4j
     protected static class AttributeCondition extends ExchangeSession.AttributeCondition {
         protected boolean isIntValue;
 
@@ -965,6 +976,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         }
     }
 
+
+@Slf4j
     protected static class HeaderCondition extends AttributeCondition {
 
         protected HeaderCondition(String attributeName, Operator operator, String value) {
@@ -987,6 +1000,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
         }
     }
 
+
+@Slf4j
     protected static class MonoCondition extends ExchangeSession.MonoCondition {
         protected MonoCondition(String attributeName, Operator operator) {
             super(attributeName, operator);
@@ -1093,6 +1108,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
     /**
      * @inheritDoc
      */
+
+@Slf4j
     public class Message extends ExchangeSession.Message {
 
         @Override
@@ -1135,6 +1152,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
     /**
      * @inheritDoc
      */
+
+@Slf4j
     public class Contact extends ExchangeSession.Contact {
         /**
          * Build Contact instance from multistatusResponse info
@@ -1325,6 +1344,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
     /**
      * @inheritDoc
      */
+
+@Slf4j
     public class Event extends ExchangeSession.Event {
         protected String instancetype;
 
@@ -1616,6 +1637,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 }
                 String encodedHref = URIUtil.encodePath(getHref());
                 Set<PropertyValue> propertyValues = new HashSet<>();
+
+@Slf4j
                 // set contentclass on create
                 if (noneMatch != null) {
                     propertyValues.add(Field.createPropertyValue("contentclass", "urn:content-classes:task"));
@@ -1710,6 +1733,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 if ((status == HttpStatus.SC_OK || status == HttpStatus.SC_CREATED) &&
                         (Settings.getBooleanProperty("mt.ews.forceActiveSyncUpdate"))) {
                     ArrayList<PropEntry> propertyList = new ArrayList<>();
+
+@Slf4j
                     // Set contentclass to make ActiveSync happy
                     propertyList.add(Field.createDavProperty("contentclass", contentClass));
                     // ... but also set PR_INTERNET_CONTENT to preserve custom properties
@@ -2310,6 +2335,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
                 || "urn:content-classes:task".equals(contentClass)) {
             return new Event(responses[0]);
         } else {
+
+@Slf4j
             LOGGER.warn("wrong contentclass on item " + itemPath + ": " + contentClass);
             // return item anyway
             return new Event(responses[0]);

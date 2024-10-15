@@ -6,6 +6,8 @@ package ru.mos.mostech.ews.exchange.dav;
 /**
  * MAPI property types.
  */
+
+@Slf4j
 public enum PropertyType {
     ApplicationTime, ApplicationTimeArray, Binary, BinaryArray, Boolean, CLSID, CLSIDArray, Currency, CurrencyArray,
     Double, DoubleArray, Error, Float, FloatArray, Integer, IntegerArray, Long, LongArray, Null, Object,

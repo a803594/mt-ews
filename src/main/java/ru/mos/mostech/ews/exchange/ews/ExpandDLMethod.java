@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.XMLStreamUtil;
 
 import javax.xml.stream.XMLStreamException;
@@ -12,6 +13,8 @@ import javax.xml.stream.XMLStreamReader;
 /**
  * Expand distribution list.
  */
+
+@Slf4j
 public class ExpandDLMethod extends EWSMethod {
     /**
      * Build Resolve Names method

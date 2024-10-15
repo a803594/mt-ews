@@ -4,12 +4,17 @@ DIT
 package ru.mos.mostech.ews.exchange;
 
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * VCard property
  */
+
+@Slf4j
 public class VProperty {
 
+
+@Slf4j
     protected enum State {
         KEY, PARAM_NAME, PARAM_VALUE, QUOTED_PARAM_VALUE, VALUE, BACKSLASH
     }
@@ -21,6 +26,8 @@ public class VProperty {
         MULTIVALUED_PROPERTIES.add("LOCATION");
     }
 
+
+@Slf4j
     protected static class Param {
         String name;
         List<String> values;

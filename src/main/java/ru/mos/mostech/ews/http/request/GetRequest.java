@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.http.request;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
@@ -17,6 +18,8 @@ import java.net.URI;
 /**
  * Http get request with a string response handler.
  */
+
+@Slf4j
 public class GetRequest extends HttpGet implements ResponseHandler<String>, ResponseWrapper {
     private HttpResponse response;
     private String responseBodyAsString;

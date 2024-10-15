@@ -5,38 +5,64 @@ DIT
 package ru.mos.mostech.ews.exchange.graph;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpGet;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpRequestBase;
+import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONArray;
+import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONException;
+import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.HttpNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ExchangeSession;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.auth.O365Token;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ews.EwsExchangeSession;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ews.ExtendedFieldURI;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ews.Field;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ews.FieldURI;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.util.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.mail.MessagingException;
+import lombok.extern.slf4j.Slf4j;
 import javax.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import java.net.URI;
+import lombok.extern.slf4j.Slf4j;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implement ExchangeSession based on Microsoft Graph
  */
+
+@Slf4j
 public class GraphExchangeSession extends ExchangeSession {
 
+
+@Slf4j
     protected class Folder extends ExchangeSession.Folder {
         public FolderId folderId;
     }
 
     // special folders https://learn.microsoft.com/en-us/graph/api/resources/mailfolder
     @SuppressWarnings("SpellCheckingInspection")
+
+@Slf4j
     public enum WellKnownFolderName {
         archive,
         deleteditems,
@@ -46,6 +72,8 @@ public class GraphExchangeSession extends ExchangeSession {
         searchfolders
     }
 
+
+@Slf4j
     protected static class FolderId {
         protected String mailbox;
         protected String id;
@@ -133,6 +161,8 @@ public class GraphExchangeSession extends ExchangeSession {
         return null;
     }
 
+
+@Slf4j
     static class AttributeCondition extends ExchangeSession.AttributeCondition {
 
         protected AttributeCondition(String attributeName, Operator operator, String value) {
@@ -656,6 +686,8 @@ public class GraphExchangeSession extends ExchangeSession {
 
     }
 
+
+@Slf4j
     class GraphIterator {
 
         private JSONObject jsonObject;

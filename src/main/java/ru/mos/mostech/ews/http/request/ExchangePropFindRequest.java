@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.http.request;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.webdav.header.DepthHeader;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameIterator;
@@ -21,6 +22,8 @@ import java.util.Map;
  * Custom Exchange PROPFIND method.
  * Does not load full DOM in memory.
  */
+
+@Slf4j
 public class ExchangePropFindRequest extends ExchangeDavRequest {
     protected static final Logger LOGGER = Logger.getLogger(ExchangePropFindRequest.class);
 

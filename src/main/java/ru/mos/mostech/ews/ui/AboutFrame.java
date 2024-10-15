@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.ui;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
 import ru.mos.mostech.ews.ui.browser.DesktopBrowser;
@@ -22,6 +23,8 @@ import java.net.URL;
 /**
  * About frame
  */
+
+@Slf4j
 public class AboutFrame extends JFrame {
     private final JEditorPane jEditorPane;
 

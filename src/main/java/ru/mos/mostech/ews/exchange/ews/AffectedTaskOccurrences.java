@@ -7,6 +7,8 @@ package ru.mos.mostech.ews.exchange.ews;
  * Item delete option.
  */
 @SuppressWarnings({"UnusedDeclaration"})
+
+@Slf4j
 public final class AffectedTaskOccurrences extends AttributeOption {
     private AffectedTaskOccurrences(String value) {
         super("AffectedTaskOccurrences", value);

@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.XMLStreamUtil;
 
 import javax.xml.stream.XMLStreamException;
@@ -11,6 +12,8 @@ import javax.xml.stream.XMLStreamReader;
 /**
  * Resolve Names method.
  */
+
+@Slf4j
 public class ResolveNamesMethod extends EWSMethod {
     protected static final AttributeOption RETURN_FULL_CONTACT_DATA = new AttributeOption("ReturnFullContactData", "true");
 

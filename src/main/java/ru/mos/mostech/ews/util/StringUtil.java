@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
@@ -19,6 +20,8 @@ import java.util.regex.Pattern;
 /**
  * Various string handling methods
  */
+
+@Slf4j
 public final class StringUtil {
     private StringUtil() {
     }
@@ -116,6 +119,8 @@ public final class StringUtil {
         }
     }
 
+
+@Slf4j
     static class PatternMap {
         protected String match;
         protected String value;

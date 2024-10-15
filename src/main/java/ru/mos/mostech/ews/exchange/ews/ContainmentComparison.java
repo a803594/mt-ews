@@ -7,6 +7,8 @@ package ru.mos.mostech.ews.exchange.ews;
  * Contains comparison mode.
  */
 @SuppressWarnings({"UnusedDeclaration"})
+
+@Slf4j
 public final class ContainmentComparison extends AttributeOption {
     private ContainmentComparison(String value) {
         super("ContainmentComparison", value);

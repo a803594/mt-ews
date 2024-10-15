@@ -4,18 +4,28 @@ DIT
 package ru.mos.mostech.ews.exchange;
 
 import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.util.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.StandardCharsets;
+import lombok.extern.slf4j.Slf4j;
 import java.text.ParseException;
+import lombok.extern.slf4j.Slf4j;
 import java.text.SimpleDateFormat;
+import lombok.extern.slf4j.Slf4j;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * VCalendar object.
  */
+
+@Slf4j
 public class VCalendar extends VObject {
     protected static final Logger LOGGER = Logger.getLogger(VCalendar.class);
     protected VObject firstVevent;
@@ -752,6 +762,8 @@ public class VCalendar extends VObject {
     /**
      * VCalendar recipients for notifications
      */
+
+@Slf4j
     public static class Recipients {
         /**
          * attendee list

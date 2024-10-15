@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import ru.mos.mostech.ews.BundleMessage;
@@ -38,6 +39,8 @@ import java.util.*;
  * EWS Exchange adapter.
  * Compatible with Exchange 2007, 2010 and 2013.
  */
+
+@Slf4j
 public class EwsExchangeSession extends ExchangeSession {
 
     protected static final int PAGE_SIZE = 500;
@@ -127,10 +130,14 @@ public class EwsExchangeSession extends ExchangeSession {
      */
     private O365Token token;
 
+
+@Slf4j
     protected class Folder extends ExchangeSession.Folder {
         public FolderId folderId;
     }
 
+
+@Slf4j
     protected static class FolderPath {
         protected final String parentPath;
         protected final String folderName;
@@ -297,6 +304,8 @@ public class EwsExchangeSession extends ExchangeSession {
         }
     }
 
+
+@Slf4j
     class Message extends ExchangeSession.Message {
         // message item id
         ItemId itemId;
@@ -706,6 +715,8 @@ public class EwsExchangeSession extends ExchangeSession {
         return results;
     }
 
+
+@Slf4j
     protected static class MultiCondition extends ExchangeSession.MultiCondition implements SearchExpression {
         protected MultiCondition(Operator operator, Condition... condition) {
             super(operator, condition);
@@ -734,6 +745,8 @@ public class EwsExchangeSession extends ExchangeSession {
         }
     }
 
+
+@Slf4j
     protected static class NotCondition extends ExchangeSession.NotCondition implements SearchExpression {
         protected NotCondition(Condition condition) {
             super(condition);
@@ -747,6 +760,8 @@ public class EwsExchangeSession extends ExchangeSession {
     }
 
 
+
+@Slf4j
     protected static class AttributeCondition extends ExchangeSession.AttributeCondition implements SearchExpression {
         protected ContainmentMode containmentMode;
         protected ContainmentComparison containmentComparison;
@@ -834,6 +849,8 @@ public class EwsExchangeSession extends ExchangeSession {
 
     }
 
+
+@Slf4j
     protected static class HeaderCondition extends AttributeCondition {
 
         protected HeaderCondition(String attributeName, String value) {
@@ -849,6 +866,8 @@ public class EwsExchangeSession extends ExchangeSession {
 
     }
 
+
+@Slf4j
     protected static class IsNullCondition implements ExchangeSession.Condition, SearchExpression {
         protected final String attributeName;
 
@@ -873,6 +892,8 @@ public class EwsExchangeSession extends ExchangeSession {
 
     }
 
+
+@Slf4j
     protected static class ExistsCondition implements ExchangeSession.Condition, SearchExpression {
         protected final String attributeName;
 
@@ -1236,6 +1257,8 @@ public class EwsExchangeSession extends ExchangeSession {
         executeMethod(moveItemMethod);
     }
 
+
+@Slf4j
     protected class Contact extends ExchangeSession.Contact {
         // item id
         ItemId itemId;
@@ -1438,6 +1461,8 @@ public class EwsExchangeSession extends ExchangeSession {
         }
     }
 
+
+@Slf4j
     protected class Event extends ExchangeSession.Event {
         // item id
         ItemId itemId;

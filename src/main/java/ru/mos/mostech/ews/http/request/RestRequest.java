@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.http.request;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -27,6 +28,8 @@ import java.util.zip.GZIPInputStream;
 /**
  * Generic Rest request.
  */
+
+@Slf4j
 public class RestRequest extends HttpPost implements ResponseHandler<JSONObject> {
     private static final String JSON_CONTENT_TYPE = "application/json; charset=utf-8";
     private static final Logger LOGGER = Logger.getLogger(RestRequest.class);

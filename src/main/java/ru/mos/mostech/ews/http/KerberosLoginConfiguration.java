@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.http;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 
 import javax.security.auth.login.AppConfigurationEntry;
@@ -20,6 +21,8 @@ import java.util.HashMap;
  * };
  * <p/>
  */
+
+@Slf4j
 public class KerberosLoginConfiguration extends Configuration {
     protected static final Logger LOGGER = Logger.getLogger(KerberosLoginConfiguration.class);
     protected static final AppConfigurationEntry[] CLIENT_LOGIN_MODULE;

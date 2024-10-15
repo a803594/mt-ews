@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.dav;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DefaultDavProperty;
 import org.apache.jackrabbit.webdav.property.PropEntry;
@@ -21,6 +22,8 @@ import java.util.Map;
 /**
  * WebDav Field
  */
+
+@Slf4j
 public class Field {
 
     protected static final Map<DistinguishedPropertySetType, String> distinguishedPropertySetMap = new HashMap<>();
@@ -67,6 +70,8 @@ public class Field {
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
+
+@Slf4j
     protected enum DistinguishedPropertySetType {
         Meeting, Appointment, Common, PublicStrings, Address, InternetHeaders, CalendarAssistant, UnifiedMessaging, Task
     }

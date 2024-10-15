@@ -4,6 +4,8 @@
 
 package ru.mos.mostech.ews.ldap;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
@@ -13,6 +15,8 @@ import java.nio.charset.StandardCharsets;
  * @author Jagane Sundar
  * @author Vincent Ryan
  */
+
+@Slf4j
 public final class BerDecoder extends Ber {
 
     private int origOffset;  // The start point in buf to decode

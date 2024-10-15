@@ -3,11 +3,15 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Set;
 
 /**
  * EWS GetFolder method.
  */
+
+@Slf4j
 public class GetFolderMethod extends EWSMethod {
 
     /**

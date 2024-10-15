@@ -4,28 +4,48 @@ DIT
 package ru.mos.mostech.ews.exchange;
 
 import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.HttpNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.URIUtil;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.ui.NotificationDialog;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.util.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.mail.MessagingException;
+import lombok.extern.slf4j.Slf4j;
 import javax.mail.internet.*;
+import lombok.extern.slf4j.Slf4j;
 import javax.mail.util.SharedByteArrayInputStream;
+import lombok.extern.slf4j.Slf4j;
 import java.io.*;
+import lombok.extern.slf4j.Slf4j;
 import java.net.NoRouteToHostException;
+import lombok.extern.slf4j.Slf4j;
 import java.net.UnknownHostException;
+import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.StandardCharsets;
+import lombok.extern.slf4j.Slf4j;
 import java.text.ParseException;
+import lombok.extern.slf4j.Slf4j;
 import java.text.SimpleDateFormat;
+import lombok.extern.slf4j.Slf4j;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Exchange session through Outlook Web Access (DAV)
  */
+
+@Slf4j
 public abstract class ExchangeSession {
 
     protected static final Logger LOGGER = Logger.getLogger("mt.ews.exchange.ExchangeSession");
@@ -309,6 +329,8 @@ public abstract class ExchangeSession {
         return serverVersion;
     }
 
+
+@Slf4j
     public enum Operator {
         Or, And, Not, IsEqualTo,
         IsGreaterThan, IsGreaterThanOrEqualTo,
@@ -320,6 +342,8 @@ public abstract class ExchangeSession {
     /**
      * Exchange search filter.
      */
+
+@Slf4j
     public interface Condition {
         /**
          * Append condition to buffer.
@@ -347,6 +371,8 @@ public abstract class ExchangeSession {
     /**
      * Attribute condition.
      */
+
+@Slf4j
     public abstract static class AttributeCondition implements Condition {
         protected final String attributeName;
         protected final Operator operator;
@@ -385,6 +411,8 @@ public abstract class ExchangeSession {
     /**
      * Multiple condition.
      */
+
+@Slf4j
     public abstract static class MultiCondition implements Condition {
         protected final Operator operator;
         protected final List<Condition> conditions;
@@ -464,6 +492,8 @@ public abstract class ExchangeSession {
     /**
      * Not condition.
      */
+
+@Slf4j
     public abstract static class NotCondition implements Condition {
         protected final Condition condition;
 
@@ -483,6 +513,8 @@ public abstract class ExchangeSession {
     /**
      * Single search filter condition.
      */
+
+@Slf4j
     public abstract static class MonoCondition implements Condition {
         protected final String attributeName;
         protected final Operator operator;
@@ -1067,6 +1099,8 @@ public abstract class ExchangeSession {
     /**
      * Exchange folder with IMAP properties
      */
+
+@Slf4j
     public class Folder {
         /**
          * Logical (IMAP) folder path.
@@ -1078,6 +1112,8 @@ public abstract class ExchangeSession {
          */
         public String displayName;
         /**
+
+@Slf4j
          * Folder class (PR_CONTAINER_CLASS).
          */
         public String folderClass;
@@ -1296,6 +1332,8 @@ public abstract class ExchangeSession {
     /**
      * Exchange message.
      */
+
+@Slf4j
     public abstract class Message implements Comparable<Message> {
         /**
          * enclosing message list
@@ -1698,6 +1736,8 @@ public abstract class ExchangeSession {
     /**
      * Message list, includes a single messsage cache
      */
+
+@Slf4j
     public static class MessageList extends ArrayList<Message> {
         /**
          * Cached message content parsed in a MIME message.
@@ -1717,6 +1757,8 @@ public abstract class ExchangeSession {
     /**
      * Generic folder item.
      */
+
+@Slf4j
     public abstract static class Item extends HashMap<String, String> {
         protected String folderPath;
         protected String itemName;
@@ -1817,6 +1859,8 @@ public abstract class ExchangeSession {
     /**
      * Contact object
      */
+
+@Slf4j
     public abstract class Contact extends Item {
 
         protected ArrayList<String> distributionListMembers = null;
@@ -2004,6 +2048,8 @@ public abstract class ExchangeSession {
     /**
      * Calendar event object.
      */
+
+@Slf4j
     public abstract class Event extends Item {
         protected String contentClass;
         protected String subject;
@@ -2525,6 +2571,8 @@ public abstract class ExchangeSession {
     /**
      * Contact picture
      */
+
+@Slf4j
     public static class ContactPhoto {
         /**
          * Contact picture content type (always image/jpeg on read)
@@ -2593,6 +2641,8 @@ public abstract class ExchangeSession {
     /**
      * Event result object to hold HTTP status and event etag from an event creation/update.
      */
+
+@Slf4j
     public static class ItemResult {
         /**
          * HTTP status
@@ -3071,6 +3121,8 @@ public abstract class ExchangeSession {
      * Exchange to iCalendar Free/Busy parser.
      * Free time returns 0, Tentative returns 1, Busy returns 2, and Out of Office (OOF) returns 3
      */
+
+@Slf4j
     public static final class FreeBusy {
         final SimpleDateFormat icalParser;
         boolean knownAttendee = true;

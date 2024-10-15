@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.util.StringUtil;
 
 import java.io.IOException;
@@ -11,6 +12,8 @@ import java.io.Writer;
 /**
  * Generic element option.
  */
+
+@Slf4j
 public class ElementOption extends Option {
     ElementOption option;
     /**

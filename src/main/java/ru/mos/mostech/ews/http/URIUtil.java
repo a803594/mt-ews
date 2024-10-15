@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.http;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.http.Consts;
@@ -14,6 +15,8 @@ import java.util.BitSet;
 /**
  * Implement encode/decode logic to replace HttpClient 3 URIUtil
  */
+
+@Slf4j
 public class URIUtil {
 
     /**

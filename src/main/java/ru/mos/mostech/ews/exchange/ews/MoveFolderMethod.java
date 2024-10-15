@@ -6,6 +6,8 @@ package ru.mos.mostech.ews.exchange.ews;
 /**
  * Create Folder method.
  */
+
+@Slf4j
 public class MoveFolderMethod extends EWSMethod {
     /**
      * Move folder to target folder.

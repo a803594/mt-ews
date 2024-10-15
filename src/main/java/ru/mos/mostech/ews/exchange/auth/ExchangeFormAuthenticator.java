@@ -5,45 +5,82 @@ DIT
 package ru.mos.mostech.ews.exchange.auth;
 
 import org.apache.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpGet;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpRequestBase;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.protocol.HttpClientContext;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.cookie.Cookie;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.impl.client.BasicCookieStore;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.impl.cookie.BasicClientCookie;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.htmlcleaner.*;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsAuthenticationException;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.WebdavNotAvailableException;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.MosTechEwsOTPPrompt;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.URIUtil;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.request.GetRequest;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.request.PostRequest;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.request.ResponseWrapper;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.util.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
+import lombok.extern.slf4j.Slf4j;
 import java.awt.image.BufferedImage;
+import lombok.extern.slf4j.Slf4j;
 import java.io.ByteArrayInputStream;
+import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import java.net.ConnectException;
+import lombok.extern.slf4j.Slf4j;
 import java.net.URI;
+import lombok.extern.slf4j.Slf4j;
 import java.net.URISyntaxException;
+import lombok.extern.slf4j.Slf4j;
 import java.net.UnknownHostException;
+import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.StandardCharsets;
+import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
+import lombok.extern.slf4j.Slf4j;
 import java.util.HashSet;
+import lombok.extern.slf4j.Slf4j;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * New Exchange form authenticator based on HttpClient 4.
  */
+
+@Slf4j
 public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
     protected static final Logger LOGGER = Logger.getLogger(ExchangeFormAuthenticator.class);
 

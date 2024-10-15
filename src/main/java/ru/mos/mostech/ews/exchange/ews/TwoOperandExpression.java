@@ -3,13 +3,18 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.util.StringUtil;
 
 /**
  * Two operand expression.
  */
+
+@Slf4j
 public class TwoOperandExpression implements SearchExpression {
     @SuppressWarnings({"UnusedDeclaration"})
+
+@Slf4j
     protected enum Operator {
         IsEqualTo, IsNotEqualTo, IsGreaterThan, IsGreaterThanOrEqualTo, IsLessThan, IsLessThanOrEqualTo
     }

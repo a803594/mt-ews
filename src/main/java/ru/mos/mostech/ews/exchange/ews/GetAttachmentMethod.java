@@ -6,6 +6,8 @@ package ru.mos.mostech.ews.exchange.ews;
 /**
  * Get Attachment Method.
  */
+
+@Slf4j
 public class GetAttachmentMethod extends EWSMethod {
 
     /**

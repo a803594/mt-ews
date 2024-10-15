@@ -4,22 +4,36 @@ DIT
 package ru.mos.mostech.ews;
 
 import ru.mos.mostech.ews.exception.MosTechEwsException;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.net.ServerSocketFactory;
+import lombok.extern.slf4j.Slf4j;
 import javax.net.ssl.*;
+import lombok.extern.slf4j.Slf4j;
 import java.io.FileInputStream;
+import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import java.net.InetAddress;
+import lombok.extern.slf4j.Slf4j;
 import java.net.ServerSocket;
+import lombok.extern.slf4j.Slf4j;
 import java.net.Socket;
+import lombok.extern.slf4j.Slf4j;
 import java.security.*;
+import lombok.extern.slf4j.Slf4j;
 import java.security.cert.CertificateException;
+import lombok.extern.slf4j.Slf4j;
 import java.util.HashSet;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Generic abstract server common to SMTP and POP3 implementations
  */
+
+@Slf4j
 public abstract class AbstractServer extends Thread {
     protected boolean nosslFlag; // will cause same behavior as before with unchanged config files
     private final int port;

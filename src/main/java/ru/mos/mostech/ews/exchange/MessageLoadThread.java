@@ -1,17 +1,25 @@
 package ru.mos.mostech.ews.exchange;
 
 import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.mail.MessagingException;
+import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import java.io.OutputStream;
+import lombok.extern.slf4j.Slf4j;
 import java.net.SocketException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Message load thread.
  * Used to avoid timeouts over POP and IMAP
  */
+
+@Slf4j
 public class MessageLoadThread extends Thread {
     private static final Logger LOGGER = Logger.getLogger(MessageLoadThread.class);
 

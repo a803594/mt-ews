@@ -4,25 +4,39 @@ DIT
 package ru.mos.mostech.ews;
 
 import org.apache.log4j.*;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.StandardCharsets;
+import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Files;
+import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Path;
+import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Paths;
+import lombok.extern.slf4j.Slf4j;
 import java.nio.file.attribute.FileAttribute;
+import lombok.extern.slf4j.Slf4j;
 import java.nio.file.attribute.PosixFilePermissions;
+import lombok.extern.slf4j.Slf4j;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.apache.http.util.TextUtils.isEmpty;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Settings facade.
  * MT-EWS settings are stored in the .mt-ews.properties file in current
  * user home directory or in the file specified on the command line.
  */
+
+@Slf4j
 public final class Settings {
 
     private static final Logger LOGGER = Logger.getLogger(Settings.class);

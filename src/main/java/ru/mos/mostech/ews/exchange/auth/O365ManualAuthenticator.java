@@ -5,25 +5,45 @@ DIT
 package ru.mos.mostech.ews.exchange.auth;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsAuthenticationException;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ews.BaseShape;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ews.DistinguishedFolderId;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ews.GetFolderMethod;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ews.GetUserConfigurationMethod;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
+import lombok.extern.slf4j.Slf4j;
 import java.awt.*;
+import lombok.extern.slf4j.Slf4j;
 import java.io.BufferedReader;
+import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import java.io.InputStreamReader;
+import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.InvocationTargetException;
+import lombok.extern.slf4j.Slf4j;
 import java.net.URI;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 public class O365ManualAuthenticator implements ExchangeAuthenticator {
 
     private static final Logger LOGGER = Logger.getLogger(O365ManualAuthenticator.class);

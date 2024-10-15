@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.http;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.ui.PasswordPromptDialog;
 
@@ -11,6 +12,8 @@ import java.awt.*;
 /**
  * Ask user one time password.
  */
+
+@Slf4j
 public final class MosTechEwsOTPPrompt {
     private MosTechEwsOTPPrompt() {
     }

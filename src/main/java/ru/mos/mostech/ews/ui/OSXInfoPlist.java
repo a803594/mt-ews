@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.ui;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.util.IOUtil;
 
@@ -15,6 +16,8 @@ import java.nio.charset.StandardCharsets;
 /**
  * Handle OSX Info.plist file access
  */
+
+@Slf4j
 public class OSXInfoPlist {
     protected static final Logger LOGGER = Logger.getLogger(OSXInfoPlist.class);
     protected static final String INFO_PLIST_PATH = "../Info.plist";

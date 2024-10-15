@@ -6,6 +6,8 @@ package ru.mos.mostech.ews.exchange.ews;
 /**
  * Delete Item method.
  */
+
+@Slf4j
 public class DeleteItemMethod extends EWSMethod {
     /**
      * Delete item method.

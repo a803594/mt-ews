@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.http.request;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.util.StringUtil;
 
@@ -16,6 +17,8 @@ import java.nio.charset.StandardCharsets;
  * Custom Exchange SEARCH method.
  * Does not load full DOM in memory.
  */
+
+@Slf4j
 public class ExchangeSearchRequest extends ExchangeDavRequest {
     protected static final Logger LOGGER = Logger.getLogger(ExchangeSearchRequest.class);
 

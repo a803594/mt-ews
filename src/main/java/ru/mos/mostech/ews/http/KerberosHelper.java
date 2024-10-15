@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.http;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.ietf.jgss.*;
 import ru.mos.mostech.ews.Settings;
@@ -25,6 +26,8 @@ import java.security.Security;
 /**
  * Kerberos helper class.
  */
+
+@Slf4j
 public class KerberosHelper {
     protected static final Logger LOGGER = Logger.getLogger(KerberosHelper.class);
     protected static final Object LOCK = new Object();
@@ -42,6 +45,8 @@ public class KerberosHelper {
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
+
+@Slf4j
     protected static class KerberosCallbackHandler implements CallbackHandler {
         String principal;
         String password;
@@ -244,6 +249,8 @@ public class KerberosHelper {
     /**
      * Contains server Kerberos context information in server mode.
      */
+
+@Slf4j
     public static class SecurityContext {
         /**
          * response token

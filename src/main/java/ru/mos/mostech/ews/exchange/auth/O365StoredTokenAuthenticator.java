@@ -5,16 +5,23 @@ DIT
 package ru.mos.mostech.ews.exchange.auth;
 
 import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import java.net.URI;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Experimental: load Oauth2 token from settings
  */
 @SuppressWarnings("unused")
+
+@Slf4j
 public class O365StoredTokenAuthenticator implements ExchangeAuthenticator {
     private static final Logger LOGGER = Logger.getLogger(O365StoredTokenAuthenticator.class);
 

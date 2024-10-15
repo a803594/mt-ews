@@ -4,14 +4,23 @@ DIT
 package ru.mos.mostech.ews.exchange;
 
 import java.io.BufferedReader;
+import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import java.io.StringReader;
+import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
+import lombok.extern.slf4j.Slf4j;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
+
+@Slf4j
  * Base class for VCalendar, VTimezone, VEvent.
  */
+
+@Slf4j
 public class VObject {
     /**
      * VObject properties

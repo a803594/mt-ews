@@ -6,6 +6,8 @@ package ru.mos.mostech.ews.exchange.ews;
 /**
  * EWS Find Item Method.
  */
+
+@Slf4j
 public class FindItemMethod extends EWSMethod {
     /**
      * Find item method.

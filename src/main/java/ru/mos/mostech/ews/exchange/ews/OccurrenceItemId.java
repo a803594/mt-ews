@@ -4,9 +4,13 @@ DIT
 
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.io.Writer;
 
+
+@Slf4j
 public class OccurrenceItemId extends ItemId {
     protected final int instanceIndex;
 

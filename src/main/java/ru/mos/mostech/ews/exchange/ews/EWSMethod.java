@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -32,6 +33,8 @@ import java.util.zip.GZIPInputStream;
 /**
  * EWS SOAP method.
  */
+
+@Slf4j
 public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSMethod> {
     protected static final String CONTENT_TYPE = ContentType.create("text/xml", StandardCharsets.UTF_8).toString();
     protected static final Logger LOGGER = Logger.getLogger(EWSMethod.class);
@@ -494,6 +497,8 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
     /**
      * Meeting attendee object
      */
+
+@Slf4j
     public static class Attendee {
         /**
          * attendee role
@@ -516,6 +521,8 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
     /**
      * Recurring event occurrence
      */
+
+@Slf4j
     public static class Occurrence {
         /**
          * Original occurence start date
@@ -531,6 +538,8 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
     /**
      * Item
      */
+
+@Slf4j
     public static class Item extends HashMap<String, String> {
         /**
          * Item type.

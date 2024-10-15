@@ -7,6 +7,8 @@ package ru.mos.mostech.ews.exchange.ews;
  * Disposal.
  */
 @SuppressWarnings({"UnusedDeclaration"})
+
+@Slf4j
 public final class Disposal extends AttributeOption {
     private Disposal(String value) {
         super("DeleteType", value);
