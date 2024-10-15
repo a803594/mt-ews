@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.exchange;
 
-import org.apache.log4j.Logger;
 import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
 import lombok.extern.slf4j.Slf4j;

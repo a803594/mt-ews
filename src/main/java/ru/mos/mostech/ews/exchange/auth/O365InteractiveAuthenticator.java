@@ -5,7 +5,6 @@ package ru.mos.mostech.ews.exchange.auth;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.log4j.Logger;
 import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +43,6 @@ import lombok.extern.slf4j.Slf4j;
 public class O365InteractiveAuthenticator implements ExchangeAuthenticator {
 
     private static final int MAX_COUNT = 300;
-    private static final Logger LOGGER = Logger.getLogger(O365InteractiveAuthenticator.class);
 
     static {
         // disable HTTP/2 loader on Java 14 and later to enable custom socket factory

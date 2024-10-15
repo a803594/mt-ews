@@ -1,6 +1,5 @@
 package ru.mos.mostech.ews.exchange;
 
-import org.apache.log4j.Logger;
 import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MessageLoadThread extends Thread {
-    private static final Logger LOGGER = Logger.getLogger(MessageLoadThread.class);
 
     protected boolean isComplete = false;
     protected ExchangeSession.Message message;

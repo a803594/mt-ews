@@ -22,7 +22,6 @@ import org.apache.http.impl.client.BasicCookieStore;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.log4j.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.htmlcleaner.*;
 import lombok.extern.slf4j.Slf4j;

@@ -20,7 +20,6 @@ import javafx.scene.web.WebEngine;
 import lombok.extern.slf4j.Slf4j;
 import javafx.scene.web.WebView;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.log4j.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +70,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class O365InteractiveAuthenticatorFrame extends JFrame {
-    private static final Logger LOGGER = Logger.getLogger(O365InteractiveAuthenticatorFrame.class);
 
     private O365InteractiveAuthenticator authenticator;
 
