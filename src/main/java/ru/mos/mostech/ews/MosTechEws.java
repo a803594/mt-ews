@@ -9,6 +9,7 @@ import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.exchange.ExchangeSessionFactory;
 import ru.mos.mostech.ews.exchange.auth.ExchangeAuthenticator;
 import ru.mos.mostech.ews.imap.ImapServer;
+import ru.mos.mostech.ews.server.HttpServer;
 import ru.mos.mostech.ews.smtp.SmtpServer;
 import ru.mos.mostech.ews.ui.SimpleUi;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
@@ -139,7 +140,6 @@ public final class MosTechEws {
             SERVER_LIST.add(new CaldavServer(caldavPort));
         }
 
-        BundleMessage.BundleMessageList errorMessages = new BundleMessage.BundleMessageList();
         for (AbstractServer server : SERVER_LIST) {
             try {
                 server.bind();
@@ -154,8 +154,11 @@ public final class MosTechEws {
             }
         }
 
-        if (!errorMessages.isEmpty()) {
-            MosTechEwsTray.error(new BundleMessage("LOG_MESSAGE", errorMessages));
+        try {
+            HttpServer.start(Settings.getIntProperty("mt.ews.httpPort"));
+        } catch (IOException e) {
+            log.error("Ошибка при запуске приложения", e);
+            System.exit(98);
         }
 
     }
@@ -191,6 +194,7 @@ public final class MosTechEws {
                 Thread.currentThread().interrupt();
             }
         }
+        HttpServer.stop();
     }
 
     /**

@@ -83,6 +83,8 @@ public abstract class AbstractServer extends Thread {
 
                 // create ServerSocketFactory from sslContext
                 serverSocketFactory = sslContext.getServerSocketFactory();
+
+                Settings.setSecure(true);
             } catch (IOException | GeneralSecurityException ex) {
                 throw new MosTechEwsException("LOG_EXCEPTION_CREATING_SSL_SERVER_SOCKET", getProtocolName(), port, ex.getMessage() == null ? ex.toString() : ex.getMessage());
             }
