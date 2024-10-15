@@ -1,0 +1,19 @@
+<configuration>
+
+    <!-- Установите уровень логирования по умолчанию для всех логгеров -->
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+    <!-- Установите уровень логирования для конкретного пакета или класса -->
+    <logger name="ru" level="DEBUG" />
+    <logger name="org.apache.http" level="INFO" />
+
+    <!-- Определите консольный аппендер -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{ISO8601} %-5level [%thread] %logger{0} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+</configuration>
