@@ -4,6 +4,11 @@ DIT
 package ru.mos.mostech.ews.ui.tray;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.lf5.LF5Appender;
+import org.apache.log4j.lf5.LogLevel;
+import org.apache.log4j.lf5.viewer.LogBrokerMonitor;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.exchange.NetworkDownException;
@@ -21,6 +26,7 @@ import java.net.URL;
 
 @Slf4j
 public final class MosTechEwsTray {
+    private static final Logger LOGGER = Logger.getLogger("ru/mos/mostech/ews");
     private static final long ICON_SWITCH_MINIMUM_DELAY = 250;
     private static long lastIconSwitch;
 

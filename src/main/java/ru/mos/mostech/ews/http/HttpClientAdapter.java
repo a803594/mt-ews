@@ -42,6 +42,7 @@ import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.client.methods.BaseDavRequest;
 import org.apache.jackrabbit.webdav.client.methods.HttpCopy;
 import org.apache.jackrabbit.webdav.client.methods.HttpMove;
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.exception.*;

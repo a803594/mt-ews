@@ -4,6 +4,7 @@ DIT
 package ru.mos.mostech.ews.http;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.log4j.Logger;
 
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;

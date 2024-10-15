@@ -4,6 +4,7 @@ DIT
 
 package ru.mos.mostech.ews.exchange.auth;
 
+import org.apache.log4j.Logger;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HttpURLConnectionWrapper extends HttpURLConnection {
+    private static final Logger LOGGER = Logger.getLogger(HttpURLConnectionWrapper.class);
     HttpURLConnection httpURLConnection;
 
     HttpURLConnectionWrapper(HttpURLConnection httpURLConnection, URL url) {

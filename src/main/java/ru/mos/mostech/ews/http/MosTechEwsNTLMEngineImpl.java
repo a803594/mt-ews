@@ -10,6 +10,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Consts;
 import org.apache.http.impl.auth.NTLMEngine;
 import org.apache.http.impl.auth.NTLMEngineException;
+import org.apache.log4j.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;

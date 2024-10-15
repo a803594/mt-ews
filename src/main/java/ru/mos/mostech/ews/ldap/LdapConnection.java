@@ -4,6 +4,7 @@ DIT
 package ru.mos.mostech.ews.ldap;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
@@ -38,6 +39,7 @@ import java.util.*;
 
 @Slf4j
 public class LdapConnection extends AbstractConnection {
+    private static final Logger LOGGER = Logger.getLogger(LdapConnection.class);
     /**
      * MT-EWS base context
      */

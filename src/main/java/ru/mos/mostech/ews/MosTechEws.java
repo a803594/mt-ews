@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews;
 
+import org.apache.log4j.Logger;
 import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.caldav.CaldavServer;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class MosTechEws {
+    private static final Logger LOGGER = Logger.getLogger(MosTechEws.class);
     private static final Object LOCK = new Object();
     private static boolean shutdown = false;
 

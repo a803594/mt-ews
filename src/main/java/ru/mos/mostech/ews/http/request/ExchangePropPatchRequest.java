@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
+import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.exchange.dav.PropertyValue;
 
 import java.io.ByteArrayOutputStream;

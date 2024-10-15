@@ -4,6 +4,7 @@ DIT
 package ru.mos.mostech.ews.ui;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.log4j.Level;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
 import ru.mos.mostech.ews.Settings;

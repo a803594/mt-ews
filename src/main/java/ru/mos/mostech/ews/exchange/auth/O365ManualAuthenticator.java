@@ -6,6 +6,7 @@ package ru.mos.mostech.ews.exchange.auth;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.log4j.Logger;
 import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class O365ManualAuthenticator implements ExchangeAuthenticator {
 
+    private static final Logger LOGGER = Logger.getLogger(O365ManualAuthenticator.class);
 
     String errorCode = null;
     String code = null;

@@ -11,6 +11,8 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ContentType;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.codehaus.stax2.typed.TypedXMLStreamReader;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;

@@ -12,6 +12,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.AbstractHttpEntity;
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
@@ -31,6 +32,7 @@ import java.util.zip.GZIPInputStream;
 @Slf4j
 public class RestRequest extends HttpPost implements ResponseHandler<JSONObject> {
     private static final String JSON_CONTENT_TYPE = "application/json; charset=utf-8";
+    private static final Logger LOGGER = Logger.getLogger(RestRequest.class);
 
     private HttpResponse response;
     private JSONObject jsonBody;

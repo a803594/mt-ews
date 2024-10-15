@@ -7,6 +7,7 @@ import com.sun.mail.imap.protocol.BASE64MailboxDecoder;
 import com.sun.mail.imap.protocol.BASE64MailboxEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpResponseException;
+import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
@@ -38,6 +39,7 @@ import java.util.*;
 
 @Slf4j
 public class ImapConnection extends AbstractConnection {
+    private static final Logger LOGGER = Logger.getLogger(ImapConnection.class);
 
     protected String baseMailboxPath;
     ExchangeSession.Folder currentFolder;

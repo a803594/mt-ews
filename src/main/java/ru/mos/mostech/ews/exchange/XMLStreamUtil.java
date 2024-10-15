@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.exchange;
 
+import org.apache.log4j.Logger;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.stream.XMLInputFactory;
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class XMLStreamUtil {
+    private static final Logger LOGGER = Logger.getLogger(XMLStreamUtil.class);
 
     private XMLStreamUtil() {
     }

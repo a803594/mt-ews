@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews;
 
+import org.apache.log4j.*;
 import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class Settings {
 
+    private static final Logger LOGGER = Logger.getLogger(Settings.class);
 
     public static final String OUTLOOK_URL = "https://outlook.office365.com";
     public static final String O365_URL = OUTLOOK_URL+"/EWS/Exchange.asmx";

@@ -15,6 +15,7 @@ import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.property.DefaultDavProperty;
 import org.apache.jackrabbit.webdav.xml.Namespace;
+import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.exchange.XMLStreamUtil;
 
 import javax.xml.stream.XMLStreamConstants;
