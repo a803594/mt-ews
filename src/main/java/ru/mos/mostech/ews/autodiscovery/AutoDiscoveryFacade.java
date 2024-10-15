@@ -108,6 +108,7 @@ public class AutoDiscoveryFacade {
         String domain;
         String user;
         String url;
+        long time = System.currentTimeMillis();
     }
 
 }

@@ -45,6 +45,7 @@ public final class Settings {
 
     public static final String EDGE_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 Edg/90.0.818.49";
     private static volatile boolean IS_SECURE = false;
+    private static volatile boolean USE_CONFIG = false;
 
     private Settings() {
     }
@@ -113,7 +114,7 @@ public final class Settings {
                 configFilePath = System.getProperty("user.home") + "/.mt-ews.properties";
             }
             File configFile = new File(configFilePath);
-            if (configFile.exists()) {
+            if (USE_CONFIG && configFile.exists()) {
                 try (FileInputStream fileInputStream = new FileInputStream(configFile)) {
                     load(fileInputStream);
                 }
@@ -137,12 +138,16 @@ public final class Settings {
     public static void setDefaultSettings() {
         SETTINGS_PROPERTIES.put("mt.ews.mode", "EWS");
         SETTINGS_PROPERTIES.put("mt.ews.url", "https://owa.mos.ru/EWS/Exchange.asmx");
-        SETTINGS_PROPERTIES.put("mt.ews.httpPort", "1111");
-        SETTINGS_PROPERTIES.put("mt.ews.popPort", "1110");
-        SETTINGS_PROPERTIES.put("mt.ews.imapPort", "1143");
-        SETTINGS_PROPERTIES.put("mt.ews.smtpPort", "1025");
-        SETTINGS_PROPERTIES.put("mt.ews.caldavPort", "1080");
+
+        //in use
+        SETTINGS_PROPERTIES.put("mt.ews.httpPort", "51081");
+        SETTINGS_PROPERTIES.put("mt.ews.imapPort", "51143");
+        SETTINGS_PROPERTIES.put("mt.ews.smtpPort", "51025");
+        SETTINGS_PROPERTIES.put("mt.ews.caldavPort", "51080");
+        //end
+
         SETTINGS_PROPERTIES.put("mt.ews.ldapPort", "1389");
+        SETTINGS_PROPERTIES.put("mt.ews.popPort", "1110");
         SETTINGS_PROPERTIES.put("mt.ews.clientSoTimeout", "");
         SETTINGS_PROPERTIES.put("mt.ews.keepDelay", "30");
         SETTINGS_PROPERTIES.put("mt.ews.sentKeepDelay", "0");
@@ -695,10 +700,14 @@ public final class Settings {
     }
 
     public static void setSecure(boolean value) {
-        IS_SECURE  = value;
+        IS_SECURE = value;
     }
 
     public static boolean isSecure() {
         return IS_SECURE;
+    }
+
+    public static void setUserConfig(boolean value) {
+        USE_CONFIG = value;
     }
 }

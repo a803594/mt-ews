@@ -49,6 +49,8 @@ public final class MosTechEws {
                     server = true;
                 } else if ("-token".equals(arg)) {
                     token = true;
+                } else if ("-useconfig".equals(arg)) {
+                    Settings.setUserConfig(true);
                 }
             } else {
                 Settings.setConfigFilePath(arg);
