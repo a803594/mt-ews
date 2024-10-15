@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.ldap;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.BundleMessage;
@@ -36,8 +35,6 @@ import java.util.*;
 /**
  * Handle a caldav connection.
  */
-
-@Slf4j
 public class LdapConnection extends AbstractConnection {
     private static final Logger LOGGER = Logger.getLogger(LdapConnection.class);
     /**
@@ -74,8 +71,6 @@ public class LdapConnection extends AbstractConnection {
         PERSON_OBJECT_CLASSES.add("person");
         PERSON_OBJECT_CLASSES.add("organizationalPerson");
         PERSON_OBJECT_CLASSES.add("inetOrgPerson");
-
-@Slf4j
         // OpenDirectory class for iCal
         PERSON_OBJECT_CLASSES.add("apple-user");
     }
@@ -990,8 +985,6 @@ public class LdapConnection extends AbstractConnection {
         os.flush();
     }
 
-
-@Slf4j
     interface LdapFilter {
         ExchangeSession.Condition getContactSearchFilter();
 
@@ -1004,8 +997,6 @@ public class LdapConnection extends AbstractConnection {
         boolean isMatch(Map<String, String> person);
     }
 
-
-@Slf4j
     class CompoundFilter implements LdapFilter {
         final Set<LdapFilter> criteria = new HashSet<>();
         final int type;
@@ -1168,8 +1159,6 @@ public class LdapConnection extends AbstractConnection {
         }
     }
 
-
-@Slf4j
     class SimpleFilter implements LdapFilter {
         static final String STAR = "*";
         final String attributeName;
@@ -1196,8 +1185,6 @@ public class LdapConnection extends AbstractConnection {
 
         private boolean checkIgnore() {
             if ("objectclass".equals(attributeName) && STAR.equals(value)) {
-
-@Slf4j
                 // ignore cases where any object class can match
                 return true;
             } else if (IGNORE_MAP.contains(attributeName)) {
@@ -1387,8 +1374,6 @@ public class LdapConnection extends AbstractConnection {
         return contactReturningAttributes;
     }
 
-
-@Slf4j
     protected class SearchRunnable implements Runnable {
         private final int currentMessageId;
         private final String dn;

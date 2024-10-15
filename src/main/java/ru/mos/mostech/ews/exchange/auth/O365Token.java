@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.exchange.auth;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Consts;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -27,8 +26,6 @@ import java.util.Date;
 /**
  * O365 token wrapper
  */
-
-@Slf4j
 public class O365Token {
 
     protected static final Logger LOGGER = Logger.getLogger(O365Token.class);

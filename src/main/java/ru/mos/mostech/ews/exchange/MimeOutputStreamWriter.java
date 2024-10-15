@@ -4,27 +4,17 @@ DIT
 package ru.mos.mostech.ews.exchange;
 
 import javax.mail.internet.MimeUtility;
-import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import java.io.OutputStream;
-import lombok.extern.slf4j.Slf4j;
 import java.io.OutputStreamWriter;
-import lombok.extern.slf4j.Slf4j;
 import java.io.UnsupportedEncodingException;
-import lombok.extern.slf4j.Slf4j;
 import java.text.SimpleDateFormat;
-import lombok.extern.slf4j.Slf4j;
 import java.util.Date;
-import lombok.extern.slf4j.Slf4j;
 import java.util.Locale;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Mime OutputStreamWriter to build in memory Mime message.
  */
-
-@Slf4j
 public class MimeOutputStreamWriter extends OutputStreamWriter {
     /**
      * Build MIME outputStreamWriter

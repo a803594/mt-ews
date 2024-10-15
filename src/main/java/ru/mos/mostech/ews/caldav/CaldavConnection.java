@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.caldav;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.impl.EnglishReasonPhraseCatalog;
@@ -37,8 +36,6 @@ import java.util.*;
 /**
  * Handle a caldav connection.
  */
-
-@Slf4j
 public class CaldavConnection extends AbstractConnection {
     /**
      * Maximum keep alive time in seconds
@@ -1347,8 +1344,6 @@ public class CaldavConnection extends AbstractConnection {
 
     }
 
-
-@Slf4j
     protected static class CaldavRequest {
         protected final String command;
         protected final String path;
@@ -1706,8 +1701,6 @@ public class CaldavConnection extends AbstractConnection {
     /**
      * Http chunked response.
      */
-
-@Slf4j
     protected class ChunkedResponse {
         Writer writer;
 
@@ -1749,8 +1742,6 @@ public class CaldavConnection extends AbstractConnection {
     /**
      * Caldav response wrapper, content sent in chunked mode to avoid timeout
      */
-
-@Slf4j
     protected class CaldavResponse extends ChunkedResponse {
 
         protected CaldavResponse(int status) throws IOException {

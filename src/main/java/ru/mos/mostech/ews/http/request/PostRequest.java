@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.http.request;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.*;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -20,8 +19,6 @@ import java.util.ArrayList;
 /**
  * Http post request with a string response handler.
  */
-
-@Slf4j
 public class PostRequest extends HttpPost implements ResponseHandler<String>, ResponseWrapper {
     private ArrayList<NameValuePair> parameters = new ArrayList<>();
     private String responseBodyAsString = null;

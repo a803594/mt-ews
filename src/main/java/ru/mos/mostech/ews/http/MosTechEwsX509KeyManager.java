@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.http;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.ui.SelectCertificateDialog;
@@ -26,14 +25,10 @@ import java.util.List;
  * is sufficient to establish the HTTPs connection by asking the user to
  * select one.
  */
-
-@Slf4j
 public class MosTechEwsX509KeyManager implements X509KeyManager {
 
     protected static final Logger LOGGER = Logger.getLogger(MosTechEwsX509KeyManager.class);
 
-
-@Slf4j
     // Wrap an existing key manager to handle most of the interface as a pass through
     private final X509KeyManager keyManager;
 

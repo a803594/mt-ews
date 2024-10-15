@@ -7,8 +7,6 @@ package ru.mos.mostech.ews.exchange.ews;
  * ResolveNames search scope.
  */
 @SuppressWarnings({"UnusedDeclaration"})
-
-@Slf4j
 public final class SearchScope extends AttributeOption {
     private SearchScope(String value) {
         super("SearchScope", value);

@@ -6,8 +6,6 @@ package ru.mos.mostech.ews.exchange.ews;
 /**
  * Get Item method.
  */
-
-@Slf4j
 public class GetItemMethod extends EWSMethod {
     /**
      * Get item method.

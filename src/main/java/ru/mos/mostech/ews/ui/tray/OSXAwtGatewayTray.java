@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.ui.tray;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Level;
 import ru.mos.mostech.ews.BundleMessage;
 
@@ -15,8 +14,6 @@ import java.util.ArrayList;
 /**
  * Extended Awt tray with OSX extensions.
  */
-
-@Slf4j
 public class OSXAwtGatewayTray extends AwtGatewayTray implements OSXTrayInterface {
     protected static final String OSX_TRAY_ACTIVE_PNG = "osxtray2.png";
     protected static final String OSX_TRAY_PNG = "osxtray.png";

@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.http;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.Settings;
 
@@ -18,8 +17,6 @@ import java.util.List;
  * Custom proxy selector based on MT-EWS settings.
  * Interactive O365 authentication relies on native HttpUrlConnection so we need to override default proxy selector.
  */
-
-@Slf4j
 public class MosTechEwsProxySelector extends ProxySelector {
     static final Logger LOGGER = Logger.getLogger(MosTechEwsProxySelector.class);
 

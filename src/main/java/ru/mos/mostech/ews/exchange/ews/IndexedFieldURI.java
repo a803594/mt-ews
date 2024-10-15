@@ -3,14 +3,11 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.util.StringUtil;
 
 /**
  * Indexed FieldURI
  */
-
-@Slf4j
 public class IndexedFieldURI implements FieldURI {
     protected final String fieldURI;
     protected final String fieldIndex;

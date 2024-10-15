@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.http;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpRequest;
 import org.apache.http.auth.*;
@@ -22,11 +21,7 @@ import java.security.cert.Certificate;
 /**
  * Duplicate of NTLMScheme from HttpClient to implement channel binding.
  */
-
-@Slf4j
 public class MosTechEwsNTLMScheme extends AuthSchemeBase {
-
-@Slf4j
     enum State {
         UNINITIATED,
         CHALLENGE_RECEIVED,

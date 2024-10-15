@@ -5,7 +5,6 @@ package ru.mos.mostech.ews.imap;
 
 import com.sun.mail.imap.protocol.BASE64MailboxDecoder;
 import com.sun.mail.imap.protocol.BASE64MailboxEncoder;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpResponseException;
 import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.AbstractConnection;
@@ -36,8 +35,6 @@ import java.util.*;
 /**
  * Dav Gateway IMAP connection implementation.
  */
-
-@Slf4j
 public class ImapConnection extends AbstractConnection {
     private static final Logger LOGGER = Logger.getLogger(ImapConnection.class);
 
@@ -785,8 +782,6 @@ public class ImapConnection extends AbstractConnection {
         sendClient("* " + currentFolder.recent + " RECENT");
     }
 
-
-@Slf4j
     static class MessageWrapper {
         protected OutputStream os;
         protected StringBuilder buffer;
@@ -1454,8 +1449,6 @@ public class ImapConnection extends AbstractConnection {
     /**
      * client side search conditions
      */
-
-@Slf4j
     static final class SearchConditions {
         Boolean flagged;
         Boolean answered;
@@ -1833,11 +1826,7 @@ public class ImapConnection extends AbstractConnection {
     /**
      * Filter to output only headers, also count full size
      */
-
-@Slf4j
     private static final class PartOutputStream extends FilterOutputStream {
-
-@Slf4j
         protected enum State {
             START, CR, CRLF, CRLFCR, BODY
         }
@@ -1897,8 +1886,6 @@ public class ImapConnection extends AbstractConnection {
     /**
      * Partial output stream, start at startIndex and write maxSize bytes.
      */
-
-@Slf4j
     private static final class PartialOutputStream extends FilterOutputStream {
         private int size;
         private int bufferSize;
@@ -1921,8 +1908,6 @@ public class ImapConnection extends AbstractConnection {
         }
     }
 
-
-@Slf4j
     protected abstract static class AbstractRangeIterator implements Iterator<ExchangeSession.Message> {
         ExchangeSession.MessageList messages;
         int currentIndex;
@@ -1932,8 +1917,6 @@ public class ImapConnection extends AbstractConnection {
         }
     }
 
-
-@Slf4j
     protected static class UIDRangeIterator extends AbstractRangeIterator {
         final String[] ranges;
         int currentRangeIndex;
@@ -2017,8 +2000,6 @@ public class ImapConnection extends AbstractConnection {
         }
     }
 
-
-@Slf4j
     protected static class RangeIterator extends AbstractRangeIterator {
         final String[] ranges;
         int currentRangeIndex;
@@ -2100,8 +2081,6 @@ public class ImapConnection extends AbstractConnection {
         }
     }
 
-
-@Slf4j
     static class ImapTokenizer {
         char[] value;
         int startIndex;

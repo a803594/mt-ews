@@ -7,8 +7,6 @@ package ru.mos.mostech.ews.exchange.ews;
  * Contains search mode.
  */
 @SuppressWarnings({"UnusedDeclaration"})
-
-@Slf4j
 public final class ContainmentMode extends AttributeOption {
     private ContainmentMode(String value) {
         super("ContainmentMode", value);

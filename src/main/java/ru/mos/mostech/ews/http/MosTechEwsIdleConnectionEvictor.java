@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.http;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.log4j.Logger;
 
@@ -18,8 +17,6 @@ import java.util.concurrent.TimeUnit;
  * Single thread for all connection managers.
  * close idle connections
  */
-
-@Slf4j
 public class MosTechEwsIdleConnectionEvictor {
     static final Logger LOGGER = Logger.getLogger(MosTechEwsIdleConnectionEvictor.class);
 

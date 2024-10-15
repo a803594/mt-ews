@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.http.request;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -25,8 +24,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
-@Slf4j
 public abstract class ExchangeDavRequest extends HttpPost implements ResponseHandler<List<MultiStatusResponse>> {
     protected static final Logger LOGGER = Logger.getLogger(ExchangeDavRequest.class);
     private static final String XML_CONTENT_TYPE = "text/xml; charset=UTF-8";

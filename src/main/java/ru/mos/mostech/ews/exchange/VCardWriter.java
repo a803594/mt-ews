@@ -6,8 +6,6 @@ package ru.mos.mostech.ews.exchange;
 /**
  * VCard Writer
  */
-
-@Slf4j
 public class VCardWriter extends ICSBufferedWriter {
     /**
      * Begin VCard and version

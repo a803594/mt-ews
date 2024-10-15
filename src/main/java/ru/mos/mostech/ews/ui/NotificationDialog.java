@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.ui;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 
@@ -14,8 +13,6 @@ import java.awt.event.ActionEvent;
 /**
  * Edit Caldav scheduling notifications.
  */
-
-@Slf4j
 public class NotificationDialog extends JDialog {
 
     protected boolean sendNotification;

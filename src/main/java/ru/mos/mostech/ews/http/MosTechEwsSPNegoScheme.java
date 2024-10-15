@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.http;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.auth.Credentials;
 import org.apache.http.impl.auth.SPNegoScheme;
 import org.apache.log4j.Logger;
@@ -23,8 +22,6 @@ import java.security.Security;
  * Override native SPNegoScheme to handle Kerberos.
  * Try to get Kerberos ticket from session, if this fails use callbacks to get credentials from user.
  */
-
-@Slf4j
 public class MosTechEwsSPNegoScheme extends SPNegoScheme {
     protected static final Logger LOGGER = Logger.getLogger(MosTechEwsSPNegoScheme.class);
     protected static final Object LOCK = new Object();

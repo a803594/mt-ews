@@ -3,8 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashSet;
@@ -13,8 +11,6 @@ import java.util.Set;
 /**
  * Field update with multiple values.
  */
-
-@Slf4j
 public class IndexedFieldUpdate extends FieldUpdate {
     final Set<FieldUpdate> updates = new HashSet<>();
     protected final String collectionName;

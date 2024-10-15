@@ -4,24 +4,16 @@ DIT
 package ru.mos.mostech.ews;
 
 import ru.mos.mostech.ews.exception.MosTechEwsException;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import lombok.extern.slf4j.Slf4j;
 import java.text.MessageFormat;
-import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
-import lombok.extern.slf4j.Slf4j;
 import java.util.Locale;
-import lombok.extern.slf4j.Slf4j;
 import java.util.ResourceBundle;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Internationalization message.
  */
-
-@Slf4j
 public class BundleMessage implements Serializable {
     /**
      * Root locale to get english messages for logging.
@@ -206,8 +198,6 @@ public class BundleMessage implements Serializable {
     /**
      * Typed bundle message collection
      */
-
-@Slf4j
     public static class BundleMessageList extends ArrayList<BundleMessage> {
     }
 }

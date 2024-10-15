@@ -3,18 +3,13 @@ DIT
  */
 package ru.mos.mostech.ews.ui.tray;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Level;
 
 import java.awt.*;
 
 /**
-
-@Slf4j
  * Gateway tray interface common to SWT and pure java implementations
  */
-
-@Slf4j
 public interface MosTechEwsTrayInterface {
     /**
      * Switch tray icon between active and standby icon.

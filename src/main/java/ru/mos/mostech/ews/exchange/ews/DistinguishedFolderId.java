@@ -3,16 +3,12 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Distinguished Folder Id.
  */
-
-@Slf4j
 public final class DistinguishedFolderId extends FolderId {
 
     private DistinguishedFolderId(String value) {
@@ -27,8 +23,6 @@ public final class DistinguishedFolderId extends FolderId {
      * DistinguishedFolderId names
      */
     @SuppressWarnings({"UnusedDeclaration"})
-
-@Slf4j
     public enum Name {
         calendar, contacts, deleteditems, drafts, inbox, journal, notes, outbox, sentitems, tasks, msgfolderroot,
         publicfoldersroot, root, junkemail, searchfolders, voicemail,

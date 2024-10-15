@@ -4,38 +4,23 @@ DIT
 package ru.mos.mostech.ews;
 
 import org.apache.log4j.Logger;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.caldav.CaldavServer;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ExchangeSessionFactory;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.auth.ExchangeAuthenticator;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.imap.ImapServer;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.smtp.SmtpServer;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.ui.SimpleUi;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
-import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
-import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.InvocationTargetException;
-import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * DavGateway main class
  */
-
-@Slf4j
 public final class MosTechEws {
     private static final Logger LOGGER = Logger.getLogger(MosTechEws.class);
     private static final Object LOCK = new Object();

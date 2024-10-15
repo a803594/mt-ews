@@ -4,7 +4,6 @@ DIT
 package ru.mos.mostech.ews.pop;
 
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.AbstractServer;
 import ru.mos.mostech.ews.Settings;
@@ -14,8 +13,6 @@ import java.net.Socket;
 /**
  * Pop3 server
  */
-
-@Slf4j
 public class PopServer extends AbstractServer {
     /**
      * Default POP port

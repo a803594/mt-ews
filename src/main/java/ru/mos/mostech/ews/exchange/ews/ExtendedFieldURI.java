@@ -3,19 +3,14 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.util.StringUtil;
 
 /**
  * Extended MAPI property.
  */
-
-@Slf4j
 public class ExtendedFieldURI implements FieldURI {
 
     @SuppressWarnings({"UnusedDeclaration"})
-
-@Slf4j
     protected enum PropertyType {
         ApplicationTime, ApplicationTimeArray, Binary, BinaryArray, Boolean, CLSID, CLSIDArray, Currency, CurrencyArray,
         Double, DoubleArray, Error, Float, FloatArray, Integer, IntegerArray, Long, LongArray, Null, Object,
@@ -23,8 +18,6 @@ public class ExtendedFieldURI implements FieldURI {
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
-
-@Slf4j
     protected enum DistinguishedPropertySetType {
         Meeting, Appointment, Common, PublicStrings, Address, InternetHeaders, CalendarAssistant, UnifiedMessaging, Task
     }

@@ -5,30 +5,19 @@ DIT
 package ru.mos.mostech.ews.exchange.auth;
 
 import org.apache.log4j.Logger;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import java.io.InputStream;
-import lombok.extern.slf4j.Slf4j;
 import java.io.OutputStream;
-import lombok.extern.slf4j.Slf4j;
 import java.net.HttpURLConnection;
-import lombok.extern.slf4j.Slf4j;
 import java.net.ProtocolException;
-import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
-import lombok.extern.slf4j.Slf4j;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Wrapper for HttpURLConnection to fix missing content type and add logging.
  */
-
-@Slf4j
 public class HttpURLConnectionWrapper extends HttpURLConnection {
     private static final Logger LOGGER = Logger.getLogger(HttpURLConnectionWrapper.class);
     HttpURLConnection httpURLConnection;

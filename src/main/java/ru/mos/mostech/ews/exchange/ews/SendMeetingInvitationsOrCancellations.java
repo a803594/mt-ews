@@ -7,8 +7,6 @@ package ru.mos.mostech.ews.exchange.ews;
  * Item update option.
  */
 @SuppressWarnings({"UnusedDeclaration"})
-
-@Slf4j
 public final class SendMeetingInvitationsOrCancellations extends AttributeOption {
     private SendMeetingInvitationsOrCancellations(String value) {
         super("SendMeetingInvitationsOrCancellations", value);

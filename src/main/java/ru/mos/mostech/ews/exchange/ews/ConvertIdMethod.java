@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.exchange.ews;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.XMLStreamUtil;
 
 import javax.xml.stream.XMLStreamException;
@@ -13,8 +12,6 @@ import javax.xml.stream.XMLStreamReader;
 /**
  * ConvertId implementation to retrieve primary mailbox address
  */
-
-@Slf4j
 public class ConvertIdMethod extends EWSMethod {
 
     /**

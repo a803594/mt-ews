@@ -3,8 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.http;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -17,8 +15,6 @@ import java.security.Security;
 /**
  * Add the SunPKCS11 Provider.
  */
-
-@Slf4j
 public final class SunPKCS11ProviderHandler {
 
     private SunPKCS11ProviderHandler() {
@@ -69,8 +65,6 @@ public final class SunPKCS11ProviderHandler {
         return errorMessage.toString();
     }
 
-
-@Slf4j
     static final class PKCS11ProviderException extends RuntimeException {
         public PKCS11ProviderException(String message) {
             super(message);

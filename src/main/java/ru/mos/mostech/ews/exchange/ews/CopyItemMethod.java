@@ -3,15 +3,11 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.List;
 
 /**
  * Copy item to another folder.
  */
-
-@Slf4j
 public class CopyItemMethod extends EWSMethod {
     /**
      * Copy item method.

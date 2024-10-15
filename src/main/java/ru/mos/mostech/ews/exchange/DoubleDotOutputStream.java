@@ -4,11 +4,8 @@ DIT
 package ru.mos.mostech.ews.exchange;
 
 import java.io.FilterOutputStream;
-import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import java.io.OutputStream;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * RFC 1939: 3 Basic Operations
@@ -16,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
  * If any line begins with the termination octet, the line is "byte-stuffed" by
  * pre-pending the termination octet to that line of the response.
  */
-
-@Slf4j
 public class DoubleDotOutputStream extends FilterOutputStream {
 
     // remember last 2 bytes written

@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.http;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.ui.PasswordPromptDialog;
@@ -25,8 +24,6 @@ import java.util.ArrayList;
  * SSLSocketFactory implementation.
  * Wrapper for DavGatewaySSLProtocolSocketFactory used by HttpClient 4
  */
-
-@Slf4j
 public class MosTechEwsSSLSocketFactory extends SSLSocketFactory {
     static final Logger LOGGER = Logger.getLogger(MosTechEwsSSLSocketFactory.class);
 

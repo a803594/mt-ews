@@ -6,8 +6,6 @@ package ru.mos.mostech.ews.exchange.dav;
 /**
  * Property value.
  */
-
-@Slf4j
 public class PropertyValue {
     protected final String namespaceUri;
     protected final String name;

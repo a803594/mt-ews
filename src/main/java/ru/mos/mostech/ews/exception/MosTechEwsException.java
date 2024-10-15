@@ -4,18 +4,13 @@ DIT
 package ru.mos.mostech.ews.exception;
 
 import ru.mos.mostech.ews.BundleMessage;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import java.util.Locale;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * I18 IOException subclass.
  */
-
-@Slf4j
 public class MosTechEwsException extends IOException {
     private final BundleMessage message;
 

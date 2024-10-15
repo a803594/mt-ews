@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.util.StringUtil;
 
 import java.util.List;
@@ -11,8 +10,6 @@ import java.util.List;
 /**
  * Unindexed Field URI
  */
-
-@Slf4j
 public class UnindexedFieldURI implements FieldURI {
     protected final String fieldURI;
     protected final String fieldName;

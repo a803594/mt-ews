@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.exchange.ews;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
@@ -19,8 +18,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-
-@Slf4j
 public class AutoDiscoverMethod extends HttpPost implements ResponseHandler {
 
     protected static final Logger LOGGER = Logger.getLogger(AutoDiscoverMethod.class);

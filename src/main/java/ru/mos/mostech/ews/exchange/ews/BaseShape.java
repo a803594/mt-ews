@@ -7,8 +7,6 @@ package ru.mos.mostech.ews.exchange.ews;
  * Item or folder base shape.
  */
 @SuppressWarnings({"UnusedDeclaration"})
-
-@Slf4j
 public final class BaseShape extends ElementOption {
     private BaseShape(String value) {
         super("t:BaseShape", value);

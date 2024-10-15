@@ -3,16 +3,12 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.io.Writer;
 
 /**
  * Field update
  */
-
-@Slf4j
 public class FieldUpdate {
     FieldURI fieldURI;
     String value;

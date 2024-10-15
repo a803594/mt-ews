@@ -4,8 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.util;
 
-import lombok.extern.slf4j.Slf4j;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -22,8 +20,6 @@ import java.security.spec.InvalidKeySpecException;
  * Encrypt string with user password.
  * Simple implementation based on AES
  */
-
-@Slf4j
 public class StringEncryptor {
     static final String ALGO = "PBEWithHmacSHA256AndAES_128";
     static String fingerprint;

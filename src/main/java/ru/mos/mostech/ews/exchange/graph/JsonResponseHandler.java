@@ -5,36 +5,22 @@ DIT
 package ru.mos.mostech.ews.exchange.graph;
 
 import org.apache.http.Header;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.ResponseHandler;
-import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONException;
-import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONObject;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.util.IOUtil;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import java.io.InputStream;
-import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.StandardCharsets;
-import lombok.extern.slf4j.Slf4j;
 import java.util.zip.GZIPInputStream;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Generic Json response handler for graph API calls
  */
-
-@Slf4j
 public class JsonResponseHandler implements ResponseHandler<JSONObject> {
     @Override
     public JSONObject handleResponse(HttpResponse response) throws IOException {

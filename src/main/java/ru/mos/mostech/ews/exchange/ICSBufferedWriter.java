@@ -7,8 +7,6 @@ package ru.mos.mostech.ews.exchange;
  * ICS String writer.
  * split lines longer than 75 characters
  */
-
-@Slf4j
 public class ICSBufferedWriter {
     final StringBuilder buffer = new StringBuilder();
 

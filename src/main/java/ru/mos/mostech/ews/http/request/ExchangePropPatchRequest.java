@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.http.request;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
@@ -22,8 +21,6 @@ import java.util.*;
  * Supports extended property update with type.
  */
 
-
-@Slf4j
 public class ExchangePropPatchRequest extends ExchangeDavRequest {
     protected static final Logger LOGGER = Logger.getLogger(ExchangePropPatchRequest.class);
     static final String TYPE_NAMESPACE = "urn:schemas-microsoft-com:datatypes";

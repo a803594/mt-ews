@@ -6,8 +6,6 @@ package ru.mos.mostech.ews.exception;
 /**
  * I18 AuthenticationException subclass.
  */
-
-@Slf4j
 public class MosTechEwsAuthenticationException extends MosTechEwsException {
     /**
      * Create a MT-EWS authentication exception with the given BundleMessage key.

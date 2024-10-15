@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.ui;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Level;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
@@ -19,8 +18,6 @@ import java.awt.event.ActionListener;
 /**
  * MT-EWS settings frame
  */
-
-@Slf4j
 public class SettingsFrame extends JFrame {
     static final Level[] LOG_LEVELS = {Level.OFF, Level.FATAL, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG, Level.ALL};
 

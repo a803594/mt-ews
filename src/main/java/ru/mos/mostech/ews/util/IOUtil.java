@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.util;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.imageio.ImageIO;
@@ -15,8 +14,6 @@ import java.nio.charset.StandardCharsets;
 /**
  * Input output functions.
  */
-
-@Slf4j
 public final class IOUtil {
     private IOUtil() {
     }

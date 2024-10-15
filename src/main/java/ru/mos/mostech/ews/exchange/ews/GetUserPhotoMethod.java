@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.exchange.ews;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.XMLStreamUtil;
 
 import javax.xml.stream.XMLStreamException;
@@ -12,11 +11,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.io.Writer;
 
-
-@Slf4j
 public class GetUserPhotoMethod extends EWSMethod  {
-
-@Slf4j
     public enum SizeRequested {
         HR48x48, HR64x64, HR96x96, HR120x120, HR240x240, HR360x360,
         HR432x432, HR504x504, HR648x648

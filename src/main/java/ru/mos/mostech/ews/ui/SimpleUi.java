@@ -1,6 +1,5 @@
 package ru.mos.mostech.ews.ui;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.util.IOUtil;
 
@@ -11,8 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
-
-@Slf4j
 public class SimpleUi {
     public static void start() throws IOException {
         // Проверяем, поддерживается ли системный трей

@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.smtp;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
@@ -29,8 +28,6 @@ import java.util.StringTokenizer;
 /**
  * Dav Gateway smtp connection implementation
  */
-
-@Slf4j
 public class SmtpConnection extends AbstractConnection {
 
     /**

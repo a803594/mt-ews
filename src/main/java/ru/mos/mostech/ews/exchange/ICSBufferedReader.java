@@ -4,18 +4,13 @@ DIT
 package ru.mos.mostech.ews.exchange;
 
 import java.io.BufferedReader;
-import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import java.io.Reader;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * ICS Buffered Reader.
  * Read events by line, handle multiple line elements
  */
-
-@Slf4j
 public class ICSBufferedReader extends BufferedReader {
     protected String nextLine;
     protected final StringBuilder currentLine = new StringBuilder(75);

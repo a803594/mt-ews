@@ -4,7 +4,6 @@ DIT
 
 package ru.mos.mostech.ews.http;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -55,8 +54,6 @@ import java.security.Security;
 import java.util.HashSet;
 import java.util.List;
 
-
-@Slf4j
 public class HttpClientAdapter implements Closeable {
     static final Logger LOGGER = Logger.getLogger("ru.mt.ews.http.HttpClientAdapter");
 

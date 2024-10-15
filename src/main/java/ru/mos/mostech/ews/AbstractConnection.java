@@ -4,37 +4,24 @@ DIT
 package ru.mos.mostech.ews;
 
 import org.apache.log4j.Logger;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ExchangeSession;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
-import lombok.extern.slf4j.Slf4j;
 import java.net.Socket;
-import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.StandardCharsets;
-import lombok.extern.slf4j.Slf4j;
 
 
 /**
  * Generic connection common to pop3 and smtp implementations
  */
-
-@Slf4j
 public abstract class AbstractConnection extends Thread implements Closeable {
 
-
-@Slf4j
     protected enum State {
         INITIAL, LOGIN, USER, PASSWORD, AUTHENTICATED, STARTMAIL, RECIPIENT, MAILDATA
     }
 
-
-@Slf4j
     protected static class LineReaderInputStream extends PushbackInputStream {
         final String encoding;
 

@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.ui.tray;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Level;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
@@ -20,8 +19,6 @@ import java.util.ArrayList;
 /**
  * Tray icon handler based on java 1.6
  */
-
-@Slf4j
 public class AwtGatewayTray implements MosTechEwsTrayInterface {
     protected static final String TRAY_PNG = "tray.png";
 

@@ -5,31 +5,18 @@ DIT
 package ru.mos.mostech.ews.exchange.auth;
 
 import ru.mos.mostech.ews.BundleMessage;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.ui.browser.DesktopBrowser;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
-import lombok.extern.slf4j.Slf4j;
 import javax.swing.event.HyperlinkEvent;
-import lombok.extern.slf4j.Slf4j;
 import javax.swing.text.html.HTMLEditorKit;
-import lombok.extern.slf4j.Slf4j;
 import javax.swing.text.html.StyleSheet;
-import lombok.extern.slf4j.Slf4j;
 import java.awt.*;
-import lombok.extern.slf4j.Slf4j;
 import java.awt.datatransfer.Clipboard;
-import lombok.extern.slf4j.Slf4j;
 import java.awt.datatransfer.StringSelection;
-import lombok.extern.slf4j.Slf4j;
 import java.net.URISyntaxException;
-import lombok.extern.slf4j.Slf4j;
 
-
-@Slf4j
 public class O365ManualAuthenticatorDialog extends JDialog {
     final JTextField codeField = new JTextField(30);
     protected String code;

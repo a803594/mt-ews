@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.pop;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.BundleMessage;
@@ -29,8 +28,6 @@ import java.util.StringTokenizer;
 /**
  * Dav Gateway pop connection implementation
  */
-
-@Slf4j
 public class PopConnection extends AbstractConnection {
     private static final Logger LOGGER = Logger.getLogger(PopConnection.class);
 
@@ -292,11 +289,7 @@ public class PopConnection extends AbstractConnection {
     /**
      * Filter to limit output lines to max body lines after header
      */
-
-@Slf4j
     private static final class TopOutputStream extends FilterOutputStream {
-
-@Slf4j
         protected enum State {
             START, CR, CRLF, CRLFCR, BODY
         }

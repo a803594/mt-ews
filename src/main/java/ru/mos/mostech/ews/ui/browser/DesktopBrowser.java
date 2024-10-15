@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.ui.browser;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.ui.AboutFrame;
@@ -15,8 +14,6 @@ import java.net.URISyntaxException;
 /**
  * Open default browser.
  */
-
-@Slf4j
 public final class DesktopBrowser {
     private DesktopBrowser() {
     }

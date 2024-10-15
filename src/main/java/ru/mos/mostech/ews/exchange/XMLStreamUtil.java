@@ -4,34 +4,21 @@ DIT
 package ru.mos.mostech.ews.exchange;
 
 import org.apache.log4j.Logger;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.stream.XMLInputFactory;
-import lombok.extern.slf4j.Slf4j;
 import javax.xml.stream.XMLStreamConstants;
-import lombok.extern.slf4j.Slf4j;
 import javax.xml.stream.XMLStreamException;
-import lombok.extern.slf4j.Slf4j;
 import javax.xml.stream.XMLStreamReader;
-import lombok.extern.slf4j.Slf4j;
 import java.io.ByteArrayInputStream;
-import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import java.io.InputStream;
-import lombok.extern.slf4j.Slf4j;
 import java.io.StringReader;
-import lombok.extern.slf4j.Slf4j;
 import java.util.HashMap;
-import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * XmlStreamReader utility methods
  */
-
-@Slf4j
 public final class XMLStreamUtil {
     private static final Logger LOGGER = Logger.getLogger(XMLStreamUtil.class);
 

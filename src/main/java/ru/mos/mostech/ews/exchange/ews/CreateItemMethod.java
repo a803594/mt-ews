@@ -3,15 +3,12 @@ DIT
  */
 package ru.mos.mostech.ews.exchange.ews;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.AbstractHttpEntity;
 import ru.mos.mostech.ews.Settings;
 
 /**
  * Create Item method.
  */
-
-@Slf4j
 public class CreateItemMethod extends EWSMethod {
     /**
      * Create exchange item.

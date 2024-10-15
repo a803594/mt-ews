@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.ui.tray;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Level;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
@@ -19,8 +18,6 @@ import java.util.ArrayList;
 /**
  * Failover GUI for Java 1.5 without SWT
  */
-
-@Slf4j
 public class FrameGatewayTray implements MosTechEwsTrayInterface {
     protected FrameGatewayTray() {
     }

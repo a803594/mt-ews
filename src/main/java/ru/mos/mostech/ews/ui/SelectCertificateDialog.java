@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.ui;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 
@@ -13,8 +12,6 @@ import java.awt.*;
 /**
  * Let user select a client certificate
  */
-
-@Slf4j
 public class SelectCertificateDialog extends JDialog {
     protected final JList<String> aliasListBox;
     protected final String[] aliases;

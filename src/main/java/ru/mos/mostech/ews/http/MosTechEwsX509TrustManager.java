@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.http;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.ui.AcceptCertificateDialog;
@@ -25,8 +24,6 @@ import java.text.SimpleDateFormat;
 /**
  * Custom Trust Manager, let user accept or deny.
  */
-
-@Slf4j
 public class MosTechEwsX509TrustManager implements X509TrustManager {
     private final X509TrustManager standardTrustManager;
 

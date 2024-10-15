@@ -5,7 +5,6 @@ DIT
 package ru.mos.mostech.ews.http;
 
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Consts;
 import org.apache.http.impl.auth.NTLMEngine;
@@ -30,8 +29,6 @@ import java.util.Locale;
  * authentication protocol.
  * Duplicate code from NTLMEngineImpl to implement channel binding
  */
-
-@Slf4j
 final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 
     static final Logger LOGGER = Logger.getLogger(MosTechEwsNTLMEngineImpl.class);
@@ -232,8 +229,6 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
         return rval;
     }
 
-
-@Slf4j
     protected static class CipherGen {
 
         protected final long currentTime;
@@ -828,11 +823,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
         return stripDotSuffix(domain);
     }
 
-
-@Slf4j
     /** NTLM message generation, base class */
-
-@Slf4j
     static class NTLMMessage {
         /** The current response */
         protected byte[] messageContents = null;
@@ -1003,11 +994,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
         }
     }
 
-
-@Slf4j
     /** Type 1 message assembly class */
-
-@Slf4j
     static class Type1Message extends MosTechEwsNTLMEngineImpl.NTLMMessage {
 
         private final byte[] hostBytes;
@@ -1126,11 +1113,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 
     }
 
-
-@Slf4j
     /** Type 2 message class */
-
-@Slf4j
     static class Type2Message extends NTLMMessage {
         protected final byte[] challenge;
         protected String target;
@@ -1209,11 +1192,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 
     }
 
-
-@Slf4j
     /** Type 3 message assembly class */
-
-@Slf4j
     static class Type3Message extends MosTechEwsNTLMEngineImpl.NTLMMessage {
         // For mic computation
         protected final byte[] type1Message;
@@ -1612,16 +1591,12 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
     }
 
     /**
-
-@Slf4j
      * Cryptography support - MD4. The following class was based loosely on the
      * RFC and on code found at http://www.cs.umd.edu/~harry/jotp/src/md.java.
      * Code correctness was verified by looking at MD4.java from the jcifs
      * library (http://jcifs.samba.org). It was massaged extensively to the
      * final form found here by Karl Wright (kwright@metacarta.com).
      */
-
-@Slf4j
     static class MD4 {
         protected int A = 0x67452301;
         protected int B = 0xefcdab89;
@@ -1785,8 +1760,6 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
      * Cryptography support - HMACMD5 - algorithmically based on various web
      * resources by Karl Wright
      */
-
-@Slf4j
     static class HMACMD5 {
         protected final byte[] ipad;
         protected final byte[] opad;

@@ -3,7 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.caldav;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.AbstractServer;
 import ru.mos.mostech.ews.Settings;
@@ -13,8 +12,6 @@ import java.net.Socket;
 /**
  * Calendar server, handle HTTP Caldav requests.
  */
-
-@Slf4j
 public class CaldavServer extends AbstractServer {
     /**
      * Default HTTP Caldav port

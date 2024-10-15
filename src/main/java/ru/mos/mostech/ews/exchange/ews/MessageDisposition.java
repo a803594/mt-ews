@@ -7,8 +7,6 @@ package ru.mos.mostech.ews.exchange.ews;
  * MessageDisposition flag.
  */
 @SuppressWarnings({"UnusedDeclaration"})
-
-@Slf4j
 public final class MessageDisposition extends AttributeOption {
 
     private MessageDisposition(String value) {

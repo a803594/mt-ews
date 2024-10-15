@@ -4,18 +4,13 @@ DIT
 package ru.mos.mostech.ews.exchange;
 
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import java.io.InputStream;
-import lombok.extern.slf4j.Slf4j;
 import java.io.PushbackInputStream;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Replace double dot lines with single dot in input stream.
  * A line with a single dot means end of stream
  */
-
-@Slf4j
 public class DoubleDotInputStream extends PushbackInputStream {
     final int[] buffer = new int[4];
     int index = -1;

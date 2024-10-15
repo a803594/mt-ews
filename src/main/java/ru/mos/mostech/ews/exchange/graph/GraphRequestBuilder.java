@@ -5,46 +5,27 @@ DIT
 package ru.mos.mostech.ews.exchange.graph;
 
 import org.apache.http.client.methods.HttpGet;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpPost;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpRequestBase;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ByteArrayEntity;
-import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONException;
-import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONObject;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ews.ExtendedFieldURI;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ews.FieldURI;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exchange.ews.IndexedFieldURI;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import java.net.URISyntaxException;
-import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.StandardCharsets;
-import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
-import lombok.extern.slf4j.Slf4j;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 import java.util.Set;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Build Microsoft graph request
  */
-
-@Slf4j
 public class GraphRequestBuilder {
 
     String method = "POST";

@@ -5,71 +5,40 @@ DIT
 package ru.mos.mostech.ews.exchange.auth;
 
 import javafx.application.Platform;
-import lombok.extern.slf4j.Slf4j;
 import javafx.concurrent.Worker;
-import lombok.extern.slf4j.Slf4j;
 import javafx.embed.swing.JFXPanel;
-import lombok.extern.slf4j.Slf4j;
 import javafx.scene.Scene;
-import lombok.extern.slf4j.Slf4j;
 import javafx.scene.control.ProgressBar;
-import lombok.extern.slf4j.Slf4j;
 import javafx.scene.layout.StackPane;
-import lombok.extern.slf4j.Slf4j;
 import javafx.scene.web.WebEngine;
-import lombok.extern.slf4j.Slf4j;
 import javafx.scene.web.WebView;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
-import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
-import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
-import lombok.extern.slf4j.Slf4j;
 import javax.xml.XMLConstants;
-import lombok.extern.slf4j.Slf4j;
 import javax.xml.transform.OutputKeys;
-import lombok.extern.slf4j.Slf4j;
 import javax.xml.transform.Transformer;
-import lombok.extern.slf4j.Slf4j;
 import javax.xml.transform.TransformerFactory;
-import lombok.extern.slf4j.Slf4j;
 import javax.xml.transform.dom.DOMSource;
-import lombok.extern.slf4j.Slf4j;
 import javax.xml.transform.stream.StreamResult;
-import lombok.extern.slf4j.Slf4j;
 import java.awt.*;
-import lombok.extern.slf4j.Slf4j;
 import java.awt.event.WindowAdapter;
-import lombok.extern.slf4j.Slf4j;
 import java.awt.event.WindowEvent;
-import lombok.extern.slf4j.Slf4j;
 import java.io.ByteArrayOutputStream;
-import lombok.extern.slf4j.Slf4j;
 import java.io.OutputStreamWriter;
-import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
-import lombok.extern.slf4j.Slf4j;
 import java.net.URLConnection;
-import lombok.extern.slf4j.Slf4j;
 import java.net.URLStreamHandler;
-import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.StandardCharsets;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Interactive authenticator UI based on OpenJFX.
  * Need access to internal urlhandler on recent JDK versions with: --add-exports java.base/sun.net.www.protocol.https=ALL-UNNAMED
  */
-
-@Slf4j
 public class O365InteractiveAuthenticatorFrame extends JFrame {
     private static final Logger LOGGER = Logger.getLogger(O365InteractiveAuthenticatorFrame.class);
 
