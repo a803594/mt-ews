@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONObject;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade;
+import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsParams;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsResults;
 import ru.mos.mostech.ews.util.IOUtil;
 
@@ -15,11 +16,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class HttpServer {
 
     private static volatile com.sun.net.httpserver.HttpServer server;
+
+    private static final Map<ResolveEwsParams, ResolveEwsResults> cache = new ConcurrentHashMap<>();
 
     public static void start(int port) throws IOException {
         // Создаем сервер на указанном порту
@@ -69,17 +76,23 @@ public class HttpServer {
             log.info("Запрос на AutoDiscovery получен");
             try {
                 String body = readBodyRequest(exchange);
+                String query = Objects.requireNonNullElse(exchange.getRequestURI().getQuery(), "");
+
                 JSONObject json = new JSONObject(body);
                 String email = json.getString("email");
                 log.info("Поиск EWS для {}", email);
                 String password = json.getString("password");
 
-                ResolveEwsResults results =
-                        AutoDiscoveryFacade.resolveEws(AutoDiscoveryFacade.ResolveEwsParams.builder()
-                                        .email(email)
-                                        .password(password)
-                                        .build())
-                                .orElse(null);
+                ResolveEwsParams resolveEwsParams = ResolveEwsParams.builder()
+                        .email(email)
+                        .password(password)
+                        .build();
+
+                ResolveEwsResults results = cache.get(resolveEwsParams);
+                if (results == null
+                        || results.getTime() < (System.currentTimeMillis() - Duration.ofMinutes(1).toMillis())) {
+                    results = AutoDiscoveryFacade.resolveEws(resolveEwsParams).orElse(null);
+                }
 
                 if (results == null) {
                     log.info("EWS для {} не найден", email);
@@ -87,18 +100,25 @@ public class HttpServer {
                     return;
                 }
 
-                response200Isp(results, exchange);
+                cache.put(resolveEwsParams, results);
+
+                if (query.contains("responseType=json")) {
+                    response200Json(results, exchange);
+                } else {
+                    response200Isp(results, exchange);
+                }
+
             } catch (Exception e) {
                 log.error("", e);
-                response404Xml(e.getMessage(), exchange);
+                response400Xml(e.getMessage(), exchange);
             }
         }
 
 
         private void response404Xml(String data, HttpExchange exchange) throws IOException {
             String response = """
-                <username>$data</username>
-                """.replace("$data", data);
+                    <username>$data</username>
+                    """.replace("$data", data);
             exchange.getResponseHeaders().add("Content-Type", "application/xml; charset=utf-8");
             exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             exchange.sendResponseHeaders(404, response.getBytes(StandardCharsets.UTF_8).length);
@@ -109,8 +129,8 @@ public class HttpServer {
 
         private void response400Xml(String data, HttpExchange exchange) throws IOException {
             String response = """
-                <error>$data</error>
-                """.replace("$data", data);
+                    <error>$data</error>
+                    """.replace("$data", data);
             exchange.getResponseHeaders().add("Content-Type", "application/xml; charset=utf-8");
             exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             exchange.sendResponseHeaders(405, response.getBytes(StandardCharsets.UTF_8).length);
@@ -128,7 +148,25 @@ public class HttpServer {
                     Settings.getIntProperty("mt.ews.caldavPort"),
                     Settings.isSecure()
             );
-            exchange.getResponseHeaders().add("Content-Type", "application/xml; charset=utf-8");
+            exchange.getResponseHeaders().add("Content-Type", "text/xml");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            exchange.sendResponseHeaders(200, response.getBytes(StandardCharsets.UTF_8).length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(response.getBytes(StandardCharsets.UTF_8));
+            os.close();
+        }
+
+        @SneakyThrows
+        private void response200Json(ResolveEwsResults results, HttpExchange exchange) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("domain", results.getDomain());
+            jsonObject.put("user", results.getUser());
+            jsonObject.put("imapPort", Settings.getIntProperty("mt.ews.imapPort"));
+            jsonObject.put("smtpPort", Settings.getIntProperty("mt.ews.smtpPort"));
+            jsonObject.put("caldavPort", Settings.getIntProperty("mt.ews.caldavPort"));
+            jsonObject.put("isSecure", Settings.isSecure());
+            String response = jsonObject.toString();
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
             exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             exchange.sendResponseHeaders(200, response.getBytes(StandardCharsets.UTF_8).length);
             OutputStream os = exchange.getResponseBody();
