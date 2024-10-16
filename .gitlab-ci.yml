@@ -11,7 +11,7 @@ stages:
 default:
   image: alpine:3.14
   
-Сборка.Шрифтов:
+Сборка.Ews:
   stage: trigger
   script:
     - apk --no-cache add curl
