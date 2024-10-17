@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews.util;
 
+import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.imageio.ImageIO;
@@ -10,6 +11,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Supplier;
 
 /**
  * Input output functions.
@@ -153,4 +155,10 @@ public final class IOUtil {
         return baos.toByteArray();
     }
 
+    @SneakyThrows
+    public static String readToString(Supplier<InputStream> ou) {
+        try (InputStream out = ou.get()) {
+            return new String(readFully(out), StandardCharsets.UTF_8);
+        }
+    }
 }

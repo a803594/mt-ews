@@ -9,6 +9,7 @@ import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsParams;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsResults;
+import ru.mos.mostech.ews.pst.PstConverter;
 import ru.mos.mostech.ews.util.IOUtil;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
@@ -23,6 +25,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class HttpServer {
+
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+    public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json; charset=utf-8";
+    public static final String APPLICATION_XML_CHARSET_UTF_8 = "application/xml; charset=utf-8";
 
     private static volatile com.sun.net.httpserver.HttpServer server;
 
@@ -35,38 +42,74 @@ public class HttpServer {
 
         // Определяем обработчик для корневого пути ("/")
         server.createContext("/pst", new PstHandler());
+        server.createContext("/pst-status", new PstStatusHandler());
         server.createContext("/autodiscovery", new AutoDiscoveryHandler());
 
         // Запускаем сервер
         server.setExecutor(null); // Используем стандартный исполнитель
         server.start();
+        PstConverter.start();
 
         log.info("HTTP-сервер для обработки запросов от mt-mail запущен на порту {}", port);
     }
 
     public static void stop() {
         server.stop(1000);
+        PstConverter.stop();
     }
 
     // Обработчик, который отвечает на HTTP-запросы
     static class PstHandler implements HttpHandler {
+
+        @SneakyThrows
         @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            // Получаем метод запроса (GET, POST и т.д.)
-            String requestMethod = exchange.getRequestMethod();
+        public void handle(HttpExchange exchange) {
+            try {
+                String body = readBodyRequest(exchange);
 
-            // Формируем ответ
-            String response = "Запрос получен! Метод: " + requestMethod;
+                JSONObject json = new JSONObject(body);
+                String path = json.optString("path");
+                Path outputDir = PstConverter.convert(path);
 
-            exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
-            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            exchange.sendResponseHeaders(200, response.getBytes(StandardCharsets.UTF_8).length);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("path", outputDir.toAbsolutePath().toString());
+                String response = jsonObject.toString();
+                sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("error", e.getMessage());
+                String response = jsonObject.toString();
+                sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
+            }
 
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes(StandardCharsets.UTF_8));
-            os.close();
         }
     }
+
+    static class PstStatusHandler implements HttpHandler {
+
+        @SneakyThrows
+        @Override
+        public void handle(HttpExchange exchange) {
+            try {
+                String body = readBodyRequest(exchange);
+
+                JSONObject json = new JSONObject(body);
+                String path = json.optString("path");
+                JSONObject status = PstConverter.getStatus(path);
+                String response = status.toString();
+                sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("error", e.getMessage());
+                String response = jsonObject.toString();
+                sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
+            }
+
+        }
+    }
+
 
     static class AutoDiscoveryHandler implements HttpHandler {
 
@@ -119,24 +162,14 @@ public class HttpServer {
             String response = """
                     <username>$data</username>
                     """.replace("$data", data);
-            exchange.getResponseHeaders().add("Content-Type", "application/xml; charset=utf-8");
-            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            exchange.sendResponseHeaders(404, response.getBytes(StandardCharsets.UTF_8).length);
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes(StandardCharsets.UTF_8));
-            os.close();
+            sendResponse(exchange, 404, response, APPLICATION_XML_CHARSET_UTF_8);
         }
 
         private void response400Xml(String data, HttpExchange exchange) throws IOException {
             String response = """
                     <error>$data</error>
                     """.replace("$data", data);
-            exchange.getResponseHeaders().add("Content-Type", "application/xml; charset=utf-8");
-            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            exchange.sendResponseHeaders(405, response.getBytes(StandardCharsets.UTF_8).length);
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes(StandardCharsets.UTF_8));
-            os.close();
+            sendResponse(exchange, 400, response, APPLICATION_XML_CHARSET_UTF_8);
         }
 
         private void response200Isp(ResolveEwsResults results, HttpExchange exchange) throws IOException {
@@ -148,12 +181,7 @@ public class HttpServer {
                     Settings.getIntProperty("mt.ews.caldavPort"),
                     Settings.isSecure()
             );
-            exchange.getResponseHeaders().add("Content-Type", "text/xml");
-            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            exchange.sendResponseHeaders(200, response.getBytes(StandardCharsets.UTF_8).length);
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes(StandardCharsets.UTF_8));
-            os.close();
+            sendResponse(exchange, 200, response, APPLICATION_XML_CHARSET_UTF_8);
         }
 
         @SneakyThrows
@@ -166,12 +194,7 @@ public class HttpServer {
             jsonObject.put("caldavPort", Settings.getIntProperty("mt.ews.caldavPort"));
             jsonObject.put("isSecure", Settings.isSecure());
             String response = jsonObject.toString();
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
-            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            exchange.sendResponseHeaders(200, response.getBytes(StandardCharsets.UTF_8).length);
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes(StandardCharsets.UTF_8));
-            os.close();
+            sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
         }
     }
 
@@ -179,6 +202,15 @@ public class HttpServer {
         try (InputStream is = exchange.getRequestBody()) {
             return new String(IOUtil.readFully(is), StandardCharsets.UTF_8);
         }
+    }
+
+    private static void sendResponse(HttpExchange exchange, int status, String response, String contentType) throws IOException {
+        exchange.getResponseHeaders().add(CONTENT_TYPE, contentType);
+        exchange.getResponseHeaders().add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        exchange.sendResponseHeaders(status, response.getBytes(StandardCharsets.UTF_8).length);
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes(StandardCharsets.UTF_8));
+        os.close();
     }
 
 }
