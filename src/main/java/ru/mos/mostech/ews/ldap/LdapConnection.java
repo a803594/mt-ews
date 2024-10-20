@@ -37,7 +37,7 @@ import java.util.*;
  */
 @Slf4j
 public class LdapConnection extends AbstractConnection {
-    
+
     /**
      * MT-EWS base context
      */
@@ -379,8 +379,9 @@ public class LdapConnection extends AbstractConnection {
         return ldapVersion == LDAP_VERSION3;
     }
 
+    @SuppressWarnings({"java:S3776", "java:S6541", "java:S135"})
     @Override
-    public void run() {
+    public void doRun() {
         byte[] inbuf = new byte[2048];   // Buffer for reading incoming bytes
         int bytesread;  // Number of bytes in inbuf
         int bytesleft;  // Number of bytes that need to read for completing resp
@@ -658,6 +659,7 @@ public class LdapConnection extends AbstractConnection {
 
     /**
      * Extract rdn value from username
+     *
      * @param dn distinguished name or username
      * @return username
      */
@@ -1274,9 +1276,9 @@ public class LdapConnection extends AbstractConnection {
                 return true;
             } else //noinspection RedundantIfStatement
                 if ((operator == LDAP_FILTER_SUBSTRINGS) && (personAttributeValue.toLowerCase().contains(value.toLowerCase()))) {
-                // Found a substring match
-                return true;
-            }
+                    // Found a substring match
+                    return true;
+                }
 
             return false;
         }
@@ -1336,7 +1338,7 @@ public class LdapConnection extends AbstractConnection {
             if (mappedAttribute != null) {
                 contactAttributeName = mappedAttribute;
             }
-        } else if (!"hassubordinates".equals(ldapAttributeName)){
+        } else if (!"hassubordinates".equals(ldapAttributeName)) {
             MosTechEwsTray.debug(new BundleMessage("UNKNOWN_ATTRIBUTE", ldapAttributeName));
         }
         return contactAttributeName;

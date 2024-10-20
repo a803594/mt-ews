@@ -144,9 +144,9 @@ public final class Settings {
         SETTINGS_PROPERTIES.put("mt.ews.imapPort", "51143");
         SETTINGS_PROPERTIES.put("mt.ews.smtpPort", "51025");
         SETTINGS_PROPERTIES.put("mt.ews.caldavPort", "51080");
+        SETTINGS_PROPERTIES.put("mt.ews.ldapPort", "51389");
         //end
 
-        SETTINGS_PROPERTIES.put("mt.ews.ldapPort", "1389");
         SETTINGS_PROPERTIES.put("mt.ews.popPort", "1110");
         SETTINGS_PROPERTIES.put("mt.ews.clientSoTimeout", "");
         SETTINGS_PROPERTIES.put("mt.ews.keepDelay", "30");

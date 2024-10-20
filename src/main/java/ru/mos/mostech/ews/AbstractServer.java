@@ -3,6 +3,7 @@ DIT
  */
 package ru.mos.mostech.ews;
 
+import lombok.Getter;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 
@@ -21,8 +22,12 @@ import java.util.HashSet;
  * Generic abstract server common to SMTP and POP3 implementations
  */
 public abstract class AbstractServer extends Thread {
+
     protected boolean nosslFlag; // will cause same behavior as before with unchanged config files
+
+    @Getter
     private final int port;
+
     private ServerSocket serverSocket;
 
     /**
@@ -32,14 +37,6 @@ public abstract class AbstractServer extends Thread {
      */
     public abstract String getProtocolName();
 
-    /**
-     * Server socket TCP port
-     *
-     * @return port
-     */
-    public int getPort() {
-        return port;
-    }
 
     /**
      * Create a ServerSocket to listen for connections.
@@ -64,6 +61,7 @@ public abstract class AbstractServer extends Thread {
      *
      * @throws MosTechEwsException unable to create server socket
      */
+    @SuppressWarnings("java:S3776")
     public void bind() throws MosTechEwsException {
         String bindAddress = Settings.getProperty("mt.ews.bindAddress");
         String keystoreFile = Settings.getProperty("mt.ews.ssl.keystoreFile");
@@ -96,16 +94,16 @@ public abstract class AbstractServer extends Thread {
             } else {
                 serverSocket = serverSocketFactory.createServerSocket(port, 0, InetAddress.getByName(bindAddress));
             }
-            if (serverSocket instanceof SSLServerSocket) {
+            if (serverSocket instanceof SSLServerSocket sslServerSocket) {
                 // CVE-2014-3566 disable SSLv3
                 HashSet<String> protocols = new HashSet<>();
-                for (String protocol : ((SSLServerSocket) serverSocket).getEnabledProtocols()) {
+                for (String protocol : sslServerSocket.getEnabledProtocols()) {
                     if (!protocol.startsWith("SSL")) {
                         protocols.add(protocol);
                     }
                 }
-                ((SSLServerSocket) serverSocket).setEnabledProtocols(protocols.toArray(new String[0]));
-                ((SSLServerSocket) serverSocket).setNeedClientAuth(Settings.getBooleanProperty("mt.ews.ssl.needClientAuth", false));
+                sslServerSocket.setEnabledProtocols(protocols.toArray(new String[0]));
+                sslServerSocket.setNeedClientAuth(Settings.getBooleanProperty("mt.ews.ssl.needClientAuth", false));
             }
 
         } catch (IOException e) {
@@ -125,7 +123,7 @@ public abstract class AbstractServer extends Thread {
     protected TrustManager[] getTrustManagers() throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException {
         String truststoreFile = Settings.getProperty("mt.ews.ssl.truststoreFile");
         if (truststoreFile == null || truststoreFile.isEmpty()) {
-            return null;
+            return new TrustManager[]{};
         }
         try (FileInputStream trustStoreInputStream = new FileInputStream(truststoreFile)) {
             KeyStore trustStore = KeyStore.getInstance(Settings.getProperty("mt.ews.ssl.truststoreType"));
@@ -149,7 +147,7 @@ public abstract class AbstractServer extends Thread {
     protected KeyManager[] getKeyManagers() throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException, UnrecoverableKeyException {
         String keystoreFile = Settings.getProperty("mt.ews.ssl.keystoreFile");
         if (keystoreFile == null || keystoreFile.isEmpty()) {
-            return null;
+            return new KeyManager[]{};
         }
         try (FileInputStream keyStoreInputStream = new FileInputStream(keystoreFile)) {
             KeyStore keystore = KeyStore.getInstance(Settings.getProperty("mt.ews.ssl.keystoreType"));

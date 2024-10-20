@@ -1,12 +1,15 @@
 <configuration>
 
     <!-- Установите уровень логирования по умолчанию для всех логгеров -->
-    <root level="DEBUG">
-        <appender-ref ref="CONSOLE" />
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" level="INFO" />
     </root>
 
     <!-- Установите уровень логирования для конкретного пакета или класса -->
-    <logger name="ru" level="DEBUG" />
+    <logger name="ru" level="DEBUG">
+        <appender-ref ref="SIFT" />
+    </logger>
+
     <logger name="org.apache.http" level="INFO" />
 
     <!-- Определите консольный аппендер -->
@@ -14,6 +17,26 @@
         <encoder>
             <pattern>%d{ISO8601} %-5level [%thread] %logger{0} %msg%n</pattern>
         </encoder>
+    </appender>
+
+    <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator class="ch.qos.logback.classic.sift.MDCBasedDiscriminator">
+            <key>userLogPath</key>
+            <defaultValue>/dev/null</defaultValue>
+        </discriminator>
+        <sift>
+            <appender name="FILE-${userLogPath}" class="ch.qos.logback.core.FileAppender">
+                <file>${userLogPath}</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${userLogPath}.%d{yyyy-MM-dd}</fileNamePattern>
+                    <maxHistory>30</maxHistory>
+                </rollingPolicy>
+                <prudent>true</prudent>
+                <encoder>
+                    <pattern>%d{ISO8601} %-5level [%thread] %logger{0} %msg%n</pattern>
+                </encoder>
+            </appender>
+        </sift>
     </appender>
 
 </configuration>

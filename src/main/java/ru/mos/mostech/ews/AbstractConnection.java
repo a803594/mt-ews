@@ -7,10 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.exchange.ExchangeSession;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
+import ru.mos.mostech.ews.util.MdcUserPathUtils;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 
 /**
@@ -23,18 +25,23 @@ public abstract class AbstractConnection extends Thread implements Closeable {
         INITIAL, LOGIN, USER, PASSWORD, AUTHENTICATED, STARTMAIL, RECIPIENT, MAILDATA
     }
 
+    @Override
+    public void run() {
+        MdcUserPathUtils.init(client.getPort());
+        doRun();
+    }
+
+    protected abstract void doRun();
+
     protected static class LineReaderInputStream extends PushbackInputStream {
         final String encoding;
 
         protected LineReaderInputStream(InputStream in, String encoding) {
             super(in);
-            if (encoding == null) {
-                this.encoding = "ASCII";
-            } else {
-                this.encoding = encoding;
-            }
+            this.encoding = Objects.requireNonNullElse(encoding, "ASCII");
         }
 
+        @SuppressWarnings("java:S135") // break
         public String readLine() throws IOException {
             ByteArrayOutputStream baos = null;
             int b;
@@ -112,7 +119,7 @@ public abstract class AbstractConnection extends Thread implements Closeable {
      * @param name         thread type name
      * @param clientSocket client socket
      */
-    public AbstractConnection(String name, Socket clientSocket) {
+    protected AbstractConnection(String name, Socket clientSocket) {
         super(name + '-' + clientSocket.getPort());
         this.client = clientSocket;
         setDaemon(true);
@@ -125,7 +132,7 @@ public abstract class AbstractConnection extends Thread implements Closeable {
      * @param clientSocket client socket
      * @param encoding     socket stream encoding
      */
-    public AbstractConnection(String name, Socket clientSocket, String encoding) {
+    protected AbstractConnection(String name, Socket clientSocket, String encoding) {
         super(name + '-' + clientSocket.getPort());
         this.client = clientSocket;
         logConnection("CONNECT", "");
@@ -139,7 +146,7 @@ public abstract class AbstractConnection extends Thread implements Closeable {
     }
 
     public void logConnection(String action, String userName) {
-        log.info(action+" - "+client.getInetAddress().getHostAddress()+":"+client.getPort()+" " + userName);
+        log.info("{} - {}:{} {}", action, client.getInetAddress().getHostAddress(), client.getPort(), userName);
     }
 
     /**
@@ -191,9 +198,6 @@ public abstract class AbstractConnection extends Thread implements Closeable {
      * @throws IOException on error
      */
     public void sendClient(byte[] messageBytes, int offset, int length) throws IOException {
-        //StringBuffer logBuffer = new StringBuffer("> ");
-        //logBuffer.append(new String(messageBytes, offset, length));
-        //DavGatewayTray.debug(logBuffer.toString());
         os.write(messageBytes, offset, length);
         os.flush();
     }
@@ -236,6 +240,14 @@ public abstract class AbstractConnection extends Thread implements Closeable {
      * Close client connection, streams and Exchange session .
      */
     public void close() {
+        try {
+            doClose();
+        } finally {
+            MdcUserPathUtils.clear();
+        }
+    }
+
+    private void doClose() {
         logConnection("DISCONNECT", "");
         if (in != null) {
             try {

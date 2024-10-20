@@ -37,7 +37,7 @@ import java.util.*;
  */
 @Slf4j
 public class ImapConnection extends AbstractConnection {
-    
+
 
     protected String baseMailboxPath;
     ExchangeSession.Folder currentFolder;
@@ -51,8 +51,9 @@ public class ImapConnection extends AbstractConnection {
         super(ImapConnection.class.getSimpleName(), clientSocket, "UTF-8");
     }
 
+    @SuppressWarnings({"java:S3776", "java:S6541", "java:S135"})
     @Override
-    public void run() {
+    public void doRun() {
         final String capabilities;
         int imapIdleDelay = Settings.getIntProperty("mt.ews.imapIdleDelay") * 60;
         if (imapIdleDelay > 0) {
@@ -520,7 +521,7 @@ public class ImapConnection extends AbstractConnection {
                                         ExchangeSession.Message createdMessage = MessageCreateThread.createMessage(session, folderName, messageName, properties, mimeMessage, os, capabilities);
                                         if (createdMessage != null) {
                                             long uid = createdMessage.getImapUid();
-                                            sendClient(commandId + " OK [APPENDUID 1 "+uid+"] APPEND completed");
+                                            sendClient(commandId + " OK [APPENDUID 1 " + uid + "] APPEND completed");
                                         } else {
                                             sendClient(commandId + " OK APPEND completed");
                                         }
@@ -1020,6 +1021,7 @@ public class ImapConnection extends AbstractConnection {
 
     /**
      * Handle flags macro in fetch requests
+     *
      * @param parameters input fetch flags
      * @return transformed fetch flags
      */
@@ -1391,6 +1393,7 @@ public class ImapConnection extends AbstractConnection {
 
     /**
      * Compute body part size with failover.
+     *
      * @param bodyPart MIME body part
      * @return body part size or 0 on error
      */

@@ -119,8 +119,9 @@ public class CaldavConnection extends AbstractConnection {
         }
     }
 
+    @SuppressWarnings({"java:S3776", "java:S6541", "java:S135"})
     @Override
-    public void run() {
+    public void doRun() {
         String line;
         StringTokenizer tokens;
 
@@ -1307,7 +1308,7 @@ public class CaldavConnection extends AbstractConnection {
         if (content != null && content.length > 0) {
             // full debug trace
             if (log.isDebugEnabled()) {
-                log.debug("> " + new String(content, StandardCharsets.UTF_8));
+                log.debug("> {}", new String(content, StandardCharsets.UTF_8));
             }
             sendClient(content);
         }
@@ -1708,7 +1709,7 @@ public class CaldavConnection extends AbstractConnection {
                     sendClient(Integer.toHexString(length));
                     sendClient(data, offset, length);
                     if (log.isDebugEnabled()) {
-                        log.debug("> " + new String(data, offset, length, StandardCharsets.UTF_8));
+                        log.debug("> {}", new String(data, offset, length, StandardCharsets.UTF_8));
                     }
                     sendClient("");
                 }

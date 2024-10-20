@@ -75,8 +75,9 @@ public class PopConnection extends AbstractConnection {
     }
 
 
+    @SuppressWarnings({"java:S3776", "java:S6541", "java:S135"})
     @Override
-    public void run() {
+    public void doRun() {
         String line;
         StringTokenizer tokens;
 

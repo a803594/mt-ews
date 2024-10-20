@@ -40,8 +40,9 @@ public class SmtpConnection extends AbstractConnection {
     }
 
 
+    @SuppressWarnings({"java:S3776", "java:S6541", "java:S135"})
     @Override
-    public void run() {
+    public void doRun() {
         String line;
         StringTokenizer tokens;
         List<String> recipients = new ArrayList<>();
@@ -49,7 +50,7 @@ public class SmtpConnection extends AbstractConnection {
         try {
             ExchangeSessionFactory.checkConfig();
             sendClient("220 MT-EWS " + MosTechEws.getCurrentVersion() + " SMTP ready at " + new Date());
-            for (; ;) {
+            for (; ; ) {
                 line = readClient();
                 // unable to read line, connection closed ?
                 if (line == null) {
@@ -194,7 +195,7 @@ public class SmtpConnection extends AbstractConnection {
             MosTechEwsTray.log(e);
             try {
                 // append a line feed to avoid thunderbird message drop
-                sendClient("421 " + ((e.getMessage() == null) ? e : e.getMessage())+"\n");
+                sendClient("421 " + ((e.getMessage() == null) ? e : e.getMessage()) + "\n");
             } catch (IOException e2) {
                 MosTechEwsTray.debug(new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
             }
@@ -238,10 +239,10 @@ public class SmtpConnection extends AbstractConnection {
     protected void decodeCredentials(String encodedCredentials) throws IOException {
         String decodedCredentials = IOUtil.decodeBase64AsString(encodedCredentials);
         int startIndex = decodedCredentials.indexOf((char) 0);
-        if (startIndex >=0) {
-            int endIndex = decodedCredentials.indexOf((char) 0, startIndex+1);
-            if (endIndex >=0) {
-                userName = decodedCredentials.substring(startIndex+1, endIndex);
+        if (startIndex >= 0) {
+            int endIndex = decodedCredentials.indexOf((char) 0, startIndex + 1);
+            if (endIndex >= 0) {
+                userName = decodedCredentials.substring(startIndex + 1, endIndex);
                 password = decodedCredentials.substring(endIndex + 1);
             } else {
                 throw new MosTechEwsException("EXCEPTION_INVALID_CREDENTIALS");

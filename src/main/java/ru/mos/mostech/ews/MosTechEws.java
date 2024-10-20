@@ -9,6 +9,7 @@ import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.exchange.ExchangeSessionFactory;
 import ru.mos.mostech.ews.exchange.auth.ExchangeAuthenticator;
 import ru.mos.mostech.ews.imap.ImapServer;
+import ru.mos.mostech.ews.ldap.LdapServer;
 import ru.mos.mostech.ews.server.HttpServer;
 import ru.mos.mostech.ews.smtp.SmtpServer;
 import ru.mos.mostech.ews.ui.SimpleUi;
@@ -140,6 +141,10 @@ public final class MosTechEws {
         int caldavPort = Settings.getIntProperty("mt.ews.caldavPort");
         if (caldavPort != 0) {
             SERVER_LIST.add(new CaldavServer(caldavPort));
+        }
+        int ldapPort = Settings.getIntProperty("mt.ews.ldapPort");
+        if (ldapPort != 0) {
+            SERVER_LIST.add(new LdapServer(ldapPort));
         }
 
         for (AbstractServer server : SERVER_LIST) {
