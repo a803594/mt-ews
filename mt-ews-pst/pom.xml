@@ -7,7 +7,7 @@
     <groupId>ru.mos.mostech</groupId>
     <artifactId>mt-ews-pst</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>${MT_EWS_VERSION}</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

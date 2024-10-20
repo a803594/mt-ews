@@ -44,6 +44,7 @@ public class HttpServer {
         server.createContext("/pst", new PstHandler());
         server.createContext("/pst-status", new PstStatusHandler());
         server.createContext("/autodiscovery", new AutoDiscoveryHandler());
+        server.createContext("/ews-settings", new EwsSettingsHandler());
 
         // Запускаем сервер
         server.setExecutor(null); // Используем стандартный исполнитель
@@ -196,6 +197,28 @@ public class HttpServer {
             jsonObject.put("isSecure", Settings.isSecure());
             String response = jsonObject.toString();
             sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
+        }
+    }
+
+    static class EwsSettingsHandler implements HttpHandler {
+
+        @SneakyThrows
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            try {
+                JSONObject jsonObject = new JSONObject();
+                for (String[] setting : Settings.getAll()) {
+                    jsonObject.put(setting[0], setting[1]);
+                }
+                String response = jsonObject.toString();
+                sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("error", e.getMessage());
+                String response = jsonObject.toString();
+                sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
+            }
         }
     }
 

@@ -5,7 +5,7 @@
     <groupId>ru.mos.mostech</groupId>
     <artifactId>mt-ews</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>${MT_EWS_VERSION}</version>
     <name>MT-EWS IMAP/SMTP/Caldav/Carddav Exchange Gateway</name>
     <organization>
         <name>DIT</name>
