@@ -28,8 +28,9 @@
             <appender name="FILE-${userLogPath}" class="ch.qos.logback.core.FileAppender">
                 <file>${userLogPath}</file>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <fileNamePattern>${userLogPath}.%d{yyyy-MM-dd}</fileNamePattern>
+                    <fileNamePattern>${userLogPath}.%d{yyyy-MM-dd}.zip</fileNamePattern>
                     <maxHistory>30</maxHistory>
+                    <totalSizeCap>5MB</totalSizeCap>
                 </rollingPolicy>
                 <prudent>true</prudent>
                 <encoder>
