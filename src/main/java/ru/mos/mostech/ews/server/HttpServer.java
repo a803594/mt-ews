@@ -1,5 +1,6 @@
 package ru.mos.mostech.ews.server;
 
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import lombok.SneakyThrows;
@@ -12,11 +13,11 @@ import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsResults;
 import ru.mos.mostech.ews.pst.PstConverter;
 import ru.mos.mostech.ews.util.IOUtil;
 import ru.mos.mostech.ews.util.MdcUserPathUtils;
+import ru.mos.mostech.ews.util.ZipUtil;
 
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Map;
@@ -32,7 +33,8 @@ public class HttpServer {
     public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json; charset=utf-8";
     public static final String APPLICATION_XML_CHARSET_UTF_8 = "application/xml; charset=utf-8";
-    public static final String APPLICATION_JAVA_ARCHIVE = "application/java-archive";
+    public static final String APPLICATION_ZIP = "application/zip";
+
     private static volatile com.sun.net.httpserver.HttpServer server;
 
     private static final Map<ResolveEwsParams, ResolveEwsResults> cache = new ConcurrentHashMap<>();
@@ -229,15 +231,23 @@ public class HttpServer {
         @SneakyThrows
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            int remotePort = exchange.getRemoteAddress().getPort();
-            Optional<Path> userLogPath = MdcUserPathUtils.getUserLogPathByPort(remotePort);
+            try {
+                int remotePort = exchange.getRemoteAddress().getPort();
+                Optional<Path> userLogPath = MdcUserPathUtils.getUserLogPathByPort(remotePort);
 
-            if (userLogPath.isPresent()) {
-                // TODO: Добавить архивирование каталога с логами
-                File file = new File(userLogPath.get().toFile(), "ews-logs.zip");
-                sendFile(exchange, 200, file, APPLICATION_JAVA_ARCHIVE);
+                if (userLogPath.isPresent()) {
+                    File file = new File(userLogPath.toString());
+                    sendZipFile(exchange, 200, file);
+                } else {
+                    throw new Exception("Не удалось найти имя пользователя");
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("error", e.getMessage());
+                String response = jsonObject.toString();
+                sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
             }
-            // TODO: Добавить обработку ошибки при отсуствии файла
         }
     }
 
@@ -256,14 +266,17 @@ public class HttpServer {
         os.close();
     }
 
-    private static void sendFile(HttpExchange exchange, int status, File file, String contentType) throws IOException {
-        exchange.getResponseHeaders().add(CONTENT_TYPE, contentType);
-        exchange.getResponseHeaders().add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        exchange.getResponseHeaders().add(CONTENT_DISPOSITION, String.format("attachment; filename=%s", file.getName()));
-        exchange.sendResponseHeaders(status, file.length());
+    private static void sendZipFile(HttpExchange exchange, int status, File file) throws IOException {
+        Headers headers = exchange.getResponseHeaders();
+        headers.add(CONTENT_TYPE, APPLICATION_ZIP);
+        headers.add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        headers.add(CONTENT_DISPOSITION, String.format("attachment; filename=%s", file.getName()));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ZipUtil.zipFolder(file.toPath(), bos);
+        exchange.sendResponseHeaders(status, bos.size());
         OutputStream os = exchange.getResponseBody();
-        Files.copy(file.toPath(), os);
+        bos.writeTo(os);
+        bos.close();
         os.close();
     }
-
 }
