@@ -11,26 +11,28 @@ import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsParams;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsResults;
 import ru.mos.mostech.ews.pst.PstConverter;
 import ru.mos.mostech.ews.util.IOUtil;
+import ru.mos.mostech.ews.util.MdcUserPathUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class HttpServer {
 
     public static final String CONTENT_TYPE = "Content-Type";
+    public static final String CONTENT_DISPOSITION = "Content-Disposition";
     public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json; charset=utf-8";
     public static final String APPLICATION_XML_CHARSET_UTF_8 = "application/xml; charset=utf-8";
-
+    public static final String APPLICATION_JAVA_ARCHIVE = "application/java-archive";
     private static volatile com.sun.net.httpserver.HttpServer server;
 
     private static final Map<ResolveEwsParams, ResolveEwsResults> cache = new ConcurrentHashMap<>();
@@ -41,10 +43,11 @@ public class HttpServer {
                 new InetSocketAddress("localhost", port), 0);
 
         // Определяем обработчик для корневого пути ("/")
-        server.createContext("/pst", new PstHandler());
-        server.createContext("/pst-status", new PstStatusHandler());
-        server.createContext("/autodiscovery", new AutoDiscoveryHandler());
-        server.createContext("/ews-settings", new EwsSettingsHandler());
+        server.createContext("/pst", new MdcHttpHandler(new PstHandler()));
+        server.createContext("/pst-status", new MdcHttpHandler(new PstStatusHandler()));
+        server.createContext("/autodiscovery", new MdcHttpHandler(new AutoDiscoveryHandler()));
+        server.createContext("/ews-settings", new MdcHttpHandler(new EwsSettingsHandler()));
+        server.createContext("/ews-logs", new MdcHttpHandler(new EwsLogsHandler()));
 
         // Запускаем сервер
         server.setExecutor(null); // Используем стандартный исполнитель
@@ -111,7 +114,6 @@ public class HttpServer {
 
         }
     }
-
 
     static class AutoDiscoveryHandler implements HttpHandler {
 
@@ -222,6 +224,23 @@ public class HttpServer {
         }
     }
 
+    static class EwsLogsHandler implements HttpHandler {
+
+        @SneakyThrows
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            int remotePort = exchange.getRemoteAddress().getPort();
+            Optional<Path> userLogPath = MdcUserPathUtils.getUserLogPathByPort(remotePort);
+
+            if (userLogPath.isPresent()) {
+                // TODO: Добавить архивирование каталога с логами
+                File file = new File(userLogPath.get().toFile(), "ews-logs.zip");
+                sendFile(exchange, 200, file, APPLICATION_JAVA_ARCHIVE);
+            }
+            // TODO: Добавить обработку ошибки при отсуствии файла
+        }
+    }
+
     private static String readBodyRequest(HttpExchange exchange) throws IOException {
         try (InputStream is = exchange.getRequestBody()) {
             return new String(IOUtil.readFully(is), StandardCharsets.UTF_8);
@@ -234,6 +253,16 @@ public class HttpServer {
         exchange.sendResponseHeaders(status, response.getBytes(StandardCharsets.UTF_8).length);
         OutputStream os = exchange.getResponseBody();
         os.write(response.getBytes(StandardCharsets.UTF_8));
+        os.close();
+    }
+
+    private static void sendFile(HttpExchange exchange, int status, File file, String contentType) throws IOException {
+        exchange.getResponseHeaders().add(CONTENT_TYPE, contentType);
+        exchange.getResponseHeaders().add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        exchange.getResponseHeaders().add(CONTENT_DISPOSITION, String.format("attachment; filename=%s", file.getName()));
+        exchange.sendResponseHeaders(status, file.length());
+        OutputStream os = exchange.getResponseBody();
+        Files.copy(file.toPath(), os);
         os.close();
     }
 
