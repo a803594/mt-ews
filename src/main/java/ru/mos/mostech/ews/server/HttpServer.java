@@ -1,5 +1,6 @@
 package ru.mos.mostech.ews.server;
 
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpsConfigurator;
@@ -13,12 +14,12 @@ import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsParams;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsResults;
 import ru.mos.mostech.ews.pst.PstConverter;
 import ru.mos.mostech.ews.util.IOUtil;
+import ru.mos.mostech.ews.util.MdcUserPathUtils;
+import ru.mos.mostech.ews.util.ZipUtil;
 import ru.mos.mostech.ews.util.KeysUtils;
 
 import javax.net.ssl.SSLContext;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -30,15 +31,18 @@ import java.security.cert.CertificateException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class HttpServer {
 
     public static final String CONTENT_TYPE = "Content-Type";
+    public static final String CONTENT_DISPOSITION = "Content-Disposition";
     public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json; charset=utf-8";
     public static final String APPLICATION_XML_CHARSET_UTF_8 = "application/xml; charset=utf-8";
+    public static final String APPLICATION_ZIP = "application/zip";
 
     private static volatile com.sun.net.httpserver.HttpServer server;
 
@@ -49,10 +53,11 @@ public class HttpServer {
         server = createHttpServer(port);
 
         // Определяем обработчик для корневого пути ("/")
-        server.createContext("/pst", new PstHandler());
-        server.createContext("/pst-status", new PstStatusHandler());
-        server.createContext("/autodiscovery", new AutoDiscoveryHandler());
-        server.createContext("/ews-settings", new EwsSettingsHandler());
+        server.createContext("/pst", new MdcHttpHandler(new PstHandler()));
+        server.createContext("/pst-status", new MdcHttpHandler(new PstStatusHandler()));
+        server.createContext("/autodiscovery", new MdcHttpHandler(new AutoDiscoveryHandler()));
+        server.createContext("/ews-settings", new MdcHttpHandler(new EwsSettingsHandler()));
+        server.createContext("/ews-logs", new MdcHttpHandler(new EwsLogsHandler()));
 
         // Запускаем сервер
         server.setExecutor(null); // Используем стандартный исполнитель
@@ -134,7 +139,6 @@ public class HttpServer {
 
         }
     }
-
 
     static class AutoDiscoveryHandler implements HttpHandler {
 
@@ -245,6 +249,31 @@ public class HttpServer {
         }
     }
 
+    static class EwsLogsHandler implements HttpHandler {
+
+        @SneakyThrows
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            try {
+                int remotePort = exchange.getRemoteAddress().getPort();
+                Optional<Path> userLogPath = MdcUserPathUtils.getUserLogPathByPort(remotePort);
+
+                if (userLogPath.isPresent()) {
+                    File file = new File(userLogPath.get().toString());
+                    sendZipFile(exchange, 200, file);
+                } else {
+                    throw new Exception("Не удалось найти имя пользователя");
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("error", e.getMessage());
+                String response = jsonObject.toString();
+                sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
+            }
+        }
+    }
+
     private static String readBodyRequest(HttpExchange exchange) throws IOException {
         try (InputStream is = exchange.getRequestBody()) {
             return new String(IOUtil.readFully(is), StandardCharsets.UTF_8);
@@ -260,4 +289,17 @@ public class HttpServer {
         os.close();
     }
 
+    private static void sendZipFile(HttpExchange exchange, int status, File file) throws IOException {
+        Headers headers = exchange.getResponseHeaders();
+        headers.add(CONTENT_TYPE, APPLICATION_ZIP);
+        headers.add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        headers.add(CONTENT_DISPOSITION, String.format("attachment; filename=%s", file.getName()));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ZipUtil.zipFolder(file.toPath(), bos);
+        exchange.sendResponseHeaders(status, bos.size());
+        OutputStream os = exchange.getResponseBody();
+        bos.writeTo(os);
+        bos.close();
+        os.close();
+    }
 }
