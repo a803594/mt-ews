@@ -44,7 +44,8 @@ public class ZipUtil {
                 }
 
                 @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                public FileVisitResult visitFileFailed(Path file, IOException e) {
+                    log.error(e.getMessage(), e);
                     return FileVisitResult.CONTINUE;
                 }
             });

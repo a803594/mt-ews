@@ -236,7 +236,7 @@ public class HttpServer {
                 Optional<Path> userLogPath = MdcUserPathUtils.getUserLogPathByPort(remotePort);
 
                 if (userLogPath.isPresent()) {
-                    File file = new File(userLogPath.toString());
+                    File file = new File(userLogPath.get().toString());
                     sendZipFile(exchange, 200, file);
                 } else {
                     throw new Exception("Не удалось найти имя пользователя");
