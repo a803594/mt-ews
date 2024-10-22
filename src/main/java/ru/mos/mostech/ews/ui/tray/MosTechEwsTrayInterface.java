@@ -11,50 +11,49 @@ import java.awt.*;
  * Gateway tray interface common to SWT and pure java implementations
  */
 public interface MosTechEwsTrayInterface {
-    /**
-     * Switch tray icon between active and standby icon.
-     */
-    void switchIcon();
 
-    /**
-     * Reset tray icon to standby
-     */
-    void resetIcon();
+	/**
+	 * Switch tray icon between active and standby icon.
+	 */
+	void switchIcon();
 
-    /**
-     * Set tray icon to inactive (network down)
-     */
-    void inactiveIcon();
+	/**
+	 * Reset tray icon to standby
+	 */
+	void resetIcon();
 
-    /**
-     * Check if current tray status is inactive (network down).
-     *
-     * @return true if inactive
-     */
-    boolean isActive();
+	/**
+	 * Set tray icon to inactive (network down)
+	 */
+	void inactiveIcon();
 
-    /**
-     * Return AWT Image icon for frame title.
-     *
-     * @return frame icon
-     */
-    java.util.List<Image> getFrameIcons();
+	/**
+	 * Check if current tray status is inactive (network down).
+	 * @return true if inactive
+	 */
+	boolean isActive();
 
-    /**
-     * Display balloon message for log level.
-     *
-     * @param message text message
-     * @param level   log level
-     */
-    void displayMessage(String message, Level level);
+	/**
+	 * Return AWT Image icon for frame title.
+	 * @return frame icon
+	 */
+	java.util.List<Image> getFrameIcons();
 
-    /**
-     * Create tray icon and register frame listeners.
-     */
-    void init();
+	/**
+	 * Display balloon message for log level.
+	 * @param message text message
+	 * @param level log level
+	 */
+	void displayMessage(String message, Level level);
 
-    /**
-     * destroy frames
-     */
-    void dispose();
+	/**
+	 * Create tray icon and register frame listeners.
+	 */
+	void init();
+
+	/**
+	 * destroy frames
+	 */
+	void dispose();
+
 }

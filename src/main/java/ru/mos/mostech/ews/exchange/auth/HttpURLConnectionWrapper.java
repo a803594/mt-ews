@@ -20,132 +20,134 @@ import java.util.Map;
  */
 @Slf4j
 public class HttpURLConnectionWrapper extends HttpURLConnection {
-    
-    HttpURLConnection httpURLConnection;
 
-    HttpURLConnectionWrapper(HttpURLConnection httpURLConnection, URL url) {
-        super(url);
-        this.httpURLConnection = httpURLConnection;
-    }
+	HttpURLConnection httpURLConnection;
 
-    @Override
-    public void setRequestMethod(String method) throws ProtocolException {
-        httpURLConnection.setRequestMethod(method);
-    }
+	HttpURLConnectionWrapper(HttpURLConnection httpURLConnection, URL url) {
+		super(url);
+		this.httpURLConnection = httpURLConnection;
+	}
 
-    @Override
-    public void setInstanceFollowRedirects(boolean followRedirects) {
-        httpURLConnection.setInstanceFollowRedirects(followRedirects);
-    }
+	@Override
+	public void setRequestMethod(String method) throws ProtocolException {
+		httpURLConnection.setRequestMethod(method);
+	}
 
-    @Override
-    public boolean getInstanceFollowRedirects() {
-        return httpURLConnection.getInstanceFollowRedirects();
-    }
+	@Override
+	public void setInstanceFollowRedirects(boolean followRedirects) {
+		httpURLConnection.setInstanceFollowRedirects(followRedirects);
+	}
 
-    @Override
-    public String getRequestMethod() {
-        return httpURLConnection.getRequestMethod();
-    }
+	@Override
+	public boolean getInstanceFollowRedirects() {
+		return httpURLConnection.getInstanceFollowRedirects();
+	}
 
-    @Override
-    public int getResponseCode() throws IOException {
-        return httpURLConnection.getResponseCode();
-    }
+	@Override
+	public String getRequestMethod() {
+		return httpURLConnection.getRequestMethod();
+	}
 
-    @Override
-    public String getResponseMessage() throws IOException {
-        return httpURLConnection.getResponseMessage();
-    }
+	@Override
+	public int getResponseCode() throws IOException {
+		return httpURLConnection.getResponseCode();
+	}
 
-    @Override
-    public Map<String, List<String>> getHeaderFields() {
-        log.debug("{}", httpURLConnection.getHeaderFields());
-        return httpURLConnection.getHeaderFields();
-    }
+	@Override
+	public String getResponseMessage() throws IOException {
+		return httpURLConnection.getResponseMessage();
+	}
 
-    @Override
-    public String getHeaderField(String name) {
-        return httpURLConnection.getHeaderField(name);
-    }
+	@Override
+	public Map<String, List<String>> getHeaderFields() {
+		log.debug("{}", httpURLConnection.getHeaderFields());
+		return httpURLConnection.getHeaderFields();
+	}
 
-    @Override
-    public String getHeaderField(int n) {
-        return httpURLConnection.getHeaderField(n);
-    }
+	@Override
+	public String getHeaderField(String name) {
+		return httpURLConnection.getHeaderField(name);
+	}
 
-    @Override
-    public void disconnect() {
-        httpURLConnection.disconnect();
-    }
+	@Override
+	public String getHeaderField(int n) {
+		return httpURLConnection.getHeaderField(n);
+	}
 
-    @Override
-    public void setDoOutput(boolean dooutput) {
-        httpURLConnection.setDoOutput(dooutput);
-    }
+	@Override
+	public void disconnect() {
+		httpURLConnection.disconnect();
+	}
 
-    @Override
-    public boolean usingProxy() {
-        return httpURLConnection.usingProxy();
-    }
+	@Override
+	public void setDoOutput(boolean dooutput) {
+		httpURLConnection.setDoOutput(dooutput);
+	}
 
-    @Override
-    public void connect() throws IOException {
-        try {
-            httpURLConnection.connect();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw e;
-        }
-    }
+	@Override
+	public boolean usingProxy() {
+		return httpURLConnection.usingProxy();
+	}
 
-    @Override
-    public InputStream getInputStream() throws IOException {
-        return httpURLConnection.getInputStream();
-    }
+	@Override
+	public void connect() throws IOException {
+		try {
+			httpURLConnection.connect();
+		}
+		catch (IOException e) {
+			log.error(e.getMessage());
+			throw e;
+		}
+	}
 
-    @Override
-    public OutputStream getOutputStream() throws IOException {
-        return httpURLConnection.getOutputStream();
-    }
+	@Override
+	public InputStream getInputStream() throws IOException {
+		return httpURLConnection.getInputStream();
+	}
 
-    @Override
-    public InputStream getErrorStream() {
-        return httpURLConnection.getErrorStream();
-    }
+	@Override
+	public OutputStream getOutputStream() throws IOException {
+		return httpURLConnection.getOutputStream();
+	}
 
-    @Override
-    public void setRequestProperty(String key, String value) {
-        httpURLConnection.setRequestProperty(key, value);
-    }
+	@Override
+	public InputStream getErrorStream() {
+		return httpURLConnection.getErrorStream();
+	}
 
-    @Override
-    public void addRequestProperty(String key, String value) {
-        httpURLConnection.setRequestProperty(key, value);
-    }
+	@Override
+	public void setRequestProperty(String key, String value) {
+		httpURLConnection.setRequestProperty(key, value);
+	}
 
-    @Override
-    public Map<String, List<String>> getRequestProperties() {
-        return httpURLConnection.getRequestProperties();
-    }
+	@Override
+	public void addRequestProperty(String key, String value) {
+		httpURLConnection.setRequestProperty(key, value);
+	}
 
-    @Override
-    public String getRequestProperty(String key) {
-        return httpURLConnection.getRequestProperty(key);
-    }
+	@Override
+	public Map<String, List<String>> getRequestProperties() {
+		return httpURLConnection.getRequestProperties();
+	}
 
-    /**
-     * Fix missing content type
-     * @return content type or text/html if missing
-     */
-    @Override
-    public String getContentType() {
-        final String contentType = httpURLConnection.getContentType();
-        // workaround for missing content type
-        if (contentType == null && getContentLength() > 0) {
-            log.debug("Fix missing content-type at "+url.toString());
-            return "text/html";
-        }
-        return contentType;
-    }
+	@Override
+	public String getRequestProperty(String key) {
+		return httpURLConnection.getRequestProperty(key);
+	}
+
+	/**
+	 * Fix missing content type
+	 * @return content type or text/html if missing
+	 */
+	@Override
+	public String getContentType() {
+		final String contentType = httpURLConnection.getContentType();
+		// workaround for missing content type
+		if (contentType == null && getContentLength() > 0) {
+			log.debug("Fix missing content-type at " + url.toString());
+			return "text/html";
+		}
+		return contentType;
+	}
+
 }

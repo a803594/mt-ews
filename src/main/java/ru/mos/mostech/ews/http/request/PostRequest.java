@@ -20,103 +20,107 @@ import java.util.ArrayList;
  * Http post request with a string response handler.
  */
 public class PostRequest extends HttpPost implements ResponseHandler<String>, ResponseWrapper {
-    private ArrayList<NameValuePair> parameters = new ArrayList<>();
-    private String responseBodyAsString = null;
-    private HttpResponse response;
 
-    public PostRequest(final URI uri) {
-        super(uri);
-    }
+	private ArrayList<NameValuePair> parameters = new ArrayList<>();
 
-    public PostRequest(final String url) {
-        super(URI.create(url));
-    }
+	private String responseBodyAsString = null;
 
-    public void setRequestHeader(String name, String value) {
-        setHeader(name, value);
-    }
+	private HttpResponse response;
 
-    @Override
-    public HttpEntity getEntity() {
-        return new UrlEncodedFormEntity(parameters, Consts.UTF_8);
-    }
+	public PostRequest(final URI uri) {
+		super(uri);
+	}
 
-    @Override
-    public String handleResponse(HttpResponse response) throws IOException {
-        this.response = response;
-        if (HttpClientAdapter.isRedirect(response)) {
-            return null;
-        } else {
-            responseBodyAsString = new BasicResponseHandler().handleResponse(response);
-            return responseBodyAsString;
-        }
+	public PostRequest(final String url) {
+		super(URI.create(url));
+	}
 
-    }
+	public void setRequestHeader(String name, String value) {
+		setHeader(name, value);
+	}
 
-    public void setParameter(final String name, final String value) {
-        parameters.add(new BasicNameValuePair(name, value));
-    }
+	@Override
+	public HttpEntity getEntity() {
+		return new UrlEncodedFormEntity(parameters, Consts.UTF_8);
+	}
 
-    public void removeParameter(final String name) {
-        ArrayList<NameValuePair> toDelete = new ArrayList<>();
-        for (NameValuePair param: parameters) {
-            if (param.getName().equals(name)) {
-                toDelete.add(param);
-            }
-        }
-        parameters.removeAll(toDelete);
-    }
+	@Override
+	public String handleResponse(HttpResponse response) throws IOException {
+		this.response = response;
+		if (HttpClientAdapter.isRedirect(response)) {
+			return null;
+		}
+		else {
+			responseBodyAsString = new BasicResponseHandler().handleResponse(response);
+			return responseBodyAsString;
+		}
 
-    public ArrayList<NameValuePair> getParameters() {
-        return parameters;
-    }
+	}
 
-    public String getResponseBodyAsString() throws IOException {
-        if (responseBodyAsString == null) {
-            throw new IOException("No response body available");
-        }
-        return responseBodyAsString;
-    }
+	public void setParameter(final String name, final String value) {
+		parameters.add(new BasicNameValuePair(name, value));
+	}
 
-    public Header getResponseHeader(String name) {
-        checkResponse();
-        return response.getFirstHeader(name);
-    }
+	public void removeParameter(final String name) {
+		ArrayList<NameValuePair> toDelete = new ArrayList<>();
+		for (NameValuePair param : parameters) {
+			if (param.getName().equals(name)) {
+				toDelete.add(param);
+			}
+		}
+		parameters.removeAll(toDelete);
+	}
 
-    /**
-     * Get status code from response.
-     * @return Http status code
-     */
-    public int getStatusCode() {
-        checkResponse();
-        return response.getStatusLine().getStatusCode();
-    }
+	public ArrayList<NameValuePair> getParameters() {
+		return parameters;
+	}
 
-    /**
-     * Get reason phrase from response.
-     * @return reason phrase
-     */
-    public String getReasonPhrase() {
-        checkResponse();
-        return response.getStatusLine().getReasonPhrase();
-    }
+	public String getResponseBodyAsString() throws IOException {
+		if (responseBodyAsString == null) {
+			throw new IOException("No response body available");
+		}
+		return responseBodyAsString;
+	}
 
-    public URI getRedirectLocation() {
-        checkResponse();
-        return HttpClientAdapter.getRedirectLocation(response);
-    }
+	public Header getResponseHeader(String name) {
+		checkResponse();
+		return response.getFirstHeader(name);
+	}
 
-    public HttpResponse getHttpResponse() {
-        return response;
-    }
+	/**
+	 * Get status code from response.
+	 * @return Http status code
+	 */
+	public int getStatusCode() {
+		checkResponse();
+		return response.getStatusLine().getStatusCode();
+	}
 
-    /**
-     * Check if response is available.
-     */
-    private void checkResponse() {
-        if (response == null) {
-            throw new IllegalStateException("Should execute request first");
-        }
-    }
+	/**
+	 * Get reason phrase from response.
+	 * @return reason phrase
+	 */
+	public String getReasonPhrase() {
+		checkResponse();
+		return response.getStatusLine().getReasonPhrase();
+	}
+
+	public URI getRedirectLocation() {
+		checkResponse();
+		return HttpClientAdapter.getRedirectLocation(response);
+	}
+
+	public HttpResponse getHttpResponse() {
+		return response;
+	}
+
+	/**
+	 * Check if response is available.
+	 */
+	private void checkResponse() {
+		if (response == null) {
+			throw new IllegalStateException("Should execute request first");
+		}
+	}
 
 }

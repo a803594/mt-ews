@@ -21,298 +21,326 @@ import java.io.InputStreamReader;
 import java.security.PrivilegedAction;
 import java.security.Security;
 
-
 /**
  * Kerberos helper class.
  */
 @Slf4j
 public class KerberosHelper {
-    
-    protected static final Object LOCK = new Object();
-    protected static final KerberosCallbackHandler KERBEROS_CALLBACK_HANDLER;
-    private static LoginContext clientLoginContext;
 
-    static {
-        // Load Jaas configuration from class
-        Security.setProperty("login.configuration.provider", "mt.ews.http.KerberosLoginConfiguration");
-        // Kerberos callback handler singleton
-        KERBEROS_CALLBACK_HANDLER = new KerberosCallbackHandler();
-    }
+	protected static final Object LOCK = new Object();
 
-    private KerberosHelper() {
-    }
+	protected static final KerberosCallbackHandler KERBEROS_CALLBACK_HANDLER;
 
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    protected static class KerberosCallbackHandler implements CallbackHandler {
-        String principal;
-        String password;
+	private static LoginContext clientLoginContext;
 
-        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-            for (Callback callback : callbacks) {
-                if (callback instanceof NameCallback) {
-                    if (principal == null) {
-                        // if we get there kerberos token is missing or invalid
-                        if (Settings.getBooleanProperty("mt.ews.server") || GraphicsEnvironment.isHeadless()) {
-                            // headless or server mode
-                            System.out.print(((NameCallback) callback).getPrompt());
-                            BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
-                            principal = inReader.readLine();
-                        } else {
-                            CredentialPromptDialog credentialPromptDialog = new CredentialPromptDialog(((NameCallback) callback).getPrompt());
-                            principal = credentialPromptDialog.getPrincipal();
-                            password = String.valueOf(credentialPromptDialog.getPassword());
-                        }
-                    }
-                    if (principal == null) {
-                        throw new IOException("KerberosCallbackHandler: failed to retrieve principal");
-                    }
-                    ((NameCallback) callback).setName(principal);
+	static {
+		// Load Jaas configuration from class
+		Security.setProperty("login.configuration.provider", "mt.ews.http.KerberosLoginConfiguration");
+		// Kerberos callback handler singleton
+		KERBEROS_CALLBACK_HANDLER = new KerberosCallbackHandler();
+	}
 
-                } else if (callback instanceof PasswordCallback) {
-                    if (password == null) {
-                        // if we get there kerberos token is missing or invalid
-                        if (Settings.getBooleanProperty("mt.ews.server") || GraphicsEnvironment.isHeadless()) {
-                            // headless or server mode
-                            System.out.print(((PasswordCallback) callback).getPrompt());
-                            BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
-                            password = inReader.readLine();
-                        }
-                    }
-                    if (password == null) {
-                        throw new IOException("KerberosCallbackHandler: failed to retrieve password");
-                    }
-                    ((PasswordCallback) callback).setPassword(password.toCharArray());
+	private KerberosHelper() {
+	}
 
-                } else {
-                    throw new UnsupportedCallbackException(callback);
-                }
-            }
-        }
-    }
+	@SuppressWarnings("UseOfSystemOutOrSystemErr")
+	protected static class KerberosCallbackHandler implements CallbackHandler {
 
-    /**
-     * Force client principal in callback handler
-     *
-     * @param principal client principal
-     */
-    public static void setClientPrincipal(String principal) {
-        KERBEROS_CALLBACK_HANDLER.principal = principal;
-    }
+		String principal;
 
-    /**
-     * Force client password in callback handler
-     *
-     * @param password client password
-     */
-    public static void setClientPassword(String password) {
-        KERBEROS_CALLBACK_HANDLER.password = password;
-    }
+		String password;
 
-    /**
-     * Get response Kerberos token for host with provided token.
-     *
-     * @param protocol target protocol
-     * @param host     target host
-     * @param token    input token
-     * @return response token
-     * @throws GSSException   on error
-     * @throws LoginException on error
-     */
-    public static byte[] initSecurityContext(final String protocol, final String host, final byte[] token) throws GSSException, LoginException {
-        return initSecurityContext(protocol, host, null, token);
-    }
+		public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+			for (Callback callback : callbacks) {
+				if (callback instanceof NameCallback) {
+					if (principal == null) {
+						// if we get there kerberos token is missing or invalid
+						if (Settings.getBooleanProperty("mt.ews.server") || GraphicsEnvironment.isHeadless()) {
+							// headless or server mode
+							System.out.print(((NameCallback) callback).getPrompt());
+							BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
+							principal = inReader.readLine();
+						}
+						else {
+							CredentialPromptDialog credentialPromptDialog = new CredentialPromptDialog(
+									((NameCallback) callback).getPrompt());
+							principal = credentialPromptDialog.getPrincipal();
+							password = String.valueOf(credentialPromptDialog.getPassword());
+						}
+					}
+					if (principal == null) {
+						throw new IOException("KerberosCallbackHandler: failed to retrieve principal");
+					}
+					((NameCallback) callback).setName(principal);
 
-    /**
-     * Get response Kerberos token for host with provided token, use client provided delegation credentials.
-     * Used to authenticate with target host on a gateway server with client credentials,
-     * gateway must have its own principal authorized for delegation
-     *
-     * @param protocol             target protocol
-     * @param host                 target host
-     * @param delegatedCredentials client delegated credentials
-     * @param token                input token
-     * @return response token
-     * @throws GSSException   on error
-     * @throws LoginException on error
-     */
-    public static byte[] initSecurityContext(final String protocol, final String host, final GSSCredential delegatedCredentials, final byte[] token) throws GSSException, LoginException {
-        log.debug("KerberosHelper.initSecurityContext " + protocol + '@' + host + ' ' + token.length + " bytes token");
+				}
+				else if (callback instanceof PasswordCallback) {
+					if (password == null) {
+						// if we get there kerberos token is missing or invalid
+						if (Settings.getBooleanProperty("mt.ews.server") || GraphicsEnvironment.isHeadless()) {
+							// headless or server mode
+							System.out.print(((PasswordCallback) callback).getPrompt());
+							BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
+							password = inReader.readLine();
+						}
+					}
+					if (password == null) {
+						throw new IOException("KerberosCallbackHandler: failed to retrieve password");
+					}
+					((PasswordCallback) callback).setPassword(password.toCharArray());
 
-        synchronized (LOCK) {
-            // check cached TGT
-            if (clientLoginContext != null) {
-                for (Object ticket : clientLoginContext.getSubject().getPrivateCredentials(KerberosTicket.class)) {
-                    KerberosTicket kerberosTicket = (KerberosTicket) ticket;
-                    if (kerberosTicket.getServer().getName().startsWith("krbtgt") && !kerberosTicket.isCurrent()) {
-                        log.debug("KerberosHelper.clientLogin cached TGT expired, try to relogin");
-                        clientLoginContext = null;
-                    }
-                }
-            }
-            // create client login context
-            if (clientLoginContext == null) {
-                final LoginContext localLoginContext = new LoginContext("spnego-client", KERBEROS_CALLBACK_HANDLER);
-                localLoginContext.login();
-                clientLoginContext = localLoginContext;
-            }
-            // try to renew almost expired tickets
-            for (Object ticket : clientLoginContext.getSubject().getPrivateCredentials(KerberosTicket.class)) {
-                KerberosTicket kerberosTicket = (KerberosTicket) ticket;
-                log.debug("KerberosHelper.clientLogin ticket for " + kerberosTicket.getServer().getName() + " expires at " + kerberosTicket.getEndTime());
-                if (kerberosTicket.getEndTime().getTime() < System.currentTimeMillis() + 10000) {
-                    if (kerberosTicket.isRenewable()) {
-                        try {
-                            kerberosTicket.refresh();
-                        } catch (RefreshFailedException e) {
-                            log.debug("KerberosHelper.clientLogin failed to renew ticket " + kerberosTicket);
-                        }
-                    } else {
-                        log.debug("KerberosHelper.clientLogin ticket is not renewable");
-                    }
-                }
-            }
+				}
+				else {
+					throw new UnsupportedCallbackException(callback);
+				}
+			}
+		}
 
-            Object result = internalInitSecContext(protocol, host, delegatedCredentials, token);
-            if (result instanceof GSSException) {
-                log.info("KerberosHelper.initSecurityContext exception code " + ((GSSException) result).getMajor() + " minor code " + ((GSSException) result).getMinor() + " message " + ((Throwable) result).getMessage());
-                throw (GSSException) result;
-            }
+	}
 
-            log.debug("KerberosHelper.initSecurityContext return " + ((byte[]) result).length + " bytes token");
-            return (byte[]) result;
-        }
-    }
+	/**
+	 * Force client principal in callback handler
+	 * @param principal client principal
+	 */
+	public static void setClientPrincipal(String principal) {
+		KERBEROS_CALLBACK_HANDLER.principal = principal;
+	}
 
-    protected static Object internalInitSecContext(final String protocol, final String host, final GSSCredential delegatedCredentials, final byte[] token) {
-        return Subject.doAs(clientLoginContext.getSubject(), (PrivilegedAction<Object>) () -> {
-            Object result;
-            GSSContext context = null;
-            try {
-                GSSManager manager = GSSManager.getInstance();
-                GSSName serverName = manager.createName(protocol + '@' + host, GSSName.NT_HOSTBASED_SERVICE);
-                // Kerberos v5 OID
-                Oid krb5Oid = new Oid("1.2.840.113554.1.2.2");
+	/**
+	 * Force client password in callback handler
+	 * @param password client password
+	 */
+	public static void setClientPassword(String password) {
+		KERBEROS_CALLBACK_HANDLER.password = password;
+	}
 
-                context = manager.createContext(serverName, krb5Oid, delegatedCredentials, GSSContext.DEFAULT_LIFETIME);
+	/**
+	 * Get response Kerberos token for host with provided token.
+	 * @param protocol target protocol
+	 * @param host target host
+	 * @param token input token
+	 * @return response token
+	 * @throws GSSException on error
+	 * @throws LoginException on error
+	 */
+	public static byte[] initSecurityContext(final String protocol, final String host, final byte[] token)
+			throws GSSException, LoginException {
+		return initSecurityContext(protocol, host, null, token);
+	}
 
-                //context.requestMutualAuth(true);
-                // TODO: used by IIS to pass token to Exchange ?
-                context.requestCredDeleg(true);
+	/**
+	 * Get response Kerberos token for host with provided token, use client provided
+	 * delegation credentials. Used to authenticate with target host on a gateway server
+	 * with client credentials, gateway must have its own principal authorized for
+	 * delegation
+	 * @param protocol target protocol
+	 * @param host target host
+	 * @param delegatedCredentials client delegated credentials
+	 * @param token input token
+	 * @return response token
+	 * @throws GSSException on error
+	 * @throws LoginException on error
+	 */
+	public static byte[] initSecurityContext(final String protocol, final String host,
+			final GSSCredential delegatedCredentials, final byte[] token) throws GSSException, LoginException {
+		log.debug("KerberosHelper.initSecurityContext " + protocol + '@' + host + ' ' + token.length + " bytes token");
 
-                result = context.initSecContext(token, 0, token.length);
-            } catch (GSSException e) {
-                result = e;
-            } finally {
-                if (context != null) {
-                    try {
-                        context.dispose();
-                    } catch (GSSException e) {
-                        log.debug("KerberosHelper.internalInitSecContext " + e + ' ' + e.getMessage());
-                    }
-                }
-            }
-            return result;
-        });
-    }
+		synchronized (LOCK) {
+			// check cached TGT
+			if (clientLoginContext != null) {
+				for (Object ticket : clientLoginContext.getSubject().getPrivateCredentials(KerberosTicket.class)) {
+					KerberosTicket kerberosTicket = (KerberosTicket) ticket;
+					if (kerberosTicket.getServer().getName().startsWith("krbtgt") && !kerberosTicket.isCurrent()) {
+						log.debug("KerberosHelper.clientLogin cached TGT expired, try to relogin");
+						clientLoginContext = null;
+					}
+				}
+			}
+			// create client login context
+			if (clientLoginContext == null) {
+				final LoginContext localLoginContext = new LoginContext("spnego-client", KERBEROS_CALLBACK_HANDLER);
+				localLoginContext.login();
+				clientLoginContext = localLoginContext;
+			}
+			// try to renew almost expired tickets
+			for (Object ticket : clientLoginContext.getSubject().getPrivateCredentials(KerberosTicket.class)) {
+				KerberosTicket kerberosTicket = (KerberosTicket) ticket;
+				log.debug("KerberosHelper.clientLogin ticket for " + kerberosTicket.getServer().getName()
+						+ " expires at " + kerberosTicket.getEndTime());
+				if (kerberosTicket.getEndTime().getTime() < System.currentTimeMillis() + 10000) {
+					if (kerberosTicket.isRenewable()) {
+						try {
+							kerberosTicket.refresh();
+						}
+						catch (RefreshFailedException e) {
+							log.debug("KerberosHelper.clientLogin failed to renew ticket " + kerberosTicket);
+						}
+					}
+					else {
+						log.debug("KerberosHelper.clientLogin ticket is not renewable");
+					}
+				}
+			}
 
-    /**
-     * Create server side Kerberos login context for provided credentials.
-     *
-     * @param serverPrincipal server principal
-     * @param serverPassword  server passsword
-     * @return LoginContext server login context
-     * @throws LoginException on error
-     */
-    public static LoginContext serverLogin(final String serverPrincipal, final String serverPassword) throws LoginException {
-        LoginContext serverLoginContext = new LoginContext("spnego-server", callbacks -> {
-            for (Callback callback : callbacks) {
-                if (callback instanceof NameCallback) {
-                    final NameCallback nameCallback = (NameCallback) callback;
-                    nameCallback.setName(serverPrincipal);
-                } else if (callback instanceof PasswordCallback) {
-                    final PasswordCallback passCallback = (PasswordCallback) callback;
-                    passCallback.setPassword(serverPassword.toCharArray());
-                } else {
-                    throw new UnsupportedCallbackException(callback);
-                }
-            }
+			Object result = internalInitSecContext(protocol, host, delegatedCredentials, token);
+			if (result instanceof GSSException) {
+				log.info("KerberosHelper.initSecurityContext exception code " + ((GSSException) result).getMajor()
+						+ " minor code " + ((GSSException) result).getMinor() + " message "
+						+ ((Throwable) result).getMessage());
+				throw (GSSException) result;
+			}
 
-        });
-        serverLoginContext.login();
-        return serverLoginContext;
-    }
+			log.debug("KerberosHelper.initSecurityContext return " + ((byte[]) result).length + " bytes token");
+			return (byte[]) result;
+		}
+	}
 
-    /**
-     * Contains server Kerberos context information in server mode.
-     */
-    public static class SecurityContext {
-        /**
-         * response token
-         */
-        public byte[] token;
-        /**
-         * authenticated principal
-         */
-        public String principal;
-        /**
-         * client delegated credential
-         */
-        public GSSCredential clientCredential;
-    }
+	protected static Object internalInitSecContext(final String protocol, final String host,
+			final GSSCredential delegatedCredentials, final byte[] token) {
+		return Subject.doAs(clientLoginContext.getSubject(), (PrivilegedAction<Object>) () -> {
+			Object result;
+			GSSContext context = null;
+			try {
+				GSSManager manager = GSSManager.getInstance();
+				GSSName serverName = manager.createName(protocol + '@' + host, GSSName.NT_HOSTBASED_SERVICE);
+				// Kerberos v5 OID
+				Oid krb5Oid = new Oid("1.2.840.113554.1.2.2");
 
-    /**
-     * Check client provided Kerberos token in server login context
-     *
-     * @param serverLoginContext server login context
-     * @param token              Kerberos client token
-     * @return result with client principal and optional returned Kerberos token
-     * @throws GSSException on error
-     */
-    public static SecurityContext acceptSecurityContext(LoginContext serverLoginContext, final byte[] token) throws GSSException {
-        Object result = Subject.doAs(serverLoginContext.getSubject(), (PrivilegedAction<Object>) () -> {
-            Object innerResult;
-            SecurityContext securityContext = new SecurityContext();
-            GSSContext context = null;
-            try {
-                GSSManager manager = GSSManager.getInstance();
+				context = manager.createContext(serverName, krb5Oid, delegatedCredentials, GSSContext.DEFAULT_LIFETIME);
 
-                // get server credentials from context
-                Oid krb5oid = new Oid("1.2.840.113554.1.2.2");
-                GSSCredential serverCreds = manager.createCredential(null/* use name from login context*/,
-                        GSSCredential.DEFAULT_LIFETIME,
-                        krb5oid,
-                        GSSCredential.ACCEPT_ONLY/* server mode */);
-                context = manager.createContext(serverCreds);
+				// context.requestMutualAuth(true);
+				// TODO: used by IIS to pass token to Exchange ?
+				context.requestCredDeleg(true);
 
-                securityContext.token = context.acceptSecContext(token, 0, token.length);
-                if (context.isEstablished()) {
-                    securityContext.principal = context.getSrcName().toString();
-                    log.debug("Authenticated user: " + securityContext.principal);
-                    if (!context.getCredDelegState()) {
-                        log.debug("Credentials can not be delegated");
-                    } else {
-                        // Get client delegated credentials from context (gateway mode)
-                        securityContext.clientCredential = context.getDelegCred();
-                    }
-                }
-                innerResult = securityContext;
-            } catch (GSSException e) {
-                innerResult = e;
-            } finally {
-                if (context != null) {
-                    try {
-                        context.dispose();
-                    } catch (GSSException e) {
-                        log.debug("KerberosHelper.acceptSecurityContext " + e + ' ' + e.getMessage());
-                    }
-                }
-            }
-            return innerResult;
-        });
-        if (result instanceof GSSException) {
-            log.info("KerberosHelper.acceptSecurityContext exception code " + ((GSSException) result).getMajor() + " minor code " + ((GSSException) result).getMinor() + " message " + ((Throwable) result).getMessage());
-            throw (GSSException) result;
-        }
-        return (SecurityContext) result;
-    }
+				result = context.initSecContext(token, 0, token.length);
+			}
+			catch (GSSException e) {
+				result = e;
+			}
+			finally {
+				if (context != null) {
+					try {
+						context.dispose();
+					}
+					catch (GSSException e) {
+						log.debug("KerberosHelper.internalInitSecContext " + e + ' ' + e.getMessage());
+					}
+				}
+			}
+			return result;
+		});
+	}
+
+	/**
+	 * Create server side Kerberos login context for provided credentials.
+	 * @param serverPrincipal server principal
+	 * @param serverPassword server passsword
+	 * @return LoginContext server login context
+	 * @throws LoginException on error
+	 */
+	public static LoginContext serverLogin(final String serverPrincipal, final String serverPassword)
+			throws LoginException {
+		LoginContext serverLoginContext = new LoginContext("spnego-server", callbacks -> {
+			for (Callback callback : callbacks) {
+				if (callback instanceof NameCallback) {
+					final NameCallback nameCallback = (NameCallback) callback;
+					nameCallback.setName(serverPrincipal);
+				}
+				else if (callback instanceof PasswordCallback) {
+					final PasswordCallback passCallback = (PasswordCallback) callback;
+					passCallback.setPassword(serverPassword.toCharArray());
+				}
+				else {
+					throw new UnsupportedCallbackException(callback);
+				}
+			}
+
+		});
+		serverLoginContext.login();
+		return serverLoginContext;
+	}
+
+	/**
+	 * Contains server Kerberos context information in server mode.
+	 */
+	public static class SecurityContext {
+
+		/**
+		 * response token
+		 */
+		public byte[] token;
+
+		/**
+		 * authenticated principal
+		 */
+		public String principal;
+
+		/**
+		 * client delegated credential
+		 */
+		public GSSCredential clientCredential;
+
+	}
+
+	/**
+	 * Check client provided Kerberos token in server login context
+	 * @param serverLoginContext server login context
+	 * @param token Kerberos client token
+	 * @return result with client principal and optional returned Kerberos token
+	 * @throws GSSException on error
+	 */
+	public static SecurityContext acceptSecurityContext(LoginContext serverLoginContext, final byte[] token)
+			throws GSSException {
+		Object result = Subject.doAs(serverLoginContext.getSubject(), (PrivilegedAction<Object>) () -> {
+			Object innerResult;
+			SecurityContext securityContext = new SecurityContext();
+			GSSContext context = null;
+			try {
+				GSSManager manager = GSSManager.getInstance();
+
+				// get server credentials from context
+				Oid krb5oid = new Oid("1.2.840.113554.1.2.2");
+				GSSCredential serverCreds = manager.createCredential(
+						null/* use name from login context */, GSSCredential.DEFAULT_LIFETIME, krb5oid,
+						GSSCredential.ACCEPT_ONLY/* server mode */);
+				context = manager.createContext(serverCreds);
+
+				securityContext.token = context.acceptSecContext(token, 0, token.length);
+				if (context.isEstablished()) {
+					securityContext.principal = context.getSrcName().toString();
+					log.debug("Authenticated user: " + securityContext.principal);
+					if (!context.getCredDelegState()) {
+						log.debug("Credentials can not be delegated");
+					}
+					else {
+						// Get client delegated credentials from context (gateway mode)
+						securityContext.clientCredential = context.getDelegCred();
+					}
+				}
+				innerResult = securityContext;
+			}
+			catch (GSSException e) {
+				innerResult = e;
+			}
+			finally {
+				if (context != null) {
+					try {
+						context.dispose();
+					}
+					catch (GSSException e) {
+						log.debug("KerberosHelper.acceptSecurityContext " + e + ' ' + e.getMessage());
+					}
+				}
+			}
+			return innerResult;
+		});
+		if (result instanceof GSSException) {
+			log.info("KerberosHelper.acceptSecurityContext exception code " + ((GSSException) result).getMajor()
+					+ " minor code " + ((GSSException) result).getMinor() + " message "
+					+ ((Throwable) result).getMessage());
+			throw (GSSException) result;
+		}
+		return (SecurityContext) result;
+	}
+
 }

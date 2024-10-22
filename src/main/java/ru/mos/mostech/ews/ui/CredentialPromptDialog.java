@@ -10,114 +10,114 @@ import java.awt.*;
  * Prompt for Exchange credential and password.
  */
 public class CredentialPromptDialog extends JDialog {
-    final JTextField principalField = new JTextField(15);
-    final JPasswordField passwordField = new JPasswordField(15);
-    protected String principal;
-    protected char[] password;
 
-    /**
-     * Get user password.
-     *
-     * @return user password as char array
-     */
-    public char[] getPassword() {
-        if (password != null) {
-            return password.clone();
-        } else {
-            return "".toCharArray();
-        }
-    }
+	final JTextField principalField = new JTextField(15);
 
-    /**
-     * Get user principal.
-     *
-     * @return user principal
-     */
-    public String getPrincipal() {
-        return principal;
-    }
+	final JPasswordField passwordField = new JPasswordField(15);
 
-    /**
-     * Get credentials.
-     *
-     * @param prompt Kerberos prompt from callback handler
-     */
-    public CredentialPromptDialog(String prompt) {
-        setAlwaysOnTop(true);
+	protected String principal;
 
-        setTitle(BundleMessage.format("UI_KERBEROS_CREDENTIAL_PROMPT"));
+	protected char[] password;
 
-        try {
-            setIconImages(MosTechEwsTray.getFrameIcons());
-        } catch (NoSuchMethodError error) {
-            MosTechEwsTray.debug(new BundleMessage("LOG_UNABLE_TO_SET_ICON_IMAGE"));
-        }
+	/**
+	 * Get user password.
+	 * @return user password as char array
+	 */
+	public char[] getPassword() {
+		if (password != null) {
+			return password.clone();
+		}
+		else {
+			return "".toCharArray();
+		}
+	}
 
+	/**
+	 * Get user principal.
+	 * @return user principal
+	 */
+	public String getPrincipal() {
+		return principal;
+	}
 
-        JPanel questionPanel = new JPanel();
-        questionPanel.setLayout(new BoxLayout(questionPanel, BoxLayout.Y_AXIS));
-        JLabel imageLabel = new JLabel();
-        imageLabel.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
-        questionPanel.add(imageLabel);
+	/**
+	 * Get credentials.
+	 * @param prompt Kerberos prompt from callback handler
+	 */
+	public CredentialPromptDialog(String prompt) {
+		setAlwaysOnTop(true);
 
-        passwordField.setMaximumSize(passwordField.getPreferredSize());
-        passwordField.addActionListener(e -> {
-            principal = principalField.getText();
-            password = passwordField.getPassword();
-            setVisible(false);
-        });
-        JPanel credentialPanel = new JPanel(new GridLayout(2, 2));
+		setTitle(BundleMessage.format("UI_KERBEROS_CREDENTIAL_PROMPT"));
 
-        JLabel promptLabel = new JLabel(' ' +prompt.trim());
-        promptLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        promptLabel.setVerticalAlignment(SwingConstants.CENTER);
+		try {
+			setIconImages(MosTechEwsTray.getFrameIcons());
+		}
+		catch (NoSuchMethodError error) {
+			MosTechEwsTray.debug(new BundleMessage("LOG_UNABLE_TO_SET_ICON_IMAGE"));
+		}
 
-        credentialPanel.add(promptLabel);
+		JPanel questionPanel = new JPanel();
+		questionPanel.setLayout(new BoxLayout(questionPanel, BoxLayout.Y_AXIS));
+		JLabel imageLabel = new JLabel();
+		imageLabel.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
+		questionPanel.add(imageLabel);
 
-        principalField.setMaximumSize(principalField.getPreferredSize());
-        credentialPanel.add(principalField);
+		passwordField.setMaximumSize(passwordField.getPreferredSize());
+		passwordField.addActionListener(e -> {
+			principal = principalField.getText();
+			password = passwordField.getPassword();
+			setVisible(false);
+		});
+		JPanel credentialPanel = new JPanel(new GridLayout(2, 2));
 
-        JLabel passwordLabel = new JLabel(BundleMessage.format("UI_KERBEROS_PASSWORD_PROMPT"));
-        passwordLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        passwordLabel.setVerticalAlignment(SwingConstants.CENTER);
-        credentialPanel.add(passwordLabel);
+		JLabel promptLabel = new JLabel(' ' + prompt.trim());
+		promptLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		promptLabel.setVerticalAlignment(SwingConstants.CENTER);
 
-        passwordField.setMaximumSize(passwordField.getPreferredSize());
-        credentialPanel.add(passwordField);
+		credentialPanel.add(promptLabel);
 
-        add(questionPanel, BorderLayout.WEST);
-        add(credentialPanel, BorderLayout.CENTER);
-        add(getButtonPanel(), BorderLayout.SOUTH);
-        setModal(true);
+		principalField.setMaximumSize(principalField.getPreferredSize());
+		credentialPanel.add(principalField);
 
-        pack();
-        // center frame
-        setLocation(getToolkit().getScreenSize().width / 2 -
-                getSize().width / 2,
-                getToolkit().getScreenSize().height / 2 -
-                        getSize().height / 2);
-        setAlwaysOnTop(true);
-        setVisible(true);
-    }
+		JLabel passwordLabel = new JLabel(BundleMessage.format("UI_KERBEROS_PASSWORD_PROMPT"));
+		passwordLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		passwordLabel.setVerticalAlignment(SwingConstants.CENTER);
+		credentialPanel.add(passwordLabel);
 
-    protected JPanel getButtonPanel() {
-        JPanel buttonPanel = new JPanel();
-        JButton okButton = new JButton(BundleMessage.format("UI_BUTTON_OK"));
-        JButton cancelButton = new JButton(BundleMessage.format("UI_BUTTON_CANCEL"));
-        okButton.addActionListener(evt -> {
-            principal = principalField.getText();
-            password = passwordField.getPassword();
-            setVisible(false);
-        });
-        cancelButton.addActionListener(evt -> {
-            principal = null;
-            password = null;
-            setVisible(false);
-        });
+		passwordField.setMaximumSize(passwordField.getPreferredSize());
+		credentialPanel.add(passwordField);
 
-        buttonPanel.add(okButton);
-        buttonPanel.add(cancelButton);
-        return buttonPanel;
-    }
+		add(questionPanel, BorderLayout.WEST);
+		add(credentialPanel, BorderLayout.CENTER);
+		add(getButtonPanel(), BorderLayout.SOUTH);
+		setModal(true);
+
+		pack();
+		// center frame
+		setLocation(getToolkit().getScreenSize().width / 2 - getSize().width / 2,
+				getToolkit().getScreenSize().height / 2 - getSize().height / 2);
+		setAlwaysOnTop(true);
+		setVisible(true);
+	}
+
+	protected JPanel getButtonPanel() {
+		JPanel buttonPanel = new JPanel();
+		JButton okButton = new JButton(BundleMessage.format("UI_BUTTON_OK"));
+		JButton cancelButton = new JButton(BundleMessage.format("UI_BUTTON_CANCEL"));
+		okButton.addActionListener(evt -> {
+			principal = principalField.getText();
+			password = passwordField.getPassword();
+			setVisible(false);
+		});
+		cancelButton.addActionListener(evt -> {
+			principal = null;
+			password = null;
+			setVisible(false);
+		});
+
+		buttonPanel.add(okButton);
+		buttonPanel.add(cancelButton);
+		return buttonPanel;
+	}
 
 }

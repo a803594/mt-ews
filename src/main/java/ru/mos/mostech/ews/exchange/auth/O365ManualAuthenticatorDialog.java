@@ -18,140 +18,141 @@ import java.awt.datatransfer.StringSelection;
 import java.net.URISyntaxException;
 
 public class O365ManualAuthenticatorDialog extends JDialog {
-    final JTextField codeField = new JTextField(30);
-    protected String code;
 
-    /**
-     * Get Oauth authentication code.
-     *
-     * @return authentication code
-     */
-    public String getCode() {
-        if (code != null && code.contains("code=") && code.contains("&session_state=")) {
-            code = code.substring(code.indexOf("code=")+5, code.indexOf("&session_state="));
-        }
-        return code;
-    }
+	final JTextField codeField = new JTextField(30);
 
-    /**
-     * Get credentials.
-     *
-     * @param initUrl Kerberos prompt from callback handler
-     */
-    public O365ManualAuthenticatorDialog(String initUrl) {
-        setAlwaysOnTop(true);
+	protected String code;
 
-        setTitle(BundleMessage.format("UI_O365_MANUAL_PROMPT"));
+	/**
+	 * Get Oauth authentication code.
+	 * @return authentication code
+	 */
+	public String getCode() {
+		if (code != null && code.contains("code=") && code.contains("&session_state=")) {
+			code = code.substring(code.indexOf("code=") + 5, code.indexOf("&session_state="));
+		}
+		return code;
+	}
 
-        try {
-            setIconImages(MosTechEwsTray.getFrameIcons());
-        } catch (NoSuchMethodError error) {
-            MosTechEwsTray.debug(new BundleMessage("LOG_UNABLE_TO_SET_ICON_IMAGE"));
-        }
+	/**
+	 * Get credentials.
+	 * @param initUrl Kerberos prompt from callback handler
+	 */
+	public O365ManualAuthenticatorDialog(String initUrl) {
+		setAlwaysOnTop(true);
 
-        JPanel messagePanel = new JPanel();
-        messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.X_AXIS));
+		setTitle(BundleMessage.format("UI_O365_MANUAL_PROMPT"));
 
-        JLabel imageLabel = new JLabel();
-        imageLabel.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
-        messagePanel.add(imageLabel);
+		try {
+			setIconImages(MosTechEwsTray.getFrameIcons());
+		}
+		catch (NoSuchMethodError error) {
+			MosTechEwsTray.debug(new BundleMessage("LOG_UNABLE_TO_SET_ICON_IMAGE"));
+		}
 
-        messagePanel.add(getEditorPane(BundleMessage.format("UI_0365_AUTHENTICATION_PROMPT", initUrl)));
+		JPanel messagePanel = new JPanel();
+		messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.X_AXIS));
 
+		JLabel imageLabel = new JLabel();
+		imageLabel.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
+		messagePanel.add(imageLabel);
 
-        JPanel credentialPanel = new JPanel();
-        credentialPanel.setLayout(new BoxLayout(credentialPanel, BoxLayout.X_AXIS));
+		messagePanel.add(getEditorPane(BundleMessage.format("UI_0365_AUTHENTICATION_PROMPT", initUrl)));
 
-        JLabel promptLabel = new JLabel(BundleMessage.format("UI_0365_AUTHENTICATION_CODE"));
-        promptLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        promptLabel.setVerticalAlignment(SwingConstants.CENTER);
+		JPanel credentialPanel = new JPanel();
+		credentialPanel.setLayout(new BoxLayout(credentialPanel, BoxLayout.X_AXIS));
 
-        credentialPanel.add(promptLabel);
+		JLabel promptLabel = new JLabel(BundleMessage.format("UI_0365_AUTHENTICATION_CODE"));
+		promptLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		promptLabel.setVerticalAlignment(SwingConstants.CENTER);
 
-        codeField.setMaximumSize(codeField.getPreferredSize());
-        codeField.addActionListener(evt -> {
-            code = codeField.getText();
-            setVisible(false);
-        });
-        credentialPanel.add(codeField);
+		credentialPanel.add(promptLabel);
 
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.add(messagePanel);
-        centerPanel.add(getOpenButtonPanel(initUrl));
-        centerPanel.add(getEditorPane(BundleMessage.format("UI_0365_AUTHENTICATION_CODE_PROMPT")));
-        centerPanel.add(credentialPanel);
-        centerPanel.add(Box.createVerticalGlue());
+		codeField.setMaximumSize(codeField.getPreferredSize());
+		codeField.addActionListener(evt -> {
+			code = codeField.getText();
+			setVisible(false);
+		});
+		credentialPanel.add(codeField);
 
-        //add(messagePanel, BorderLayout.NORTH);
-        add(centerPanel, BorderLayout.CENTER);
-        add(getSendButtonPanel(), BorderLayout.SOUTH);
-        setModal(true);
+		JPanel centerPanel = new JPanel();
+		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+		centerPanel.add(messagePanel);
+		centerPanel.add(getOpenButtonPanel(initUrl));
+		centerPanel.add(getEditorPane(BundleMessage.format("UI_0365_AUTHENTICATION_CODE_PROMPT")));
+		centerPanel.add(credentialPanel);
+		centerPanel.add(Box.createVerticalGlue());
 
-        pack();
-        // center frame
-        setLocation(getToolkit().getScreenSize().width / 2 -
-                        getSize().width / 2,
-                getToolkit().getScreenSize().height / 2 -
-                        getSize().height / 2);
-        setAlwaysOnTop(true);
-        setVisible(true);
-    }
+		// add(messagePanel, BorderLayout.NORTH);
+		add(centerPanel, BorderLayout.CENTER);
+		add(getSendButtonPanel(), BorderLayout.SOUTH);
+		setModal(true);
 
-    private JEditorPane getEditorPane(String text) {
-        JEditorPane jEditorPane = new JEditorPane();
-        HTMLEditorKit htmlEditorKit = new HTMLEditorKit();
-        StyleSheet stylesheet = htmlEditorKit.getStyleSheet();
-        Font font = jEditorPane.getFont();
-        stylesheet.addRule("body { font-size:small;font-family: " + ((font==null)?"Arial":font.getFamily()) + '}');
-        jEditorPane.setEditorKit(htmlEditorKit);
-        jEditorPane.setContentType("text/html");
-        jEditorPane.setText(text);
+		pack();
+		// center frame
+		setLocation(getToolkit().getScreenSize().width / 2 - getSize().width / 2,
+				getToolkit().getScreenSize().height / 2 - getSize().height / 2);
+		setAlwaysOnTop(true);
+		setVisible(true);
+	}
 
-        jEditorPane.setEditable(false);
-        jEditorPane.setOpaque(false);
-        jEditorPane.addHyperlinkListener(hle -> {
-            if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
-                try {
-                    DesktopBrowser.browse(hle.getURL().toURI());
-                } catch (URISyntaxException e) {
-                    MosTechEwsTray.error(new BundleMessage("LOG_UNABLE_TO_OPEN_LINK"), e);
-                }
-            }
-        });
-        return jEditorPane;
-    }
+	private JEditorPane getEditorPane(String text) {
+		JEditorPane jEditorPane = new JEditorPane();
+		HTMLEditorKit htmlEditorKit = new HTMLEditorKit();
+		StyleSheet stylesheet = htmlEditorKit.getStyleSheet();
+		Font font = jEditorPane.getFont();
+		stylesheet
+			.addRule("body { font-size:small;font-family: " + ((font == null) ? "Arial" : font.getFamily()) + '}');
+		jEditorPane.setEditorKit(htmlEditorKit);
+		jEditorPane.setContentType("text/html");
+		jEditorPane.setText(text);
 
-    protected JPanel getOpenButtonPanel(final String initUrl) {
-        JPanel buttonPanel = new JPanel();
-        JButton openButton = new JButton(BundleMessage.format("UI_BUTTON_OPEN"));
-        JButton copyButton = new JButton(BundleMessage.format("UI_BUTTON_COPY"));
-        openButton.addActionListener(evt -> DesktopBrowser.browse(initUrl));
-        copyButton.addActionListener(evt -> {
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(new StringSelection(initUrl), null);
-        });
+		jEditorPane.setEditable(false);
+		jEditorPane.setOpaque(false);
+		jEditorPane.addHyperlinkListener(hle -> {
+			if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
+				try {
+					DesktopBrowser.browse(hle.getURL().toURI());
+				}
+				catch (URISyntaxException e) {
+					MosTechEwsTray.error(new BundleMessage("LOG_UNABLE_TO_OPEN_LINK"), e);
+				}
+			}
+		});
+		return jEditorPane;
+	}
 
-        buttonPanel.add(openButton);
-        buttonPanel.add(copyButton);
-        return buttonPanel;
-    }
+	protected JPanel getOpenButtonPanel(final String initUrl) {
+		JPanel buttonPanel = new JPanel();
+		JButton openButton = new JButton(BundleMessage.format("UI_BUTTON_OPEN"));
+		JButton copyButton = new JButton(BundleMessage.format("UI_BUTTON_COPY"));
+		openButton.addActionListener(evt -> DesktopBrowser.browse(initUrl));
+		copyButton.addActionListener(evt -> {
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			clipboard.setContents(new StringSelection(initUrl), null);
+		});
 
-    protected JPanel getSendButtonPanel() {
-        JPanel buttonPanel = new JPanel();
-        JButton sendButton = new JButton(BundleMessage.format("UI_BUTTON_SEND"));
-        JButton cancelButton = new JButton(BundleMessage.format("UI_BUTTON_CANCEL"));
-        sendButton.addActionListener(evt -> {
-            code = codeField.getText();
-            setVisible(false);
-        });
-        cancelButton.addActionListener(evt -> {
-            code = null;
-            setVisible(false);
-        });
+		buttonPanel.add(openButton);
+		buttonPanel.add(copyButton);
+		return buttonPanel;
+	}
 
-        buttonPanel.add(sendButton);
-        buttonPanel.add(cancelButton);
-        return buttonPanel;
-    }
+	protected JPanel getSendButtonPanel() {
+		JPanel buttonPanel = new JPanel();
+		JButton sendButton = new JButton(BundleMessage.format("UI_BUTTON_SEND"));
+		JButton cancelButton = new JButton(BundleMessage.format("UI_BUTTON_CANCEL"));
+		sendButton.addActionListener(evt -> {
+			code = codeField.getText();
+			setVisible(false);
+		});
+		cancelButton.addActionListener(evt -> {
+			code = null;
+			setVisible(false);
+		});
+
+		buttonPanel.add(sendButton);
+		buttonPanel.add(cancelButton);
+		return buttonPanel;
+	}
+
 }

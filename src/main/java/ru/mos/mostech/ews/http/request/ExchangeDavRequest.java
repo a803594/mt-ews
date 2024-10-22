@@ -26,248 +26,255 @@ import java.util.List;
 
 @Slf4j
 public abstract class ExchangeDavRequest extends HttpPost implements ResponseHandler<List<MultiStatusResponse>> {
-    
-    private static final String XML_CONTENT_TYPE = "text/xml; charset=UTF-8";
 
-    private HttpResponse response;
-    private List<MultiStatusResponse> responses;
+	private static final String XML_CONTENT_TYPE = "text/xml; charset=UTF-8";
 
-    /**
-     * Create PROPPATCH method.
-     *
-     * @param path path
-     */
-    public ExchangeDavRequest(String path) {
-        super(path);
-        AbstractHttpEntity httpEntity = new AbstractHttpEntity() {
-            byte[] content;
+	private HttpResponse response;
 
-            @Override
-            public boolean isRepeatable() {
-                return true;
-            }
+	private List<MultiStatusResponse> responses;
 
-            @Override
-            public long getContentLength() {
-                if (content == null) {
-                    content = generateRequestContent();
-                }
-                return content.length;
-            }
+	/**
+	 * Create PROPPATCH method.
+	 * @param path path
+	 */
+	public ExchangeDavRequest(String path) {
+		super(path);
+		AbstractHttpEntity httpEntity = new AbstractHttpEntity() {
+			byte[] content;
 
-            @Override
-            public InputStream getContent() throws UnsupportedOperationException {
-                if (content == null) {
-                    content = generateRequestContent();
-                }
-                return new ByteArrayInputStream(content);
-            }
+			@Override
+			public boolean isRepeatable() {
+				return true;
+			}
 
-            @Override
-            public void writeTo(OutputStream outputStream) throws IOException {
-                if (content == null) {
-                    content = generateRequestContent();
-                }
-                outputStream.write(content);
-            }
+			@Override
+			public long getContentLength() {
+				if (content == null) {
+					content = generateRequestContent();
+				}
+				return content.length;
+			}
 
-            @Override
-            public boolean isStreaming() {
-                return false;
-            }
-        };
+			@Override
+			public InputStream getContent() throws UnsupportedOperationException {
+				if (content == null) {
+					content = generateRequestContent();
+				}
+				return new ByteArrayInputStream(content);
+			}
 
-        httpEntity.setContentType(XML_CONTENT_TYPE);
-        setEntity(httpEntity);
-    }
+			@Override
+			public void writeTo(OutputStream outputStream) throws IOException {
+				if (content == null) {
+					content = generateRequestContent();
+				}
+				outputStream.write(content);
+			}
 
-    /**
-     * Generate request content from property values.
-     *
-     * @return request content as byte array
-     */
-    protected abstract byte[] generateRequestContent();
+			@Override
+			public boolean isStreaming() {
+				return false;
+			}
+		};
 
-    @Override
-    public List<MultiStatusResponse> handleResponse(HttpResponse response) {
-        this.response = response;
-        Header contentTypeHeader = response.getFirstHeader("Content-Type");
-        if (contentTypeHeader != null && "text/xml".equals(contentTypeHeader.getValue())) {
-            responses = new ArrayList<>();
-            XMLStreamReader reader;
-            try {
-                reader = XMLStreamUtil.createXMLStreamReader(new FilterInputStream(response.getEntity().getContent()) {
-                    final byte[] lastbytes = new byte[3];
+		httpEntity.setContentType(XML_CONTENT_TYPE);
+		setEntity(httpEntity);
+	}
 
-                    @Override
-                    public int read(byte[] bytes, int off, int len) throws IOException {
-                        int count = in.read(bytes, off, len);
-                        // patch invalid element name
-                        for (int i = 0; i < count; i++) {
-                            byte currentByte = bytes[off + i];
-                            if ((lastbytes[0] == '<') && (currentByte >= '0' && currentByte <= '9')) {
-                                // move invalid first tag char to valid range
-                                bytes[off + i] = (byte) (currentByte + 49);
-                            }
-                            lastbytes[0] = lastbytes[1];
-                            lastbytes[1] = lastbytes[2];
-                            lastbytes[2] = currentByte;
-                        }
-                        return count;
-                    }
+	/**
+	 * Generate request content from property values.
+	 * @return request content as byte array
+	 */
+	protected abstract byte[] generateRequestContent();
 
-                });
-                while (reader.hasNext()) {
-                    reader.next();
-                    if (XMLStreamUtil.isStartTag(reader, "response")) {
-                        handleResponse(reader);
-                    }
-                }
+	@Override
+	public List<MultiStatusResponse> handleResponse(HttpResponse response) {
+		this.response = response;
+		Header contentTypeHeader = response.getFirstHeader("Content-Type");
+		if (contentTypeHeader != null && "text/xml".equals(contentTypeHeader.getValue())) {
+			responses = new ArrayList<>();
+			XMLStreamReader reader;
+			try {
+				reader = XMLStreamUtil.createXMLStreamReader(new FilterInputStream(response.getEntity().getContent()) {
+					final byte[] lastbytes = new byte[3];
 
-            } catch (IOException | XMLStreamException e) {
-                log.error("Error while parsing soap response: " + e, e);
-            }
-        }
-        return responses;
-    }
+					@Override
+					public int read(byte[] bytes, int off, int len) throws IOException {
+						int count = in.read(bytes, off, len);
+						// patch invalid element name
+						for (int i = 0; i < count; i++) {
+							byte currentByte = bytes[off + i];
+							if ((lastbytes[0] == '<') && (currentByte >= '0' && currentByte <= '9')) {
+								// move invalid first tag char to valid range
+								bytes[off + i] = (byte) (currentByte + 49);
+							}
+							lastbytes[0] = lastbytes[1];
+							lastbytes[1] = lastbytes[2];
+							lastbytes[2] = currentByte;
+						}
+						return count;
+					}
 
-    protected void handleResponse(XMLStreamReader reader) throws XMLStreamException {
-        MultiStatusResponse multiStatusResponse = null;
-        String href = null;
-        String responseStatus = "";
-        while (reader.hasNext() && !XMLStreamUtil.isEndTag(reader, "response")) {
-            reader.next();
-            if (XMLStreamUtil.isStartTag(reader)) {
-                String tagLocalName = reader.getLocalName();
-                if ("href".equals(tagLocalName)) {
-                    href = reader.getElementText();
-                } else if ("status".equals(tagLocalName)) {
-                    responseStatus = reader.getElementText();
-                } else if ("propstat".equals(tagLocalName)) {
-                    if (multiStatusResponse == null) {
-                        multiStatusResponse = new MultiStatusResponse(href, responseStatus);
-                    }
-                    handlePropstat(reader, multiStatusResponse);
-                }
-            }
-        }
-        if (multiStatusResponse != null) {
-            responses.add(multiStatusResponse);
-        }
-    }
+				});
+				while (reader.hasNext()) {
+					reader.next();
+					if (XMLStreamUtil.isStartTag(reader, "response")) {
+						handleResponse(reader);
+					}
+				}
 
-    protected void handlePropstat(XMLStreamReader reader, MultiStatusResponse multiStatusResponse) throws XMLStreamException {
-        int propstatStatus = 0;
-        while (reader.hasNext() && !XMLStreamUtil.isEndTag(reader, "propstat")) {
-            reader.next();
-            if (XMLStreamUtil.isStartTag(reader)) {
-                String tagLocalName = reader.getLocalName();
-                if ("status".equals(tagLocalName)) {
-                    if ("HTTP/1.1 200 OK".equals(reader.getElementText())) {
-                        propstatStatus = HttpStatus.SC_OK;
-                    } else {
-                        propstatStatus = 0;
-                    }
-                } else if ("prop".equals(tagLocalName) && propstatStatus == HttpStatus.SC_OK) {
-                    handleProperty(reader, multiStatusResponse);
-                }
-            }
-        }
+			}
+			catch (IOException | XMLStreamException e) {
+				log.error("Error while parsing soap response: " + e, e);
+			}
+		}
+		return responses;
+	}
 
-    }
+	protected void handleResponse(XMLStreamReader reader) throws XMLStreamException {
+		MultiStatusResponse multiStatusResponse = null;
+		String href = null;
+		String responseStatus = "";
+		while (reader.hasNext() && !XMLStreamUtil.isEndTag(reader, "response")) {
+			reader.next();
+			if (XMLStreamUtil.isStartTag(reader)) {
+				String tagLocalName = reader.getLocalName();
+				if ("href".equals(tagLocalName)) {
+					href = reader.getElementText();
+				}
+				else if ("status".equals(tagLocalName)) {
+					responseStatus = reader.getElementText();
+				}
+				else if ("propstat".equals(tagLocalName)) {
+					if (multiStatusResponse == null) {
+						multiStatusResponse = new MultiStatusResponse(href, responseStatus);
+					}
+					handlePropstat(reader, multiStatusResponse);
+				}
+			}
+		}
+		if (multiStatusResponse != null) {
+			responses.add(multiStatusResponse);
+		}
+	}
 
-    protected void handleProperty(XMLStreamReader reader, MultiStatusResponse multiStatusResponse) throws XMLStreamException {
-        while (reader.hasNext() && !XMLStreamUtil.isEndTag(reader, "prop")) {
-            reader.next();
-            if (XMLStreamUtil.isStartTag(reader)) {
-                Namespace namespace = Namespace.getNamespace(reader.getNamespaceURI());
-                String tagLocalName = reader.getLocalName();
-                if (reader.getAttributeCount() > 0 && "mv.string".equals(reader.getAttributeValue(0))) {
-                    handleMultiValuedProperty(reader, multiStatusResponse);
-                } else {
-                    String tagContent = getTagContent(reader);
-                    if (tagContent != null) {
-                        multiStatusResponse.add(new DefaultDavProperty<>(tagLocalName, tagContent, namespace));
-                    }
-                }
-            }
-        }
-    }
+	protected void handlePropstat(XMLStreamReader reader, MultiStatusResponse multiStatusResponse)
+			throws XMLStreamException {
+		int propstatStatus = 0;
+		while (reader.hasNext() && !XMLStreamUtil.isEndTag(reader, "propstat")) {
+			reader.next();
+			if (XMLStreamUtil.isStartTag(reader)) {
+				String tagLocalName = reader.getLocalName();
+				if ("status".equals(tagLocalName)) {
+					if ("HTTP/1.1 200 OK".equals(reader.getElementText())) {
+						propstatStatus = HttpStatus.SC_OK;
+					}
+					else {
+						propstatStatus = 0;
+					}
+				}
+				else if ("prop".equals(tagLocalName) && propstatStatus == HttpStatus.SC_OK) {
+					handleProperty(reader, multiStatusResponse);
+				}
+			}
+		}
 
-    protected void handleMultiValuedProperty(XMLStreamReader reader, MultiStatusResponse multiStatusResponse) throws XMLStreamException {
-        String tagLocalName = reader.getLocalName();
-        Namespace namespace = Namespace.getNamespace(reader.getNamespaceURI());
-        ArrayList<String> values = new ArrayList<>();
-        while (reader.hasNext() && !XMLStreamUtil.isEndTag(reader, tagLocalName)) {
-            reader.next();
-            if (XMLStreamUtil.isStartTag(reader)) {
-                String tagContent = getTagContent(reader);
-                if (tagContent != null) {
-                    values.add(tagContent);
-                }
-            }
-        }
-        multiStatusResponse.add(new DefaultDavProperty<>(tagLocalName, values, namespace));
-    }
+	}
 
-    protected String getTagContent(XMLStreamReader reader) throws XMLStreamException {
-        String value = null;
-        String tagLocalName = reader.getLocalName();
-        while (reader.hasNext() &&
-                !((reader.getEventType() == XMLStreamConstants.END_ELEMENT) && tagLocalName.equals(reader.getLocalName()))) {
-            reader.next();
-            if (reader.getEventType() == XMLStreamConstants.CHARACTERS) {
-                value = reader.getText();
-            }
-        }
-        // empty tag
-        if (!reader.hasNext()) {
-            throw new XMLStreamException("End element for " + tagLocalName + " not found");
-        }
-        return value;
-    }
+	protected void handleProperty(XMLStreamReader reader, MultiStatusResponse multiStatusResponse)
+			throws XMLStreamException {
+		while (reader.hasNext() && !XMLStreamUtil.isEndTag(reader, "prop")) {
+			reader.next();
+			if (XMLStreamUtil.isStartTag(reader)) {
+				Namespace namespace = Namespace.getNamespace(reader.getNamespaceURI());
+				String tagLocalName = reader.getLocalName();
+				if (reader.getAttributeCount() > 0 && "mv.string".equals(reader.getAttributeValue(0))) {
+					handleMultiValuedProperty(reader, multiStatusResponse);
+				}
+				else {
+					String tagContent = getTagContent(reader);
+					if (tagContent != null) {
+						multiStatusResponse.add(new DefaultDavProperty<>(tagLocalName, tagContent, namespace));
+					}
+				}
+			}
+		}
+	}
 
-    /**
-     * Get Multistatus responses.
-     *
-     * @return responses
-     * @throws HttpResponseException on error
-     */
-    public MultiStatusResponse[] getResponses() throws HttpResponseException {
-        if (responses == null) {
-            // TODO: compare with native HttpClient error handling
-            throw new HttpResponseException(response.getStatusLine().getStatusCode(),
-                    response.getStatusLine().getReasonPhrase());
-        }
-        return responses.toArray(new MultiStatusResponse[0]);
-    }
+	protected void handleMultiValuedProperty(XMLStreamReader reader, MultiStatusResponse multiStatusResponse)
+			throws XMLStreamException {
+		String tagLocalName = reader.getLocalName();
+		Namespace namespace = Namespace.getNamespace(reader.getNamespaceURI());
+		ArrayList<String> values = new ArrayList<>();
+		while (reader.hasNext() && !XMLStreamUtil.isEndTag(reader, tagLocalName)) {
+			reader.next();
+			if (XMLStreamUtil.isStartTag(reader)) {
+				String tagContent = getTagContent(reader);
+				if (tagContent != null) {
+					values.add(tagContent);
+				}
+			}
+		}
+		multiStatusResponse.add(new DefaultDavProperty<>(tagLocalName, values, namespace));
+	}
 
-    /**
-     * Get single Multistatus response.
-     *
-     * @return response
-     * @throws HttpResponseException on error
-     */
-    public MultiStatusResponse getResponse() throws HttpResponseException {
-        if (responses == null || responses.size() != 1) {
-            throw new HttpResponseException(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
-        }
-        return responses.get(0);
-    }
+	protected String getTagContent(XMLStreamReader reader) throws XMLStreamException {
+		String value = null;
+		String tagLocalName = reader.getLocalName();
+		while (reader.hasNext() && !((reader.getEventType() == XMLStreamConstants.END_ELEMENT)
+				&& tagLocalName.equals(reader.getLocalName()))) {
+			reader.next();
+			if (reader.getEventType() == XMLStreamConstants.CHARACTERS) {
+				value = reader.getText();
+			}
+		}
+		// empty tag
+		if (!reader.hasNext()) {
+			throw new XMLStreamException("End element for " + tagLocalName + " not found");
+		}
+		return value;
+	}
 
-    /**
-     * Return method http status code.
-     *
-     * @return http status code
-     * @throws HttpResponseException on error
-     */
-    public int getResponseStatusCode() throws HttpResponseException {
-        String responseDescription = getResponse().getResponseDescription();
-        if ("HTTP/1.1 201 Created".equals(responseDescription)) {
-            return HttpStatus.SC_CREATED;
-        } else {
-            return HttpStatus.SC_OK;
-        }
-    }
+	/**
+	 * Get Multistatus responses.
+	 * @return responses
+	 * @throws HttpResponseException on error
+	 */
+	public MultiStatusResponse[] getResponses() throws HttpResponseException {
+		if (responses == null) {
+			// TODO: compare with native HttpClient error handling
+			throw new HttpResponseException(response.getStatusLine().getStatusCode(),
+					response.getStatusLine().getReasonPhrase());
+		}
+		return responses.toArray(new MultiStatusResponse[0]);
+	}
+
+	/**
+	 * Get single Multistatus response.
+	 * @return response
+	 * @throws HttpResponseException on error
+	 */
+	public MultiStatusResponse getResponse() throws HttpResponseException {
+		if (responses == null || responses.size() != 1) {
+			throw new HttpResponseException(response.getStatusLine().getStatusCode(),
+					response.getStatusLine().getReasonPhrase());
+		}
+		return responses.get(0);
+	}
+
+	/**
+	 * Return method http status code.
+	 * @return http status code
+	 * @throws HttpResponseException on error
+	 */
+	public int getResponseStatusCode() throws HttpResponseException {
+		String responseDescription = getResponse().getResponseDescription();
+		if ("HTTP/1.1 201 Created".equals(responseDescription)) {
+			return HttpStatus.SC_CREATED;
+		}
+		else {
+			return HttpStatus.SC_OK;
+		}
+	}
 
 }

@@ -17,69 +17,74 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 /**
- * Encrypt string with user password.
- * Simple implementation based on AES
+ * Encrypt string with user password. Simple implementation based on AES
  */
 public class StringEncryptor {
-    static final String ALGO = "PBEWithHmacSHA256AndAES_128";
-    static String fingerprint;
 
-    static {
-        try {
-            fingerprint = InetAddress.getLocalHost().getCanonicalHostName().substring(0, 16);
-        } catch (Throwable t) {
-            fingerprint = "mtewsgateway!&";
-        }
-    }
+	static final String ALGO = "PBEWithHmacSHA256AndAES_128";
+	static String fingerprint;
 
-    private final String password;
+	static {
+		try {
+			fingerprint = InetAddress.getLocalHost().getCanonicalHostName().substring(0, 16);
+		}
+		catch (Throwable t) {
+			fingerprint = "mtewsgateway!&";
+		}
+	}
 
-    public StringEncryptor(String password) {
-        this.password = password;
-    }
+	private final String password;
 
-    public String encryptString(String value) throws IOException {
-        try {
-            byte[] plaintext = value.getBytes(StandardCharsets.UTF_8);
+	public StringEncryptor(String password) {
+		this.password = password;
+	}
 
-            // Encrypt
-            Cipher enc = Cipher.getInstance(ALGO);
-            enc.init(Cipher.ENCRYPT_MODE, getSecretKey(), getPBEParameterSpec());
-            byte[] encrypted = enc.doFinal(plaintext);
-            return "{AES}" + IOUtil.encodeBase64AsString(encrypted);
+	public String encryptString(String value) throws IOException {
+		try {
+			byte[] plaintext = value.getBytes(StandardCharsets.UTF_8);
 
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
-    }
+			// Encrypt
+			Cipher enc = Cipher.getInstance(ALGO);
+			enc.init(Cipher.ENCRYPT_MODE, getSecretKey(), getPBEParameterSpec());
+			byte[] encrypted = enc.doFinal(plaintext);
+			return "{AES}" + IOUtil.encodeBase64AsString(encrypted);
 
-    public String decryptString(String value) throws IOException {
-        if (value != null && value.startsWith("{AES}")) {
-            try {
-                byte[] encrypted = IOUtil.decodeBase64(value.substring(5));
+		}
+		catch (Exception e) {
+			throw new IOException(e);
+		}
+	}
 
-                Cipher dec = Cipher.getInstance(ALGO);
-                dec.init(Cipher.DECRYPT_MODE, getSecretKey(), getPBEParameterSpec());
-                byte[] decrypted = dec.doFinal(encrypted);
-                return new String(decrypted, StandardCharsets.UTF_8);
+	public String decryptString(String value) throws IOException {
+		if (value != null && value.startsWith("{AES}")) {
+			try {
+				byte[] encrypted = IOUtil.decodeBase64(value.substring(5));
 
-            } catch (Exception e) {
-                throw new IOException(e);
-            }
-        } else {
-            return value;
-        }
-    }
+				Cipher dec = Cipher.getInstance(ALGO);
+				dec.init(Cipher.DECRYPT_MODE, getSecretKey(), getPBEParameterSpec());
+				byte[] decrypted = dec.doFinal(encrypted);
+				return new String(decrypted, StandardCharsets.UTF_8);
 
-    private SecretKey getSecretKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
-        PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray());
+			}
+			catch (Exception e) {
+				throw new IOException(e);
+			}
+		}
+		else {
+			return value;
+		}
+	}
 
-        SecretKeyFactory kf = SecretKeyFactory.getInstance(ALGO);
-        return kf.generateSecret(keySpec);
-    }
+	private SecretKey getSecretKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
+		PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray());
 
-    private PBEParameterSpec getPBEParameterSpec() {
-        byte[] bytes = fingerprint.getBytes(StandardCharsets.UTF_8);
-        return new PBEParameterSpec(bytes, 10000, new IvParameterSpec(bytes));
-    }
+		SecretKeyFactory kf = SecretKeyFactory.getInstance(ALGO);
+		return kf.generateSecret(keySpec);
+	}
+
+	private PBEParameterSpec getPBEParameterSpec() {
+		byte[] bytes = fingerprint.getBytes(StandardCharsets.UTF_8);
+		return new PBEParameterSpec(bytes, 10000, new IvParameterSpec(bytes));
+	}
+
 }

@@ -25,223 +25,240 @@ import java.security.Security;
 @Slf4j
 public class O365InteractiveAuthenticator implements ExchangeAuthenticator {
 
-    private static final int MAX_COUNT = 300;
-    
+	private static final int MAX_COUNT = 300;
 
-    static {
-        // disable HTTP/2 loader on Java 14 and later to enable custom socket factory
-        System.setProperty("com.sun.webkit.useHTTP2Loader", "false");
-    }
+	static {
+		// disable HTTP/2 loader on Java 14 and later to enable custom socket factory
+		System.setProperty("com.sun.webkit.useHTTP2Loader", "false");
+	}
 
-    boolean isAuthenticated = false;
-    String errorCode = null;
-    String code = null;
+	boolean isAuthenticated = false;
 
-    URI ewsUrl = URI.create(Settings.getO365Url());
+	String errorCode = null;
 
-    private O365InteractiveAuthenticatorFrame o365InteractiveAuthenticatorFrame;
-    private O365ManualAuthenticatorDialog o365ManualAuthenticatorDialog;
+	String code = null;
 
-    private String username;
-    private String password;
-    private O365Token token;
+	URI ewsUrl = URI.create(Settings.getO365Url());
 
-    public O365Token getToken() {
-        return token;
-    }
+	private O365InteractiveAuthenticatorFrame o365InteractiveAuthenticatorFrame;
 
-    @Override
-    public URI getExchangeUri() {
-        return ewsUrl;
-    }
+	private O365ManualAuthenticatorDialog o365ManualAuthenticatorDialog;
 
-    public String getUsername() {
-        return username;
-    }
+	private String username;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	private String password;
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	private O365Token token;
 
-    /**
-     * Return a pool enabled HttpClientAdapter instance to access O365
-     *
-     * @return HttpClientAdapter instance
-     */
-    @Override
-    public HttpClientAdapter getHttpClientAdapter() {
-        return new HttpClientAdapter(getExchangeUri(), username, password, true);
-    }
+	public O365Token getToken() {
+		return token;
+	}
 
-    public void authenticate() throws IOException {
+	@Override
+	public URI getExchangeUri() {
+		return ewsUrl;
+	}
 
-        // allow cross domain requests for Okta form support
-        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
-        // enable NTLM for ADFS support
-        System.setProperty("jdk.http.ntlm.transparentAuth", "allHosts");
+	public String getUsername() {
+		return username;
+	}
 
-        // common MT-EWS client id
-        final String clientId = Settings.getProperty("mt.ews.oauth.clientId", "facd6cff-a294-4415-b59f-c5b01937d7bd");
-        // standard native app redirectUri
-        final String redirectUri = Settings.getProperty("mt.ews.oauth.redirectUri", Settings.O365_LOGIN_URL+"common/oauth2/nativeclient");
-        // company tenantId or common
-        String tenantId = Settings.getProperty("mt.ews.oauth.tenantId", "common");
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-        // first try to load stored token
-        token = O365Token.load(tenantId, clientId, redirectUri, username, password);
-        if (token != null) {
-            isAuthenticated = true;
-            return;
-        }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-        final String initUrl = O365Authenticator.buildAuthorizeUrl(tenantId, clientId, redirectUri, username);
+	/**
+	 * Return a pool enabled HttpClientAdapter instance to access O365
+	 * @return HttpClientAdapter instance
+	 */
+	@Override
+	public HttpClientAdapter getHttpClientAdapter() {
+		return new HttpClientAdapter(getExchangeUri(), username, password, true);
+	}
 
-        // set default authenticator
-        Authenticator.setDefault(new Authenticator() {
-            @Override
-            public PasswordAuthentication getPasswordAuthentication() {
-                if (getRequestorType() == RequestorType.PROXY) {
-                    String proxyUser = Settings.getProperty("mt.ews.proxyUser");
-                    String proxyPassword = Settings.getProperty("mt.ews.proxyPassword");
-                    if (proxyUser != null && proxyPassword != null) {
-                        log.debug("Proxy authentication with user " + proxyUser);
-                        return new PasswordAuthentication(proxyUser, proxyPassword.toCharArray());
-                    } else {
-                        log.debug("Missing proxy credentials ");
-                        return null;
-                    }
-                } else {
-                    log.debug("Password authentication with user " + username);
-                    return new PasswordAuthentication(username, password.toCharArray());
-                }
-            }
-        });
+	public void authenticate() throws IOException {
 
-        boolean isJFXAvailable = true;
-        try {
-            Class.forName("javafx.application.Platform");
-        } catch (ClassNotFoundException e) {
-            log.warn("Unable to load JavaFX (OpenJFX), switch to manual mode");
-            isJFXAvailable = false;
-        }
+		// allow cross domain requests for Okta form support
+		System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+		// enable NTLM for ADFS support
+		System.setProperty("jdk.http.ntlm.transparentAuth", "allHosts");
 
-        if (isJFXAvailable) {
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    o365InteractiveAuthenticatorFrame = new O365InteractiveAuthenticatorFrame();
-                    o365InteractiveAuthenticatorFrame.setO365InteractiveAuthenticator(O365InteractiveAuthenticator.this);
-                    o365InteractiveAuthenticatorFrame.authenticate(initUrl, redirectUri);
-                } catch (NoClassDefFoundError e) {
-                    log.warn("Unable to load JavaFX (OpenJFX)");
-                } catch (IllegalAccessError e) {
-                    log.warn("Unable to load JavaFX (OpenJFX), append --add-exports java.base/sun.net.www.protocol.https=ALL-UNNAMED to java options");
-                }
+		// common MT-EWS client id
+		final String clientId = Settings.getProperty("mt.ews.oauth.clientId", "facd6cff-a294-4415-b59f-c5b01937d7bd");
+		// standard native app redirectUri
+		final String redirectUri = Settings.getProperty("mt.ews.oauth.redirectUri",
+				Settings.O365_LOGIN_URL + "common/oauth2/nativeclient");
+		// company tenantId or common
+		String tenantId = Settings.getProperty("mt.ews.oauth.tenantId", "common");
 
-            });
-        } else {
-            if (o365InteractiveAuthenticatorFrame == null) {
-                try {
-                    SwingUtilities.invokeAndWait(() -> o365ManualAuthenticatorDialog = new O365ManualAuthenticatorDialog(initUrl));
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                } catch (InvocationTargetException e) {
-                    throw new IOException(e);
-                }
-                code = o365ManualAuthenticatorDialog.getCode();
-                isAuthenticated = code != null;
-                if (!isAuthenticated) {
-                    errorCode = "User did not provide authentication code";
-                }
-            }
-        }
+		// first try to load stored token
+		token = O365Token.load(tenantId, clientId, redirectUri, username, password);
+		if (token != null) {
+			isAuthenticated = true;
+			return;
+		}
 
-        int count = 0;
+		final String initUrl = O365Authenticator.buildAuthorizeUrl(tenantId, clientId, redirectUri, username);
 
-        while (!isAuthenticated && errorCode == null && count++ < MAX_COUNT) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
+		// set default authenticator
+		Authenticator.setDefault(new Authenticator() {
+			@Override
+			public PasswordAuthentication getPasswordAuthentication() {
+				if (getRequestorType() == RequestorType.PROXY) {
+					String proxyUser = Settings.getProperty("mt.ews.proxyUser");
+					String proxyPassword = Settings.getProperty("mt.ews.proxyPassword");
+					if (proxyUser != null && proxyPassword != null) {
+						log.debug("Proxy authentication with user " + proxyUser);
+						return new PasswordAuthentication(proxyUser, proxyPassword.toCharArray());
+					}
+					else {
+						log.debug("Missing proxy credentials ");
+						return null;
+					}
+				}
+				else {
+					log.debug("Password authentication with user " + username);
+					return new PasswordAuthentication(username, password.toCharArray());
+				}
+			}
+		});
 
-        if (count > MAX_COUNT) {
-            errorCode = "Timed out waiting for interactive authentication";
-        }
+		boolean isJFXAvailable = true;
+		try {
+			Class.forName("javafx.application.Platform");
+		}
+		catch (ClassNotFoundException e) {
+			log.warn("Unable to load JavaFX (OpenJFX), switch to manual mode");
+			isJFXAvailable = false;
+		}
 
-        if (o365InteractiveAuthenticatorFrame != null && o365InteractiveAuthenticatorFrame.isVisible()) {
-            o365InteractiveAuthenticatorFrame.close();
-        }
+		if (isJFXAvailable) {
+			SwingUtilities.invokeLater(() -> {
+				try {
+					o365InteractiveAuthenticatorFrame = new O365InteractiveAuthenticatorFrame();
+					o365InteractiveAuthenticatorFrame
+						.setO365InteractiveAuthenticator(O365InteractiveAuthenticator.this);
+					o365InteractiveAuthenticatorFrame.authenticate(initUrl, redirectUri);
+				}
+				catch (NoClassDefFoundError e) {
+					log.warn("Unable to load JavaFX (OpenJFX)");
+				}
+				catch (IllegalAccessError e) {
+					log.warn(
+							"Unable to load JavaFX (OpenJFX), append --add-exports java.base/sun.net.www.protocol.https=ALL-UNNAMED to java options");
+				}
 
-        if (isAuthenticated) {
-            token = O365Token.build(tenantId, clientId, redirectUri, code, password);
+			});
+		}
+		else {
+			if (o365InteractiveAuthenticatorFrame == null) {
+				try {
+					SwingUtilities.invokeAndWait(
+							() -> o365ManualAuthenticatorDialog = new O365ManualAuthenticatorDialog(initUrl));
+				}
+				catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+				catch (InvocationTargetException e) {
+					throw new IOException(e);
+				}
+				code = o365ManualAuthenticatorDialog.getCode();
+				isAuthenticated = code != null;
+				if (!isAuthenticated) {
+					errorCode = "User did not provide authentication code";
+				}
+			}
+		}
 
-            log.debug("Authenticated username: " + token.getUsername());
-            if (username != null && !username.isEmpty() && !username.equalsIgnoreCase(token.getUsername())) {
-                throw new MosTechEwsAuthenticationException("Authenticated username " + token.getUsername() + " does not match " + username);
-            }
+		int count = 0;
 
-        } else {
-            log.error("Authentication failed " + errorCode);
-            throw new MosTechEwsException("EXCEPTION_AUTHENTICATION_FAILED_REASON", errorCode);
-        }
-    }
+		while (!isAuthenticated && errorCode == null && count++ < MAX_COUNT) {
+			try {
+				Thread.sleep(1000);
+			}
+			catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
 
-    public static void main(String[] argv) {
+		if (count > MAX_COUNT) {
+			errorCode = "Timed out waiting for interactive authentication";
+		}
 
-        try {
-            // set custom factory before loading OpenJFX
-            Security.setProperty("ssl.SocketFactory.provider", "mt.ews.http.DavGatewaySSLSocketFactory");
+		if (o365InteractiveAuthenticatorFrame != null && o365InteractiveAuthenticatorFrame.isVisible()) {
+			o365InteractiveAuthenticatorFrame.close();
+		}
 
-            Settings.setDefaultSettings();
-            Settings.setConfigFilePath("mt-ews-interactive.properties");
-            Settings.load();
+		if (isAuthenticated) {
+			token = O365Token.build(tenantId, clientId, redirectUri, code, password);
 
-            O365InteractiveAuthenticator authenticator = new O365InteractiveAuthenticator();
-            authenticator.setUsername("");
-            authenticator.authenticate();
+			log.debug("Authenticated username: " + token.getUsername());
+			if (username != null && !username.isEmpty() && !username.equalsIgnoreCase(token.getUsername())) {
+				throw new MosTechEwsAuthenticationException(
+						"Authenticated username " + token.getUsername() + " does not match " + username);
+			}
 
-            try (
-                    HttpClientAdapter httpClientAdapter = new HttpClientAdapter(authenticator.getExchangeUri(), true)
-            ) {
+		}
+		else {
+			log.error("Authentication failed " + errorCode);
+			throw new MosTechEwsException("EXCEPTION_AUTHENTICATION_FAILED_REASON", errorCode);
+		}
+	}
 
-                // switch to EWS url
-                GetFolderMethod checkMethod = new GetFolderMethod(BaseShape.ID_ONLY, DistinguishedFolderId.getInstance(null, DistinguishedFolderId.Name.root), null);
-                checkMethod.setHeader("Authorization", "Bearer " + authenticator.getToken().getAccessToken());
-                try (
-                        CloseableHttpResponse response = httpClientAdapter.execute(checkMethod)
-                ) {
-                    checkMethod.handleResponse(response);
-                    checkMethod.checkSuccess();
-                }
-                log.info("Retrieved folder id " + checkMethod.getResponseItem().get("FolderId"));
+	public static void main(String[] argv) {
 
-                // loop to check expiration
-                int i = 0;
-                while (i++ < 12 * 60 * 2) {
-                    GetUserConfigurationMethod getUserConfigurationMethod = new GetUserConfigurationMethod();
-                    getUserConfigurationMethod.setHeader("Authorization", "Bearer " + authenticator.getToken().getAccessToken());
-                    try (
-                            CloseableHttpResponse response = httpClientAdapter.execute(getUserConfigurationMethod)
-                    ) {
-                        getUserConfigurationMethod.handleResponse(response);
-                        getUserConfigurationMethod.checkSuccess();
-                    }
-                    log.info("{}", getUserConfigurationMethod.getResponseItem());
+		try {
+			// set custom factory before loading OpenJFX
+			Security.setProperty("ssl.SocketFactory.provider", "mt.ews.http.DavGatewaySSLSocketFactory");
 
-                    Thread.sleep(5000);
-                }
-            }
-        } catch (InterruptedException e) {
-            log.warn("Thread interrupted", e);
-            Thread.currentThread().interrupt();
-        } catch (Exception e) {
-            log.error(e + " " + e.getMessage(), e);
-        }
-        System.exit(0);
-    }
+			Settings.setDefaultSettings();
+			Settings.setConfigFilePath("mt-ews-interactive.properties");
+			Settings.load();
+
+			O365InteractiveAuthenticator authenticator = new O365InteractiveAuthenticator();
+			authenticator.setUsername("");
+			authenticator.authenticate();
+
+			try (HttpClientAdapter httpClientAdapter = new HttpClientAdapter(authenticator.getExchangeUri(), true)) {
+
+				// switch to EWS url
+				GetFolderMethod checkMethod = new GetFolderMethod(BaseShape.ID_ONLY,
+						DistinguishedFolderId.getInstance(null, DistinguishedFolderId.Name.root), null);
+				checkMethod.setHeader("Authorization", "Bearer " + authenticator.getToken().getAccessToken());
+				try (CloseableHttpResponse response = httpClientAdapter.execute(checkMethod)) {
+					checkMethod.handleResponse(response);
+					checkMethod.checkSuccess();
+				}
+				log.info("Retrieved folder id " + checkMethod.getResponseItem().get("FolderId"));
+
+				// loop to check expiration
+				int i = 0;
+				while (i++ < 12 * 60 * 2) {
+					GetUserConfigurationMethod getUserConfigurationMethod = new GetUserConfigurationMethod();
+					getUserConfigurationMethod.setHeader("Authorization",
+							"Bearer " + authenticator.getToken().getAccessToken());
+					try (CloseableHttpResponse response = httpClientAdapter.execute(getUserConfigurationMethod)) {
+						getUserConfigurationMethod.handleResponse(response);
+						getUserConfigurationMethod.checkSuccess();
+					}
+					log.info("{}", getUserConfigurationMethod.getResponseItem());
+
+					Thread.sleep(5000);
+				}
+			}
+		}
+		catch (InterruptedException e) {
+			log.warn("Thread interrupted", e);
+			Thread.currentThread().interrupt();
+		}
+		catch (Exception e) {
+			log.error(e + " " + e.getMessage(), e);
+		}
+		System.exit(0);
+	}
+
 }

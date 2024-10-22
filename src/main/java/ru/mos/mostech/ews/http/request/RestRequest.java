@@ -29,97 +29,102 @@ import java.util.zip.GZIPInputStream;
  */
 @Slf4j
 public class RestRequest extends HttpPost implements ResponseHandler<JSONObject> {
-    private static final String JSON_CONTENT_TYPE = "application/json; charset=utf-8";
-    
 
-    private HttpResponse response;
-    private JSONObject jsonBody;
+	private static final String JSON_CONTENT_TYPE = "application/json; charset=utf-8";
 
-    public RestRequest(String uri) {
-        super(uri);
+	private HttpResponse response;
 
-        AbstractHttpEntity httpEntity = new AbstractHttpEntity() {
-            byte[] content;
+	private JSONObject jsonBody;
 
-            @Override
-            public boolean isRepeatable() {
-                return true;
-            }
+	public RestRequest(String uri) {
+		super(uri);
 
-            @Override
-            public long getContentLength() {
-                if (content == null) {
-                    content = getJsonContent();
-                }
-                return content.length;
-            }
+		AbstractHttpEntity httpEntity = new AbstractHttpEntity() {
+			byte[] content;
 
-            @Override
-            public InputStream getContent() throws UnsupportedOperationException {
-                if (content == null) {
-                    content = getJsonContent();
-                }
-                return new ByteArrayInputStream(content);
-            }
+			@Override
+			public boolean isRepeatable() {
+				return true;
+			}
 
-            @Override
-            public void writeTo(OutputStream outputStream) throws IOException {
-                if (content == null) {
-                    content = getJsonContent();
-                }
-                outputStream.write(content);
-            }
+			@Override
+			public long getContentLength() {
+				if (content == null) {
+					content = getJsonContent();
+				}
+				return content.length;
+			}
 
-            @Override
-            public boolean isStreaming() {
-                return false;
-            }
-        };
-        httpEntity.setContentType(JSON_CONTENT_TYPE);
-        setEntity(httpEntity);
-    }
+			@Override
+			public InputStream getContent() throws UnsupportedOperationException {
+				if (content == null) {
+					content = getJsonContent();
+				}
+				return new ByteArrayInputStream(content);
+			}
 
-    public RestRequest(String uri, HttpEntity entity) {
-        super(uri);
-        setEntity(entity);
-    }
+			@Override
+			public void writeTo(OutputStream outputStream) throws IOException {
+				if (content == null) {
+					content = getJsonContent();
+				}
+				outputStream.write(content);
+			}
 
-    protected byte[] getJsonContent() {
-        return jsonBody.toString().getBytes(Consts.UTF_8);
-    }
+			@Override
+			public boolean isStreaming() {
+				return false;
+			}
+		};
+		httpEntity.setContentType(JSON_CONTENT_TYPE);
+		setEntity(httpEntity);
+	}
 
-    public void setJsonBody(JSONObject jsonBody) {
-        this.jsonBody = jsonBody;
-    }
+	public RestRequest(String uri, HttpEntity entity) {
+		super(uri);
+		setEntity(entity);
+	}
 
-    public void setRequestHeader(String name, String value) {
-        setHeader(name, value);
-    }
+	protected byte[] getJsonContent() {
+		return jsonBody.toString().getBytes(Consts.UTF_8);
+	}
 
-    @Override
-    public JSONObject handleResponse(HttpResponse response) throws IOException {
-        this.response = response;
-        JSONObject jsonResponse;
-        Header contentTypeHeader = response.getFirstHeader("Content-Type");
-        if (contentTypeHeader != null && JSON_CONTENT_TYPE.equals(contentTypeHeader.getValue())) {
-            try (InputStream inputStream = response.getEntity().getContent()){
-                if (HttpClientAdapter.isGzipEncoded(response)) {
-                    jsonResponse = processResponseStream(new GZIPInputStream(inputStream));
-                } else {
-                    jsonResponse = processResponseStream(inputStream);
-                }
-            } catch (JSONException e) {
-                log.error("Error while parsing json response: " + e, e);
-                throw new IOException(e.getMessage(), e);
-            }
-        } else {
-            throw new IOException("Invalid response content");
-        }
-        return jsonResponse;
-    }
+	public void setJsonBody(JSONObject jsonBody) {
+		this.jsonBody = jsonBody;
+	}
 
-    private JSONObject processResponseStream(InputStream responseBodyAsStream) throws IOException, JSONException {
-        // quick non streaming implementation
-        return new JSONObject(new String(IOUtil.readFully(responseBodyAsStream), StandardCharsets.UTF_8));
-    }
+	public void setRequestHeader(String name, String value) {
+		setHeader(name, value);
+	}
+
+	@Override
+	public JSONObject handleResponse(HttpResponse response) throws IOException {
+		this.response = response;
+		JSONObject jsonResponse;
+		Header contentTypeHeader = response.getFirstHeader("Content-Type");
+		if (contentTypeHeader != null && JSON_CONTENT_TYPE.equals(contentTypeHeader.getValue())) {
+			try (InputStream inputStream = response.getEntity().getContent()) {
+				if (HttpClientAdapter.isGzipEncoded(response)) {
+					jsonResponse = processResponseStream(new GZIPInputStream(inputStream));
+				}
+				else {
+					jsonResponse = processResponseStream(inputStream);
+				}
+			}
+			catch (JSONException e) {
+				log.error("Error while parsing json response: " + e, e);
+				throw new IOException(e.getMessage(), e);
+			}
+		}
+		else {
+			throw new IOException("Invalid response content");
+		}
+		return jsonResponse;
+	}
+
+	private JSONObject processResponseStream(InputStream responseBodyAsStream) throws IOException, JSONException {
+		// quick non streaming implementation
+		return new JSONObject(new String(IOUtil.readFully(responseBodyAsStream), StandardCharsets.UTF_8));
+	}
+
 }

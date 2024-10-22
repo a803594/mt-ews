@@ -10,20 +10,21 @@ import java.io.Writer;
  * Generic option.
  */
 public abstract class Option {
-    protected final String name;
-    protected final String value;
 
-    protected Option(String name, String value) {
-        this.name = name;
-        this.value = value;
-    }
+	protected final String name;
 
-    /**
-     * Write XML content to writer.
-     *
-     * @param writer writer
-     * @throws IOException on error
-     */
-    public abstract void write(Writer writer) throws IOException;
+	protected final String value;
+
+	protected Option(String name, String value) {
+		this.name = name;
+		this.value = value;
+	}
+
+	/**
+	 * Write XML content to writer.
+	 * @param writer writer
+	 * @throws IOException on error
+	 */
+	public abstract void write(Writer writer) throws IOException;
 
 }

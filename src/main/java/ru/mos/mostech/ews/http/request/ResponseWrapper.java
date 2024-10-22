@@ -13,9 +13,13 @@ import java.net.URI;
  * Http response wrapper.
  */
 public interface ResponseWrapper {
-    URI getURI();
 
-    int getStatusCode();
-    HttpResponse getHttpResponse();
-    String getResponseBodyAsString() throws IOException;
+	URI getURI();
+
+	int getStatusCode();
+
+	HttpResponse getHttpResponse();
+
+	String getResponseBodyAsString() throws IOException;
+
 }

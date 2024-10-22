@@ -37,269 +37,278 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class HttpServer {
 
-    public static final String CONTENT_TYPE = "Content-Type";
-    public static final String CONTENT_DISPOSITION = "Content-Disposition";
-    public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
-    public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json; charset=utf-8";
-    public static final String APPLICATION_XML_CHARSET_UTF_8 = "application/xml; charset=utf-8";
-    public static final String APPLICATION_ZIP = "application/zip";
+	public static final String CONTENT_TYPE = "Content-Type";
 
-    private static volatile com.sun.net.httpserver.HttpServer server;
+	public static final String CONTENT_DISPOSITION = "Content-Disposition";
 
-    private static final Map<ResolveEwsParams, ResolveEwsResults> cache = new ConcurrentHashMap<>();
+	public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
 
-    @SneakyThrows
-    public static void start(int port) {
-        server = createHttpServer(port);
+	public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json; charset=utf-8";
 
-        // Определяем обработчик для корневого пути ("/")
-        server.createContext("/pst", new MdcHttpHandler(new PstHandler()));
-        server.createContext("/pst-status", new MdcHttpHandler(new PstStatusHandler()));
-        server.createContext("/autodiscovery", new MdcHttpHandler(new AutoDiscoveryHandler()));
-        server.createContext("/ews-settings", new MdcHttpHandler(new EwsSettingsHandler()));
-        server.createContext("/ews-logs", new MdcHttpHandler(new EwsLogsHandler()));
+	public static final String APPLICATION_XML_CHARSET_UTF_8 = "application/xml; charset=utf-8";
 
-        // Запускаем сервер
-        server.setExecutor(null); // Используем стандартный исполнитель
-        server.start();
-        PstConverter.start();
+	public static final String APPLICATION_ZIP = "application/zip";
 
-        log.info("HTTP-сервер для обработки запросов от mt-mail запущен на порту {}", port);
-    }
+	private static volatile com.sun.net.httpserver.HttpServer server;
 
-    private static com.sun.net.httpserver.HttpServer createHttpServer(int port) throws NoSuchAlgorithmException, KeyManagementException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
-        String keystoreFile = Settings.getProperty("mt.ews.ssl.keystoreFile");
-        if (keystoreFile == null || keystoreFile.isEmpty()) {
-            return com.sun.net.httpserver.HttpServer.create(
-                    new InetSocketAddress("localhost", port), 0);
-        }
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(KeysUtils.getKeyManagers(), null, null);
-        // Создаем сервер на указанном порту
-        HttpsServer server = HttpsServer.create(
-                new InetSocketAddress("localhost", port), 0);
-        server.setHttpsConfigurator(new HttpsConfigurator(sslContext));
-        return server;
-    }
+	private static final Map<ResolveEwsParams, ResolveEwsResults> cache = new ConcurrentHashMap<>();
 
-    public static void stop() {
-        server.stop(1000);
-        PstConverter.stop();
-    }
+	@SneakyThrows
+	public static void start(int port) {
+		server = createHttpServer(port);
 
-    // Обработчик, который отвечает на HTTP-запросы
-    static class PstHandler implements HttpHandler {
+		// Определяем обработчик для корневого пути ("/")
+		server.createContext("/pst", new MdcHttpHandler(new PstHandler()));
+		server.createContext("/pst-status", new MdcHttpHandler(new PstStatusHandler()));
+		server.createContext("/autodiscovery", new MdcHttpHandler(new AutoDiscoveryHandler()));
+		server.createContext("/ews-settings", new MdcHttpHandler(new EwsSettingsHandler()));
+		server.createContext("/ews-logs", new MdcHttpHandler(new EwsLogsHandler()));
 
-        @SneakyThrows
-        @Override
-        public void handle(HttpExchange exchange) {
-            try {
+		// Запускаем сервер
+		server.setExecutor(null); // Используем стандартный исполнитель
+		server.start();
+		PstConverter.start();
 
-                String body = readBodyRequest(exchange);
+		log.info("HTTP-сервер для обработки запросов от mt-mail запущен на порту {}", port);
+	}
 
-                JSONObject json = new JSONObject(body);
-                String path = json.optString("path");
-                Path outputDir = PstConverter.convert(path);
+	private static com.sun.net.httpserver.HttpServer createHttpServer(int port) throws NoSuchAlgorithmException,
+			KeyManagementException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
+		String keystoreFile = Settings.getProperty("mt.ews.ssl.keystoreFile");
+		if (keystoreFile == null || keystoreFile.isEmpty()) {
+			return com.sun.net.httpserver.HttpServer.create(new InetSocketAddress("localhost", port), 0);
+		}
+		SSLContext sslContext = SSLContext.getInstance("TLS");
+		sslContext.init(KeysUtils.getKeyManagers(), null, null);
+		// Создаем сервер на указанном порту
+		HttpsServer server = HttpsServer.create(new InetSocketAddress("localhost", port), 0);
+		server.setHttpsConfigurator(new HttpsConfigurator(sslContext));
+		return server;
+	}
 
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("path", outputDir.toAbsolutePath().toString());
-                String response = jsonObject.toString();
-                sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("error", e.getMessage());
-                String response = jsonObject.toString();
-                sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
-            }
+	public static void stop() {
+		server.stop(1000);
+		PstConverter.stop();
+	}
 
-        }
-    }
+	// Обработчик, который отвечает на HTTP-запросы
+	static class PstHandler implements HttpHandler {
 
-    static class PstStatusHandler implements HttpHandler {
+		@SneakyThrows
+		@Override
+		public void handle(HttpExchange exchange) {
+			try {
 
-        @SneakyThrows
-        @Override
-        public void handle(HttpExchange exchange) {
-            try {
-                String body = readBodyRequest(exchange);
+				String body = readBodyRequest(exchange);
 
-                JSONObject json = new JSONObject(body);
-                String path = json.optString("path");
-                JSONObject status = PstConverter.getStatus(path);
-                String response = status.toString();
-                sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("error", e.getMessage());
-                String response = jsonObject.toString();
-                sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
-            }
+				JSONObject json = new JSONObject(body);
+				String path = json.optString("path");
+				Path outputDir = PstConverter.convert(path);
 
-        }
-    }
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("path", outputDir.toAbsolutePath().toString());
+				String response = jsonObject.toString();
+				sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
+			}
+			catch (Exception e) {
+				log.error(e.getMessage(), e);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("error", e.getMessage());
+				String response = jsonObject.toString();
+				sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
+			}
 
-    static class AutoDiscoveryHandler implements HttpHandler {
+		}
 
-        @SneakyThrows
-        @Override
-        public void handle(HttpExchange exchange) {
-            log.info("Запрос на AutoDiscovery получен");
-            try {
-                String body = readBodyRequest(exchange);
-                String query = Objects.requireNonNullElse(exchange.getRequestURI().getQuery(), "");
+	}
 
-                JSONObject json = new JSONObject(body);
-                String email = json.getString("email");
-                log.info("Поиск EWS для {}", email);
-                String password = json.getString("password");
+	static class PstStatusHandler implements HttpHandler {
 
-                ResolveEwsParams resolveEwsParams = ResolveEwsParams.builder()
-                        .email(email)
-                        .password(password)
-                        .build();
+		@SneakyThrows
+		@Override
+		public void handle(HttpExchange exchange) {
+			try {
+				String body = readBodyRequest(exchange);
 
-                ResolveEwsResults results = cache.get(resolveEwsParams);
-                if (results == null
-                        || results.getTime() < (System.currentTimeMillis() - Duration.ofMinutes(1).toMillis())) {
-                    results = AutoDiscoveryFacade.resolveEws(resolveEwsParams).orElse(null);
-                }
+				JSONObject json = new JSONObject(body);
+				String path = json.optString("path");
+				JSONObject status = PstConverter.getStatus(path);
+				String response = status.toString();
+				sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
+			}
+			catch (Exception e) {
+				log.error(e.getMessage(), e);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("error", e.getMessage());
+				String response = jsonObject.toString();
+				sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
+			}
 
-                if (results == null) {
-                    log.info("EWS для {} не найден", email);
-                    response404Xml(email, exchange);
-                    return;
-                }
+		}
 
-                cache.put(resolveEwsParams, results);
+	}
 
-                if (query.contains("responseType=json")) {
-                    response200Json(results, exchange);
-                } else {
-                    response200Isp(results, exchange);
-                }
+	static class AutoDiscoveryHandler implements HttpHandler {
 
-            } catch (Exception e) {
-                log.error("", e);
-                response400Xml(e.getMessage(), exchange);
-            }
-        }
+		@SneakyThrows
+		@Override
+		public void handle(HttpExchange exchange) {
+			log.info("Запрос на AutoDiscovery получен");
+			try {
+				String body = readBodyRequest(exchange);
+				String query = Objects.requireNonNullElse(exchange.getRequestURI().getQuery(), "");
 
+				JSONObject json = new JSONObject(body);
+				String email = json.getString("email");
+				log.info("Поиск EWS для {}", email);
+				String password = json.getString("password");
 
-        private void response404Xml(String data, HttpExchange exchange) throws IOException {
-            String response = """
-                    <username>$data</username>
-                    """.replace("$data", data);
-            sendResponse(exchange, 404, response, APPLICATION_XML_CHARSET_UTF_8);
-        }
+				ResolveEwsParams resolveEwsParams = ResolveEwsParams.builder().email(email).password(password).build();
 
-        private void response400Xml(String data, HttpExchange exchange) throws IOException {
-            String response = """
-                    <error>$data</error>
-                    """.replace("$data", data);
-            sendResponse(exchange, 400, response, APPLICATION_XML_CHARSET_UTF_8);
-        }
+				ResolveEwsResults results = cache.get(resolveEwsParams);
+				if (results == null
+						|| results.getTime() < (System.currentTimeMillis() - Duration.ofMinutes(1).toMillis())) {
+					results = AutoDiscoveryFacade.resolveEws(resolveEwsParams).orElse(null);
+				}
 
-        private void response200Isp(ResolveEwsResults results, HttpExchange exchange) throws IOException {
-            String response = IspResponse.build(
-                    results.getDomain(),
-                    results.getUser(),
-                    Settings.getIntProperty("mt.ews.imapPort"),
-                    Settings.getIntProperty("mt.ews.smtpPort"),
-                    Settings.getIntProperty("mt.ews.caldavPort"),
-                    Settings.isSecure()
-            );
-            sendResponse(exchange, 200, response, APPLICATION_XML_CHARSET_UTF_8);
-        }
+				if (results == null) {
+					log.info("EWS для {} не найден", email);
+					response404Xml(email, exchange);
+					return;
+				}
 
-        @SneakyThrows
-        private void response200Json(ResolveEwsResults results, HttpExchange exchange) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("domain", results.getDomain());
-            jsonObject.put("user", results.getUser());
-            jsonObject.put("imapPort", Settings.getIntProperty("mt.ews.imapPort"));
-            jsonObject.put("smtpPort", Settings.getIntProperty("mt.ews.smtpPort"));
-            jsonObject.put("caldavPort", Settings.getIntProperty("mt.ews.caldavPort"));
-            jsonObject.put("isSecure", Settings.isSecure());
-            String response = jsonObject.toString();
-            sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
-        }
-    }
+				cache.put(resolveEwsParams, results);
 
-    static class EwsSettingsHandler implements HttpHandler {
+				if (query.contains("responseType=json")) {
+					response200Json(results, exchange);
+				}
+				else {
+					response200Isp(results, exchange);
+				}
 
-        @SneakyThrows
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            try {
-                JSONObject jsonObject = new JSONObject();
-                for (String[] setting : Settings.getAll()) {
-                    jsonObject.put(setting[0], setting[1]);
-                }
-                String response = jsonObject.toString();
-                sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("error", e.getMessage());
-                String response = jsonObject.toString();
-                sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
-            }
-        }
-    }
+			}
+			catch (Exception e) {
+				log.error("", e);
+				response400Xml(e.getMessage(), exchange);
+			}
+		}
 
-    static class EwsLogsHandler implements HttpHandler {
+		private void response404Xml(String data, HttpExchange exchange) throws IOException {
+			String response = """
+					<username>$data</username>
+					""".replace("$data", data);
+			sendResponse(exchange, 404, response, APPLICATION_XML_CHARSET_UTF_8);
+		}
 
-        @SneakyThrows
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            try {
-                int remotePort = exchange.getRemoteAddress().getPort();
-                Optional<Path> userLogPath = MdcUserPathUtils.getUserLogPathByPort(remotePort);
+		private void response400Xml(String data, HttpExchange exchange) throws IOException {
+			String response = """
+					<error>$data</error>
+					""".replace("$data", data);
+			sendResponse(exchange, 400, response, APPLICATION_XML_CHARSET_UTF_8);
+		}
 
-                if (userLogPath.isPresent()) {
-                    File file = new File(userLogPath.get().toString());
-                    sendZipFile(exchange, 200, file);
-                } else {
-                    throw new Exception("Не удалось найти имя пользователя");
-                }
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("error", e.getMessage());
-                String response = jsonObject.toString();
-                sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
-            }
-        }
-    }
+		private void response200Isp(ResolveEwsResults results, HttpExchange exchange) throws IOException {
+			String response = IspResponse.build(results.getDomain(), results.getUser(),
+					Settings.getIntProperty("mt.ews.imapPort"), Settings.getIntProperty("mt.ews.smtpPort"),
+					Settings.getIntProperty("mt.ews.caldavPort"), Settings.isSecure());
+			sendResponse(exchange, 200, response, APPLICATION_XML_CHARSET_UTF_8);
+		}
 
-    private static String readBodyRequest(HttpExchange exchange) throws IOException {
-        try (InputStream is = exchange.getRequestBody()) {
-            return new String(IOUtil.readFully(is), StandardCharsets.UTF_8);
-        }
-    }
+		@SneakyThrows
+		private void response200Json(ResolveEwsResults results, HttpExchange exchange) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("domain", results.getDomain());
+			jsonObject.put("user", results.getUser());
+			jsonObject.put("imapPort", Settings.getIntProperty("mt.ews.imapPort"));
+			jsonObject.put("smtpPort", Settings.getIntProperty("mt.ews.smtpPort"));
+			jsonObject.put("caldavPort", Settings.getIntProperty("mt.ews.caldavPort"));
+			jsonObject.put("isSecure", Settings.isSecure());
+			String response = jsonObject.toString();
+			sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
+		}
 
-    private static void sendResponse(HttpExchange exchange, int status, String response, String contentType) throws IOException {
-        exchange.getResponseHeaders().add(CONTENT_TYPE, contentType);
-        exchange.getResponseHeaders().add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        exchange.sendResponseHeaders(status, response.getBytes(StandardCharsets.UTF_8).length);
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes(StandardCharsets.UTF_8));
-        os.close();
-    }
+	}
 
-    private static void sendZipFile(HttpExchange exchange, int status, File file) throws IOException {
-        Headers headers = exchange.getResponseHeaders();
-        headers.add(CONTENT_TYPE, APPLICATION_ZIP);
-        headers.add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        headers.add(CONTENT_DISPOSITION, String.format("attachment; filename=%s", file.getName()));
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ZipUtil.zipFolder(file.toPath(), bos);
-        exchange.sendResponseHeaders(status, bos.size());
-        OutputStream os = exchange.getResponseBody();
-        bos.writeTo(os);
-        bos.close();
-        os.close();
-    }
+	static class EwsSettingsHandler implements HttpHandler {
+
+		@SneakyThrows
+		@Override
+		public void handle(HttpExchange exchange) throws IOException {
+			try {
+				JSONObject jsonObject = new JSONObject();
+				for (String[] setting : Settings.getAll()) {
+					jsonObject.put(setting[0], setting[1]);
+				}
+				String response = jsonObject.toString();
+				sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
+			}
+			catch (Exception e) {
+				log.error(e.getMessage(), e);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("error", e.getMessage());
+				String response = jsonObject.toString();
+				sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
+			}
+		}
+
+	}
+
+	static class EwsLogsHandler implements HttpHandler {
+
+		@SneakyThrows
+		@Override
+		public void handle(HttpExchange exchange) throws IOException {
+			try {
+				int remotePort = exchange.getRemoteAddress().getPort();
+				Optional<Path> userLogPath = MdcUserPathUtils.getUserLogPathByPort(remotePort);
+
+				if (userLogPath.isPresent()) {
+					File file = new File(userLogPath.get().toString());
+					sendZipFile(exchange, 200, file);
+				}
+				else {
+					throw new Exception("Не удалось найти имя пользователя");
+				}
+			}
+			catch (Exception e) {
+				log.error(e.getMessage(), e);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("error", e.getMessage());
+				String response = jsonObject.toString();
+				sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
+			}
+		}
+
+	}
+
+	private static String readBodyRequest(HttpExchange exchange) throws IOException {
+		try (InputStream is = exchange.getRequestBody()) {
+			return new String(IOUtil.readFully(is), StandardCharsets.UTF_8);
+		}
+	}
+
+	private static void sendResponse(HttpExchange exchange, int status, String response, String contentType)
+			throws IOException {
+		exchange.getResponseHeaders().add(CONTENT_TYPE, contentType);
+		exchange.getResponseHeaders().add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+		exchange.sendResponseHeaders(status, response.getBytes(StandardCharsets.UTF_8).length);
+		OutputStream os = exchange.getResponseBody();
+		os.write(response.getBytes(StandardCharsets.UTF_8));
+		os.close();
+	}
+
+	private static void sendZipFile(HttpExchange exchange, int status, File file) throws IOException {
+		Headers headers = exchange.getResponseHeaders();
+		headers.add(CONTENT_TYPE, APPLICATION_ZIP);
+		headers.add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+		headers.add(CONTENT_DISPOSITION, String.format("attachment; filename=%s", file.getName()));
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ZipUtil.zipFolder(file.toPath(), bos);
+		exchange.sendResponseHeaders(status, bos.size());
+		OutputStream os = exchange.getResponseBody();
+		bos.writeTo(os);
+		bos.close();
+		os.close();
+	}
+
 }

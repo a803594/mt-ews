@@ -11,45 +11,46 @@ import java.util.Map;
  */
 public final class DistinguishedFolderId extends FolderId {
 
-    private DistinguishedFolderId(String value) {
-        super("t:DistinguishedFolderId", value, null);
-    }
+	private DistinguishedFolderId(String value) {
+		super("t:DistinguishedFolderId", value, null);
+	}
 
-    private DistinguishedFolderId(String value, String mailbox) {
-        super("t:DistinguishedFolderId", value, null, mailbox);
-    }
+	private DistinguishedFolderId(String value, String mailbox) {
+		super("t:DistinguishedFolderId", value, null, mailbox);
+	}
 
-    /**
-     * DistinguishedFolderId names
-     */
-    @SuppressWarnings({"UnusedDeclaration"})
-    public enum Name {
-        calendar, contacts, deleteditems, drafts, inbox, journal, notes, outbox, sentitems, tasks, msgfolderroot,
-        publicfoldersroot, root, junkemail, searchfolders, voicemail,
-        archivemsgfolderroot
-    }
+	/**
+	 * DistinguishedFolderId names
+	 */
+	@SuppressWarnings({ "UnusedDeclaration" })
+	public enum Name {
 
-    private static final Map<Name, DistinguishedFolderId> folderIdMap = new HashMap<>();
+		calendar, contacts, deleteditems, drafts, inbox, journal, notes, outbox, sentitems, tasks, msgfolderroot,
+		publicfoldersroot, root, junkemail, searchfolders, voicemail, archivemsgfolderroot
 
-    static {
-        for (Name name : Name.values()) {
-            folderIdMap.put(name, new DistinguishedFolderId(name.toString()));
-        }
-    }
+	}
 
-    /**
-     * Get DistinguishedFolderId object for mailbox and name.
-     *
-     * @param mailbox mailbox name
-     * @param name    folder id name
-     * @return DistinguishedFolderId object
-     */
-    public static DistinguishedFolderId getInstance(String mailbox, Name name) {
-        if (mailbox == null) {
-            return folderIdMap.get(name);
-        } else {
-            return new DistinguishedFolderId(name.toString(), mailbox);
-        }
-    }
+	private static final Map<Name, DistinguishedFolderId> folderIdMap = new HashMap<>();
+
+	static {
+		for (Name name : Name.values()) {
+			folderIdMap.put(name, new DistinguishedFolderId(name.toString()));
+		}
+	}
+
+	/**
+	 * Get DistinguishedFolderId object for mailbox and name.
+	 * @param mailbox mailbox name
+	 * @param name folder id name
+	 * @return DistinguishedFolderId object
+	 */
+	public static DistinguishedFolderId getInstance(String mailbox, Name name) {
+		if (mailbox == null) {
+			return folderIdMap.get(name);
+		}
+		else {
+			return new DistinguishedFolderId(name.toString(), mailbox);
+		}
+	}
 
 }

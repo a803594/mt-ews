@@ -8,19 +8,21 @@ import java.io.IOException;
 
 public class MdcHttpHandler implements HttpHandler {
 
-    private final HttpHandler delegate;
+	private final HttpHandler delegate;
 
-    public MdcHttpHandler(HttpHandler delegate) {
-        this.delegate = delegate;
-    }
+	public MdcHttpHandler(HttpHandler delegate) {
+		this.delegate = delegate;
+	}
 
-    @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-        try {
-            MdcUserPathUtils.init(httpExchange.getRemoteAddress().getPort());
-            delegate.handle(httpExchange);
-        } finally {
-            MdcUserPathUtils.clear();
-        }
-    }
+	@Override
+	public void handle(HttpExchange httpExchange) throws IOException {
+		try {
+			MdcUserPathUtils.init(httpExchange.getRemoteAddress().getPort());
+			delegate.handle(httpExchange);
+		}
+		finally {
+			MdcUserPathUtils.clear();
+		}
+	}
+
 }

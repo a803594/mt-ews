@@ -27,156 +27,166 @@ import java.net.URI;
 @Slf4j
 public class O365ManualAuthenticator implements ExchangeAuthenticator {
 
-    
+	String errorCode = null;
 
-    String errorCode = null;
-    String code = null;
+	String code = null;
 
-    URI ewsUrl = URI.create(Settings.getO365Url());
+	URI ewsUrl = URI.create(Settings.getO365Url());
 
-    private O365ManualAuthenticatorDialog o365ManualAuthenticatorDialog;
+	private O365ManualAuthenticatorDialog o365ManualAuthenticatorDialog;
 
-    private String username;
-    private String password;
-    private O365Token token;
+	private String username;
 
-    public O365Token getToken() {
-        return token;
-    }
+	private String password;
 
-    @Override
-    public URI getExchangeUri() {
-        return ewsUrl;
-    }
+	private O365Token token;
 
-    public String getUsername() {
-        return username;
-    }
+	public O365Token getToken() {
+		return token;
+	}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	@Override
+	public URI getExchangeUri() {
+		return ewsUrl;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    /**
-     * Return a pool enabled HttpClientAdapter instance to access O365
-     * @return HttpClientAdapter instance
-     */
-    @Override
-    public HttpClientAdapter getHttpClientAdapter() {
-        return new HttpClientAdapter(getExchangeUri(), username, password, true);
-    }
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-    public void authenticate() throws IOException {
-        // common MT-EWS client id
-        final String clientId = Settings.getProperty("mt.ews.oauth.clientId", "facd6cff-a294-4415-b59f-c5b01937d7bd");
-        // standard native app redirectUri
-        final String redirectUri = Settings.getProperty("mt.ews.oauth.redirectUri", Settings.O365_LOGIN_URL+"common/oauth2/nativeclient");
-        // company tenantId or common
-        String tenantId = Settings.getProperty("mt.ews.oauth.tenantId", "common");
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-        // first try to load stored token
-        token = O365Token.load(tenantId, clientId, redirectUri, username, password);
-        if (token != null) {
-            return;
-        }
+	/**
+	 * Return a pool enabled HttpClientAdapter instance to access O365
+	 * @return HttpClientAdapter instance
+	 */
+	@Override
+	public HttpClientAdapter getHttpClientAdapter() {
+		return new HttpClientAdapter(getExchangeUri(), username, password, true);
+	}
 
-        final String initUrl = O365Authenticator.buildAuthorizeUrl(tenantId, clientId, redirectUri, username);
+	public void authenticate() throws IOException {
+		// common MT-EWS client id
+		final String clientId = Settings.getProperty("mt.ews.oauth.clientId", "facd6cff-a294-4415-b59f-c5b01937d7bd");
+		// standard native app redirectUri
+		final String redirectUri = Settings.getProperty("mt.ews.oauth.redirectUri",
+				Settings.O365_LOGIN_URL + "common/oauth2/nativeclient");
+		// company tenantId or common
+		String tenantId = Settings.getProperty("mt.ews.oauth.tenantId", "common");
 
-        if (Settings.getBooleanProperty("mt.ews.server") || GraphicsEnvironment.isHeadless()) {
-            // command line mode
-            code = getCodeFromConsole(initUrl);
-        } else {
-            try {
-                SwingUtilities.invokeAndWait(() -> o365ManualAuthenticatorDialog = new O365ManualAuthenticatorDialog(initUrl));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } catch (InvocationTargetException e) {
-                throw new IOException(e);
-            }
-            code = o365ManualAuthenticatorDialog.getCode();
-        }
+		// first try to load stored token
+		token = O365Token.load(tenantId, clientId, redirectUri, username, password);
+		if (token != null) {
+			return;
+		}
 
-        if (code == null) {
-            log.error("Authentication failed, code not available");
-            throw new MosTechEwsException("EXCEPTION_AUTHENTICATION_FAILED_REASON", errorCode);
-        }
+		final String initUrl = O365Authenticator.buildAuthorizeUrl(tenantId, clientId, redirectUri, username);
 
-        token = O365Token.build(tenantId, clientId, redirectUri, code, password);
+		if (Settings.getBooleanProperty("mt.ews.server") || GraphicsEnvironment.isHeadless()) {
+			// command line mode
+			code = getCodeFromConsole(initUrl);
+		}
+		else {
+			try {
+				SwingUtilities
+					.invokeAndWait(() -> o365ManualAuthenticatorDialog = new O365ManualAuthenticatorDialog(initUrl));
+			}
+			catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+			catch (InvocationTargetException e) {
+				throw new IOException(e);
+			}
+			code = o365ManualAuthenticatorDialog.getCode();
+		}
 
-        log.debug("Authenticated username: " + token.getUsername());
-        if (username != null && !username.isEmpty() && !username.equalsIgnoreCase(token.getUsername())) {
-            throw new MosTechEwsAuthenticationException("Authenticated username " + token.getUsername() + " does not match " + username);
-        }
+		if (code == null) {
+			log.error("Authentication failed, code not available");
+			throw new MosTechEwsException("EXCEPTION_AUTHENTICATION_FAILED_REASON", errorCode);
+		}
 
-    }
+		token = O365Token.build(tenantId, clientId, redirectUri, code, password);
 
-    private String getCodeFromConsole(String initUrl) {
-        BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(BundleMessage.format("UI_0365_AUTHENTICATION_PROMPT_CONSOLE", initUrl)).append("\n")
-        .append(BundleMessage.format("UI_0365_AUTHENTICATION_CODE"));
-        try {
-            System.out.print(buffer.toString());
-            code = inReader.readLine();
-            if (code != null && code.contains("code=") && code.contains("&session_state=")) {
-                code = code.substring(code.indexOf("code=")+5, code.indexOf("&session_state="));
-            }
-        } catch (IOException e) {
-            System.err.println(e + " " + e.getMessage());
-        }
-        return code;
-    }
+		log.debug("Authenticated username: " + token.getUsername());
+		if (username != null && !username.isEmpty() && !username.equalsIgnoreCase(token.getUsername())) {
+			throw new MosTechEwsAuthenticationException(
+					"Authenticated username " + token.getUsername() + " does not match " + username);
+		}
 
-    public static void main(String[] argv) {
-        try {
-            Settings.setDefaultSettings();
-            Settings.setProperty("mt.ews.server", "false");
-            //Settings.setLoggingLevel("httpclient.wire", Level.DEBUG);
+	}
 
-            O365ManualAuthenticator authenticator = new O365ManualAuthenticator();
-            authenticator.setUsername("");
-            authenticator.authenticate();
+	private String getCodeFromConsole(String initUrl) {
+		BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
+		StringBuilder buffer = new StringBuilder();
+		buffer.append(BundleMessage.format("UI_0365_AUTHENTICATION_PROMPT_CONSOLE", initUrl))
+			.append("\n")
+			.append(BundleMessage.format("UI_0365_AUTHENTICATION_CODE"));
+		try {
+			System.out.print(buffer.toString());
+			code = inReader.readLine();
+			if (code != null && code.contains("code=") && code.contains("&session_state=")) {
+				code = code.substring(code.indexOf("code=") + 5, code.indexOf("&session_state="));
+			}
+		}
+		catch (IOException e) {
+			System.err.println(e + " " + e.getMessage());
+		}
+		return code;
+	}
 
-            // switch to EWS url
-            HttpClientAdapter httpClientAdapter = new HttpClientAdapter(authenticator.getExchangeUri(), true);
+	public static void main(String[] argv) {
+		try {
+			Settings.setDefaultSettings();
+			Settings.setProperty("mt.ews.server", "false");
+			// Settings.setLoggingLevel("httpclient.wire", Level.DEBUG);
 
-            GetFolderMethod checkMethod = new GetFolderMethod(BaseShape.ID_ONLY, DistinguishedFolderId.getInstance(null, DistinguishedFolderId.Name.root), null);
-            checkMethod.setHeader("Authorization", "Bearer " + authenticator.getToken().getAccessToken());
-            try (
-                    CloseableHttpResponse response = httpClientAdapter.execute(checkMethod)
-            ) {
-                checkMethod.handleResponse(response);
-                checkMethod.checkSuccess();
-            }
-            System.out.println("Retrieved folder id " + checkMethod.getResponseItem().get("FolderId"));
+			O365ManualAuthenticator authenticator = new O365ManualAuthenticator();
+			authenticator.setUsername("");
+			authenticator.authenticate();
 
-            // loop to check expiration
-            int i = 0;
-            while (i++ < 12 * 60 * 2) {
-                GetUserConfigurationMethod getUserConfigurationMethod = new GetUserConfigurationMethod();
-                getUserConfigurationMethod.setHeader("Authorization", "Bearer " + authenticator.getToken().getAccessToken());
-                try (
-                        CloseableHttpResponse response = httpClientAdapter.execute(checkMethod)
-                ) {
-                    checkMethod.handleResponse(response);
+			// switch to EWS url
+			HttpClientAdapter httpClientAdapter = new HttpClientAdapter(authenticator.getExchangeUri(), true);
 
-                    checkMethod.checkSuccess();
-                }
-                System.out.println(getUserConfigurationMethod.getResponseItem());
+			GetFolderMethod checkMethod = new GetFolderMethod(BaseShape.ID_ONLY,
+					DistinguishedFolderId.getInstance(null, DistinguishedFolderId.Name.root), null);
+			checkMethod.setHeader("Authorization", "Bearer " + authenticator.getToken().getAccessToken());
+			try (CloseableHttpResponse response = httpClientAdapter.execute(checkMethod)) {
+				checkMethod.handleResponse(response);
+				checkMethod.checkSuccess();
+			}
+			System.out.println("Retrieved folder id " + checkMethod.getResponseItem().get("FolderId"));
 
-                Thread.sleep(5000);
-            }
+			// loop to check expiration
+			int i = 0;
+			while (i++ < 12 * 60 * 2) {
+				GetUserConfigurationMethod getUserConfigurationMethod = new GetUserConfigurationMethod();
+				getUserConfigurationMethod.setHeader("Authorization",
+						"Bearer " + authenticator.getToken().getAccessToken());
+				try (CloseableHttpResponse response = httpClientAdapter.execute(checkMethod)) {
+					checkMethod.handleResponse(response);
 
-        } catch (InterruptedException e) {
-            log.warn("Thread interrupted", e);
-            Thread.currentThread().interrupt();
-        } catch (Exception e) {
-            log.error(e + " " + e.getMessage(), e);
-        }
-        System.exit(0);
-    }
+					checkMethod.checkSuccess();
+				}
+				System.out.println(getUserConfigurationMethod.getResponseItem());
+
+				Thread.sleep(5000);
+			}
+
+		}
+		catch (InterruptedException e) {
+			log.warn("Thread interrupted", e);
+			Thread.currentThread().interrupt();
+		}
+		catch (Exception e) {
+			log.error(e + " " + e.getMessage(), e);
+		}
+		System.exit(0);
+	}
+
 }

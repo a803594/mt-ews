@@ -17,65 +17,70 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 public class OSXInfoPlist {
-    
-    protected static final String INFO_PLIST_PATH = "../Info.plist";
 
-    private OSXInfoPlist() {
-    }
+	protected static final String INFO_PLIST_PATH = "../Info.plist";
 
-    protected static boolean isOSX() {
-        return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
-    }
+	private OSXInfoPlist() {
+	}
 
-    protected static String getInfoPlistContent() throws IOException {
-        try (FileInputStream fileInputStream = new FileInputStream(getInfoPlistPath())) {
-            return new String(IOUtil.readFully(fileInputStream), StandardCharsets.UTF_8);
-        }
-    }
+	protected static boolean isOSX() {
+		return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
+	}
 
-    /**
-     * Test current LSUIElement (hide from dock) value
-     *
-     * @return true if application is hidden from dock
-     */
-    public static boolean isHideFromDock() {
-        boolean result = false;
-        try {
-            result = isOSX() && getInfoPlistContent().contains("<key>LSUIElement</key><string>1</string>");
-        } catch (IOException e) {
-            log.warn("Unable to update Info.plist", e);
-        }
-        return result;
-    }
+	protected static String getInfoPlistContent() throws IOException {
+		try (FileInputStream fileInputStream = new FileInputStream(getInfoPlistPath())) {
+			return new String(IOUtil.readFully(fileInputStream), StandardCharsets.UTF_8);
+		}
+	}
 
-    /**
-     * Update LSUIElement (hide from dock) value
-     *
-     * @param hideFromDock new hide from dock value
-     */
-    public static void setOSXHideFromDock(boolean hideFromDock) {
-        try {
-            if (isOSX()) {
-                boolean currentHideFromDock = isHideFromDock();
-                if (currentHideFromDock != hideFromDock) {
-                    String content = getInfoPlistContent();
-                    try (FileOutputStream fileOutputStream = new FileOutputStream(getInfoPlistPath())) {
-                        fileOutputStream.write(content.replaceFirst(
-                                "<key>LSUIElement</key><string>" + (currentHideFromDock ? "1" : "0") + "</string>",
-                                "<key>LSUIElement</key><string>" + (hideFromDock ? "1" : "0") + "</string>").getBytes(StandardCharsets.UTF_8));
-                    }
-                }
-            }
-        } catch (IOException e) {
-            log.warn("Unable to update Info.plist", e);
-        }
-    }
+	/**
+	 * Test current LSUIElement (hide from dock) value
+	 * @return true if application is hidden from dock
+	 */
+	public static boolean isHideFromDock() {
+		boolean result = false;
+		try {
+			result = isOSX() && getInfoPlistContent().contains("<key>LSUIElement</key><string>1</string>");
+		}
+		catch (IOException e) {
+			log.warn("Unable to update Info.plist", e);
+		}
+		return result;
+	}
 
-    private static String getInfoPlistPath() throws IOException {
-        File file = new File(INFO_PLIST_PATH);
-        if (file.exists()) {
-            return INFO_PLIST_PATH;
-        }
-        throw new IOException("Info.plist file not found");
-    }
+	/**
+	 * Update LSUIElement (hide from dock) value
+	 * @param hideFromDock new hide from dock value
+	 */
+	public static void setOSXHideFromDock(boolean hideFromDock) {
+		try {
+			if (isOSX()) {
+				boolean currentHideFromDock = isHideFromDock();
+				if (currentHideFromDock != hideFromDock) {
+					String content = getInfoPlistContent();
+					try (FileOutputStream fileOutputStream = new FileOutputStream(getInfoPlistPath())) {
+						fileOutputStream
+							.write(content
+								.replaceFirst(
+										"<key>LSUIElement</key><string>" + (currentHideFromDock ? "1" : "0")
+												+ "</string>",
+										"<key>LSUIElement</key><string>" + (hideFromDock ? "1" : "0") + "</string>")
+								.getBytes(StandardCharsets.UTF_8));
+					}
+				}
+			}
+		}
+		catch (IOException e) {
+			log.warn("Unable to update Info.plist", e);
+		}
+	}
+
+	private static String getInfoPlistPath() throws IOException {
+		File file = new File(INFO_PLIST_PATH);
+		if (file.exists()) {
+			return INFO_PLIST_PATH;
+		}
+		throw new IOException("Info.plist file not found");
+	}
+
 }

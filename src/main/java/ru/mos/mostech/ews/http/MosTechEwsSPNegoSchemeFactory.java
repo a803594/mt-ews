@@ -15,44 +15,45 @@ import org.apache.http.protocol.HttpContext;
  */
 public class MosTechEwsSPNegoSchemeFactory implements AuthSchemeFactory, AuthSchemeProvider {
 
-    private final boolean stripPort;
-    private final boolean useCanonicalHostname;
+	private final boolean stripPort;
 
-    /**
-     * @since 4.4
-     */
-    public MosTechEwsSPNegoSchemeFactory(final boolean stripPort, final boolean useCanonicalHostname) {
-        super();
-        this.stripPort = stripPort;
-        this.useCanonicalHostname = useCanonicalHostname;
-    }
+	private final boolean useCanonicalHostname;
 
-    public MosTechEwsSPNegoSchemeFactory(final boolean stripPort) {
-        super();
-        this.stripPort = stripPort;
-        this.useCanonicalHostname = true;
-    }
+	/**
+	 * @since 4.4
+	 */
+	public MosTechEwsSPNegoSchemeFactory(final boolean stripPort, final boolean useCanonicalHostname) {
+		super();
+		this.stripPort = stripPort;
+		this.useCanonicalHostname = useCanonicalHostname;
+	}
 
-    public MosTechEwsSPNegoSchemeFactory() {
-        this(true, true);
-    }
+	public MosTechEwsSPNegoSchemeFactory(final boolean stripPort) {
+		super();
+		this.stripPort = stripPort;
+		this.useCanonicalHostname = true;
+	}
 
-    public boolean isStripPort() {
-        return stripPort;
-    }
+	public MosTechEwsSPNegoSchemeFactory() {
+		this(true, true);
+	}
 
-    public boolean isUseCanonicalHostname() {
-        return useCanonicalHostname;
-    }
+	public boolean isStripPort() {
+		return stripPort;
+	}
 
-    @Override
-    public AuthScheme newInstance(final HttpParams params) {
-        return new MosTechEwsSPNegoScheme(this.stripPort, this.useCanonicalHostname);
-    }
+	public boolean isUseCanonicalHostname() {
+		return useCanonicalHostname;
+	}
 
-    @Override
-    public AuthScheme create(final HttpContext context) {
-        return new MosTechEwsSPNegoScheme(this.stripPort, this.useCanonicalHostname);
-    }
+	@Override
+	public AuthScheme newInstance(final HttpParams params) {
+		return new MosTechEwsSPNegoScheme(this.stripPort, this.useCanonicalHostname);
+	}
+
+	@Override
+	public AuthScheme create(final HttpContext context) {
+		return new MosTechEwsSPNegoScheme(this.stripPort, this.useCanonicalHostname);
+	}
 
 }

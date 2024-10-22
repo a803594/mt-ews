@@ -28,184 +28,194 @@ import java.util.Set;
  */
 public class GraphRequestBuilder {
 
-    String method = "POST";
-    String baseUrl = Settings.GRAPH_URL;
-    String version = "beta";
-    String mailbox;
-    String objectType;
+	String method = "POST";
 
-    String childType;
+	String baseUrl = Settings.GRAPH_URL;
 
-    String filter;
+	String version = "beta";
 
-    Set<FieldURI> expandFields;
+	String mailbox;
 
-    String accessToken;
+	String objectType;
 
-    JSONObject jsonBody = null;
-    private String objectId;
+	String childType;
 
-    /**
-     * Set property in Json body.
-     * @param name property name
-     * @param value property value
-     * @throws JSONException on error
-     */
-    public GraphRequestBuilder setProperty(String name, String value) throws JSONException {
-        if (jsonBody == null) {
-            jsonBody = new JSONObject();
-        }
-        jsonBody.put(name, value);
-        return this;
-    }
+	String filter;
 
-    /**
-     * Set epxand fields (returning attributes).
-     * @param expandFields set of fields to return
-     * @return this
-     */
-    public GraphRequestBuilder setExpandFields(Set<FieldURI> expandFields) {
-        this.expandFields = expandFields;
-        return this;
-    }
+	Set<FieldURI> expandFields;
 
-    public GraphRequestBuilder setObjectType(String objectType) {
-        this.objectType = objectType;
-        return this;
-    }
+	String accessToken;
 
-    public GraphRequestBuilder setChildType(String childType) {
-        this.childType = childType;
-        return this;
-    }
+	JSONObject jsonBody = null;
 
-    public GraphRequestBuilder setFilter(String filter) {
-        this.filter = filter;
-        return this;
-    }
+	private String objectId;
 
-    public GraphRequestBuilder setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-        return this;
-    }
+	/**
+	 * Set property in Json body.
+	 * @param name property name
+	 * @param value property value
+	 * @throws JSONException on error
+	 */
+	public GraphRequestBuilder setProperty(String name, String value) throws JSONException {
+		if (jsonBody == null) {
+			jsonBody = new JSONObject();
+		}
+		jsonBody.put(name, value);
+		return this;
+	}
 
-    public GraphRequestBuilder setMethod(String method) {
-        this.method = method;
-        return this;
-    }
+	/**
+	 * Set epxand fields (returning attributes).
+	 * @param expandFields set of fields to return
+	 * @return this
+	 */
+	public GraphRequestBuilder setExpandFields(Set<FieldURI> expandFields) {
+		this.expandFields = expandFields;
+		return this;
+	}
 
-    public GraphRequestBuilder setMailbox(String mailbox) {
-        this.mailbox = mailbox;
-        return this;
-    }
+	public GraphRequestBuilder setObjectType(String objectType) {
+		this.objectType = objectType;
+		return this;
+	}
 
-    public GraphRequestBuilder setObjectId(String objectId) {
-        this.objectId = objectId;
-        return this;
-    }
+	public GraphRequestBuilder setChildType(String childType) {
+		this.childType = childType;
+		return this;
+	}
 
-    /**
-     * Build request path based on version, username, object type and object id.
-     * @return request path
-     */
-    protected String buildPath() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("/").append(version);
-        if (mailbox != null) {
-            buffer.append("/users/").append(mailbox);
-        } else {
-            buffer.append("/me");
-        }
-        if (objectType != null) {
-            buffer.append("/").append(objectType);
-        }
-        if (objectId != null) {
-            buffer.append("/").append(objectId);
-        }
-        if (childType != null) {
-            buffer.append("/").append(childType);
-        }
+	public GraphRequestBuilder setFilter(String filter) {
+		this.filter = filter;
+		return this;
+	}
 
-        return buffer.toString();
-    }
+	public GraphRequestBuilder setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+		return this;
+	}
 
-    /**
-     * Compute expand parameters from properties.
-     * @return $expand value
-     */
-    private String buildExpand() {
-        ArrayList<String> singleValueProperties = new ArrayList<>();
-        ArrayList<String> multiValueProperties = new ArrayList<>();
-        for (FieldURI fieldURI : expandFields) {
-            if (fieldURI instanceof ExtendedFieldURI) {
-                singleValueProperties.add(fieldURI.getGraphId());
-            } else if (fieldURI instanceof IndexedFieldURI) {
-                multiValueProperties.add(fieldURI.getGraphId());
-            }
-        }
-        StringBuilder expand = new StringBuilder();
-        if (!singleValueProperties.isEmpty()) {
-            expand.append("singleValueExtendedProperties($filter=");
-            appendExpandProperties(expand, singleValueProperties);
-            expand.append(")");
-        }
-        if (!multiValueProperties.isEmpty()) {
-            if (!singleValueProperties.isEmpty()) {
-                expand.append(",");
-            }
-            expand.append("multiValueExtendedProperties($filter=");
-            appendExpandProperties(expand, multiValueProperties);
-            expand.append(")");
-        }
-        return expand.toString();
-    }
+	public GraphRequestBuilder setMethod(String method) {
+		this.method = method;
+		return this;
+	}
 
-    protected void appendExpandProperties(StringBuilder buffer, List<String> properties) {
-        boolean first = true;
-        for (String id : properties) {
-            if (first) {
-                first = false;
-            } else {
-                buffer.append(" or ");
-            }
-            buffer.append("id eq '").append(id).append("'");
-        }
-    }
+	public GraphRequestBuilder setMailbox(String mailbox) {
+		this.mailbox = mailbox;
+		return this;
+	}
 
+	public GraphRequestBuilder setObjectId(String objectId) {
+		this.objectId = objectId;
+		return this;
+	}
 
-    /**
-     * Build http request.
-     * @return Http request
-     * @throws IOException on error
-     */
-    public HttpRequestBase build() throws IOException {
-        try {
-            URIBuilder uriBuilder = new URIBuilder(baseUrl).setPath(buildPath());
-            if (expandFields != null) {
-                uriBuilder.addParameter("$expand", buildExpand());
-            }
+	/**
+	 * Build request path based on version, username, object type and object id.
+	 * @return request path
+	 */
+	protected String buildPath() {
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("/").append(version);
+		if (mailbox != null) {
+			buffer.append("/users/").append(mailbox);
+		}
+		else {
+			buffer.append("/me");
+		}
+		if (objectType != null) {
+			buffer.append("/").append(objectType);
+		}
+		if (objectId != null) {
+			buffer.append("/").append(objectId);
+		}
+		if (childType != null) {
+			buffer.append("/").append(childType);
+		}
 
-            if (filter != null) {
-                uriBuilder.addParameter("$filter", filter);
-            }
+		return buffer.toString();
+	}
 
-            HttpRequestBase httpRequest;
-            if ("POST".equals(method)) {
-                httpRequest = new HttpPost(uriBuilder.build());
-                if (jsonBody != null) {
-                    ((HttpPost) httpRequest).setEntity(new ByteArrayEntity(jsonBody.toString().getBytes(StandardCharsets.UTF_8)));
-                }
-            } else {
-                // default to GET request
-                httpRequest = new HttpGet(uriBuilder.build());
-            }
-            httpRequest.setHeader("Content-Type", "application/json");
-            httpRequest.setHeader("Authorization", "Bearer " + accessToken);
+	/**
+	 * Compute expand parameters from properties.
+	 * @return $expand value
+	 */
+	private String buildExpand() {
+		ArrayList<String> singleValueProperties = new ArrayList<>();
+		ArrayList<String> multiValueProperties = new ArrayList<>();
+		for (FieldURI fieldURI : expandFields) {
+			if (fieldURI instanceof ExtendedFieldURI) {
+				singleValueProperties.add(fieldURI.getGraphId());
+			}
+			else if (fieldURI instanceof IndexedFieldURI) {
+				multiValueProperties.add(fieldURI.getGraphId());
+			}
+		}
+		StringBuilder expand = new StringBuilder();
+		if (!singleValueProperties.isEmpty()) {
+			expand.append("singleValueExtendedProperties($filter=");
+			appendExpandProperties(expand, singleValueProperties);
+			expand.append(")");
+		}
+		if (!multiValueProperties.isEmpty()) {
+			if (!singleValueProperties.isEmpty()) {
+				expand.append(",");
+			}
+			expand.append("multiValueExtendedProperties($filter=");
+			appendExpandProperties(expand, multiValueProperties);
+			expand.append(")");
+		}
+		return expand.toString();
+	}
 
-            return httpRequest;
-        } catch (URISyntaxException e) {
-            throw new IOException(e.getMessage(), e);
-        }
-    }
+	protected void appendExpandProperties(StringBuilder buffer, List<String> properties) {
+		boolean first = true;
+		for (String id : properties) {
+			if (first) {
+				first = false;
+			}
+			else {
+				buffer.append(" or ");
+			}
+			buffer.append("id eq '").append(id).append("'");
+		}
+	}
+
+	/**
+	 * Build http request.
+	 * @return Http request
+	 * @throws IOException on error
+	 */
+	public HttpRequestBase build() throws IOException {
+		try {
+			URIBuilder uriBuilder = new URIBuilder(baseUrl).setPath(buildPath());
+			if (expandFields != null) {
+				uriBuilder.addParameter("$expand", buildExpand());
+			}
+
+			if (filter != null) {
+				uriBuilder.addParameter("$filter", filter);
+			}
+
+			HttpRequestBase httpRequest;
+			if ("POST".equals(method)) {
+				httpRequest = new HttpPost(uriBuilder.build());
+				if (jsonBody != null) {
+					((HttpPost) httpRequest)
+						.setEntity(new ByteArrayEntity(jsonBody.toString().getBytes(StandardCharsets.UTF_8)));
+				}
+			}
+			else {
+				// default to GET request
+				httpRequest = new HttpGet(uriBuilder.build());
+			}
+			httpRequest.setHeader("Content-Type", "application/json");
+			httpRequest.setHeader("Authorization", "Bearer " + accessToken);
+
+			return httpRequest;
+		}
+		catch (URISyntaxException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+	}
 
 }
