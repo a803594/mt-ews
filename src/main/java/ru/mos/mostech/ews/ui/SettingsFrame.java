@@ -677,8 +677,9 @@ public class SettingsFrame extends JFrame {
     /**
      * MT-EWS settings frame.
      */
+    @SuppressWarnings("java:S3776")
     public SettingsFrame() {
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setTitle(BundleMessage.format("UI_MT_EWS_SETTINGS"));
         try {
             setIconImages(MosTechEwsTray.getFrameIcons());
@@ -859,7 +860,7 @@ public class SettingsFrame extends JFrame {
         add(BorderLayout.SOUTH, buttonPanel);
 
         pack();
-        //setResizable(false);
+
         // center frame
         setLocationRelativeTo(null);
         urlField.requestFocus();
