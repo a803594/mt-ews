@@ -29,23 +29,29 @@ public final class Settings {
 
 
     public static final String OUTLOOK_URL = "https://outlook.office365.com";
-    public static final String O365_URL = OUTLOOK_URL + "/EWS/Exchange.asmx";
-
     public static final String GRAPH_URL = "https://graph.microsoft.com";
 
+    public static final String O365_URL = OUTLOOK_URL + "/EWS/Exchange.asmx";
     public static final String O365_LOGIN_URL = "https://login.microsoftonline.com/";
-
     public static final String O365 = "O365";
     public static final String O365_MODERN = "O365Modern";
     public static final String O365_INTERACTIVE = "O365Interactive";
     public static final String O365_MANUAL = "O365Manual";
+
     public static final String WEBDAV = "WebDav";
     public static final String EWS = "EWS";
     public static final String AUTO = "Auto";
 
     public static final String EDGE_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 Edg/90.0.818.49";
-    private static volatile boolean IS_SECURE = false;
-    private static volatile boolean USE_CONFIG = false;
+    public static final String MT_EWS_PROPERTIES = "/.mt-ews.properties";
+    public static final String OS_NAME = "os.name";
+
+    private static volatile boolean isSecure = false;
+    private static volatile boolean useConfig = false;
+    private static volatile String configFilePath;
+    private static volatile boolean isFirstStart;
+
+    private static final String USER_HOME = "user.home";
 
     private Settings() {
     }
@@ -59,7 +65,7 @@ public final class Settings {
                 sortedKeySet.add((String) keysEnumeration.nextElement());
             }
             final Iterator<String> sortedKeysIterator = sortedKeySet.iterator();
-            return new Enumeration<Object>() {
+            return new Enumeration<>() {
 
                 public boolean hasMoreElements() {
                     return sortedKeysIterator.hasNext();
@@ -72,8 +78,6 @@ public final class Settings {
         }
 
     };
-    private static String configFilePath;
-    private static boolean isFirstStart;
 
     /**
      * Set config file path (from command line parameter).
@@ -101,7 +105,6 @@ public final class Settings {
      */
     public static synchronized void load(InputStream inputStream) throws IOException {
         SETTINGS_PROPERTIES.load(inputStream);
-        updateLoggingConfig();
     }
 
     /**
@@ -111,10 +114,10 @@ public final class Settings {
         try {
             if (configFilePath == null) {
                 //noinspection AccessOfSystemProperties
-                configFilePath = System.getProperty("user.home") + "/.mt-ews.properties";
+                configFilePath = System.getProperty(USER_HOME) + MT_EWS_PROPERTIES;
             }
             File configFile = new File(configFilePath);
-            if (USE_CONFIG && configFile.exists()) {
+            if (useConfig && configFile.exists()) {
                 try (FileInputStream fileInputStream = new FileInputStream(configFile)) {
                     load(fileInputStream);
                 }
@@ -128,7 +131,6 @@ public final class Settings {
         } catch (IOException e) {
             MosTechEwsTray.error(new BundleMessage("LOG_UNABLE_TO_LOAD_SETTINGS"), e);
         }
-        updateLoggingConfig();
     }
 
     /**
@@ -179,10 +181,10 @@ public final class Settings {
         SETTINGS_PROPERTIES.put("mt.ews.imapAlwaysApproxMsgSize", Boolean.FALSE.toString());
         SETTINGS_PROPERTIES.put("mt.ews.popMarkReadOnRetr", Boolean.FALSE.toString());
         SETTINGS_PROPERTIES.put("mt.ews.smtpSaveInSent", Boolean.TRUE.toString());
-        SETTINGS_PROPERTIES.put("mt.ews.ssl.keystoreType", "");
-        SETTINGS_PROPERTIES.put("mt.ews.ssl.keystoreFile", "");
+        SETTINGS_PROPERTIES.put("mt.ews.ssl.keystoreType", "JKS");
+        SETTINGS_PROPERTIES.put("mt.ews.ssl.keystoreFile", "classpath:keys/localhost.jks");
         SETTINGS_PROPERTIES.put("mt.ews.ssl.keystorePass", "");
-        SETTINGS_PROPERTIES.put("mt.ews.ssl.keyPass", "");
+        SETTINGS_PROPERTIES.put("mt.ews.ssl.keyPass", "12345678");
         if (isWindows()) {
             // default to MSCAPI on windows for native client certificate access
             SETTINGS_PROPERTIES.put("mt.ews.ssl.clientKeystoreType", "MSCAPI");
@@ -218,12 +220,12 @@ public final class Settings {
         if ((logFilePath == null || logFilePath.isEmpty())) {
             if (Settings.getBooleanProperty("mt.ews.server")) {
                 logFilePath = "mt-ews.log";
-            } else if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) {
+            } else if (System.getProperty(OS_NAME).toLowerCase().startsWith("mac os x")) {
                 // store mt-ews.log in OSX Logs directory
-                logFilePath = System.getProperty("user.home") + "/Library/Logs/mt-ews/mt-ews.log";
+                logFilePath = System.getProperty(USER_HOME) + "/Library/Logs/mt-ews/mt-ews.log";
             } else {
                 // store mt-ews.log in user home folder
-                logFilePath = System.getProperty("user.home") + "/mt-ews.log";
+                logFilePath = System.getProperty(USER_HOME) + "/mt-ews.log";
             }
         } else {
             File logFile = new File(logFilePath);
@@ -256,12 +258,6 @@ public final class Settings {
     }
 
     /**
-     * Update Log4J config from settings.
-     */
-    public static void updateLoggingConfig() {
-    }
-
-    /**
      * Save settings in current file path (command line or default).
      */
     public static synchronized void save() {
@@ -280,7 +276,7 @@ public final class Settings {
                 try {
                     Files.createFile(path, permissions);
                 } catch (IOException e) {
-                    log.error("", e.getMessage());
+                    log.error(e.getMessage(), e);
                 }
             }
 
@@ -303,7 +299,6 @@ public final class Settings {
                 MosTechEwsTray.error(new BundleMessage("LOG_UNABLE_TO_STORE_SETTINGS"), e);
             }
         }
-        updateLoggingConfig();
     }
 
     private static void readLines(ArrayList<String> lines, Properties properties) {
@@ -419,11 +414,7 @@ public final class Settings {
      * @param value    property value
      */
     public static synchronized void setProperty(String property, String value) {
-        if (value != null) {
-            SETTINGS_PROPERTIES.setProperty(property, value);
-        } else {
-            SETTINGS_PROPERTIES.setProperty(property, "");
-        }
+        SETTINGS_PROPERTIES.setProperty(property, Objects.requireNonNullElse(value, ""));
     }
 
     /**
@@ -560,22 +551,6 @@ public final class Settings {
     }
 
     /**
-     * Build logging properties prefix.
-     *
-     * @param category logging category
-     * @return prefix
-     */
-    private static String getLoggingPrefix(String category) {
-        String prefix;
-        if ("rootLogger".equals(category)) {
-            prefix = "log4j.";
-        } else {
-            prefix = "log4j.logger.";
-        }
-        return prefix;
-    }
-
-    /**
      * Return Log4J logging level for the category.
      *
      * @param category logging category
@@ -639,7 +614,7 @@ public final class Settings {
      * @return true on Windows
      */
     public static boolean isWindows() {
-        return System.getProperty("os.name").toLowerCase().startsWith("windows");
+        return System.getProperty(OS_NAME).toLowerCase().startsWith("windows");
     }
 
     /**
@@ -648,12 +623,12 @@ public final class Settings {
      * @return true on Linux
      */
     public static boolean isLinux() {
-        return System.getProperty("os.name").toLowerCase().startsWith("linux");
+        return System.getProperty(OS_NAME).toLowerCase().startsWith("linux");
     }
 
     public static boolean isUnix() {
         return isLinux() ||
-                System.getProperty("os.name").toLowerCase().startsWith("freebsd");
+                System.getProperty(OS_NAME).toLowerCase().startsWith("freebsd");
     }
 
     public static String getUserAgent() {
@@ -700,14 +675,14 @@ public final class Settings {
     }
 
     public static void setSecure(boolean value) {
-        IS_SECURE = value;
+        isSecure = value;
     }
 
     public static boolean isSecure() {
-        return IS_SECURE;
+        return isSecure;
     }
 
     public static void setUserConfig(boolean value) {
-        USE_CONFIG = value;
+        useConfig = value;
     }
 }

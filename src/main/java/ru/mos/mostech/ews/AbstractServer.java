@@ -6,14 +6,17 @@ package ru.mos.mostech.ews;
 import lombok.Getter;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
+import ru.mos.mostech.ews.util.KeysUtils;
 
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.*;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.HashSet;
@@ -121,18 +124,7 @@ public abstract class AbstractServer extends Thread {
      * @throws KeyStoreException        on error
      */
     protected TrustManager[] getTrustManagers() throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException {
-        String truststoreFile = Settings.getProperty("mt.ews.ssl.truststoreFile");
-        if (truststoreFile == null || truststoreFile.isEmpty()) {
-            return new TrustManager[]{};
-        }
-        try (FileInputStream trustStoreInputStream = new FileInputStream(truststoreFile)) {
-            KeyStore trustStore = KeyStore.getInstance(Settings.getProperty("mt.ews.ssl.truststoreType"));
-            trustStore.load(trustStoreInputStream, Settings.getCharArrayProperty("mt.ews.ssl.truststorePass"));
-
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            tmf.init(trustStore);
-            return tmf.getTrustManagers();
-        }
+        return KeysUtils.getTrustManagers();
     }
 
     /**
@@ -145,18 +137,7 @@ public abstract class AbstractServer extends Thread {
      * @throws KeyStoreException        on error
      */
     protected KeyManager[] getKeyManagers() throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException, UnrecoverableKeyException {
-        String keystoreFile = Settings.getProperty("mt.ews.ssl.keystoreFile");
-        if (keystoreFile == null || keystoreFile.isEmpty()) {
-            return new KeyManager[]{};
-        }
-        try (FileInputStream keyStoreInputStream = new FileInputStream(keystoreFile)) {
-            KeyStore keystore = KeyStore.getInstance(Settings.getProperty("mt.ews.ssl.keystoreType"));
-            keystore.load(keyStoreInputStream, Settings.getCharArrayProperty("mt.ews.ssl.keystorePass"));
-
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            kmf.init(keystore, Settings.getCharArrayProperty("mt.ews.ssl.keyPass"));
-            return kmf.getKeyManagers();
-        }
+        return KeysUtils.getKeyManagers();
     }
 
     /**

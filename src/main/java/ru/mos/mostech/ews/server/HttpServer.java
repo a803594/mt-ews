@@ -2,6 +2,8 @@ package ru.mos.mostech.ews.server;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpsConfigurator;
+import com.sun.net.httpserver.HttpsServer;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONObject;
@@ -11,13 +13,20 @@ import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsParams;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsResults;
 import ru.mos.mostech.ews.pst.PstConverter;
 import ru.mos.mostech.ews.util.IOUtil;
+import ru.mos.mostech.ews.util.KeysUtils;
 
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
@@ -35,10 +44,9 @@ public class HttpServer {
 
     private static final Map<ResolveEwsParams, ResolveEwsResults> cache = new ConcurrentHashMap<>();
 
-    public static void start(int port) throws IOException {
-        // Создаем сервер на указанном порту
-        server = com.sun.net.httpserver.HttpServer.create(
-                new InetSocketAddress("localhost", port), 0);
+    @SneakyThrows
+    public static void start(int port) {
+        server = createHttpServer(port);
 
         // Определяем обработчик для корневого пути ("/")
         server.createContext("/pst", new PstHandler());
@@ -52,6 +60,21 @@ public class HttpServer {
         PstConverter.start();
 
         log.info("HTTP-сервер для обработки запросов от mt-mail запущен на порту {}", port);
+    }
+
+    private static com.sun.net.httpserver.HttpServer createHttpServer(int port) throws NoSuchAlgorithmException, KeyManagementException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
+        String keystoreFile = Settings.getProperty("mt.ews.ssl.keystoreFile");
+        if (keystoreFile == null || keystoreFile.isEmpty()) {
+            return com.sun.net.httpserver.HttpServer.create(
+                    new InetSocketAddress("localhost", port), 0);
+        }
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(KeysUtils.getKeyManagers(), null, null);
+        // Создаем сервер на указанном порту
+        HttpsServer server = HttpsServer.create(
+                new InetSocketAddress("localhost", port), 0);
+        server.setHttpsConfigurator(new HttpsConfigurator(sslContext));
+        return server;
     }
 
     public static void stop() {

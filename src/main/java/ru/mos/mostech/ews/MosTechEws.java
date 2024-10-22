@@ -81,7 +81,6 @@ public final class MosTechEws {
             }
             if (server) {
                 Settings.setProperty("mt.ews.server", "true");
-                Settings.updateLoggingConfig();
             }
 
             if (Settings.getBooleanProperty("mt.ews.server")) {
@@ -163,7 +162,7 @@ public final class MosTechEws {
 
         try {
             HttpServer.start(Settings.getIntProperty("mt.ews.httpPort"));
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Ошибка при запуске приложения", e);
             System.exit(98);
         }
