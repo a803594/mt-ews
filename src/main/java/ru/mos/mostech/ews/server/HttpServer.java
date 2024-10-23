@@ -215,6 +215,7 @@ public class HttpServer {
 			String response = IspResponse.build(results.getDomain(), results.getUser(),
 					Settings.getIntProperty("mt.ews.imapPort"), Settings.getIntProperty("mt.ews.smtpPort"),
 					Settings.getIntProperty("mt.ews.caldavPort"), Settings.isSecure());
+			log.info(response);
 			sendResponse(exchange, 200, response, APPLICATION_XML_CHARSET_UTF_8);
 		}
 
