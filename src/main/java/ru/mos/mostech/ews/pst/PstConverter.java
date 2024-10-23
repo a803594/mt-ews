@@ -12,7 +12,11 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +26,8 @@ import java.util.concurrent.TimeUnit;
 public class PstConverter {
 
 	private volatile ExecutorService executor;
+
+	private final Set<PosixFilePermission> permission = PosixFilePermissions.fromString("rwxr-xr-x");
 
 	public static void main(String[] args) {
 		start();
@@ -53,8 +59,9 @@ public class PstConverter {
 
 		String fileName = Path.of(inputPath).getFileName().toString();
 		Path pstPathDir = Paths.get(userDirectory, ".mt-ews", "pst");
-		Files.createDirectories(pstPathDir);
-		Path tempDirectory = Files.createTempDirectory(pstPathDir, fileName);
+		FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(permission);
+		Files.createDirectories(pstPathDir, attr);
+		Path tempDirectory = Files.createTempDirectory(pstPathDir, fileName, attr);
 		doConvert(jar.getAbsolutePath(), inputPath, tempDirectory.toString());
 		return tempDirectory;
 	}
@@ -101,7 +108,7 @@ public class PstConverter {
 		}
 	}
 
-	public JSONObject getStatus(String outputDir) throws JSONException {
+	public JSONObject getStatus(String outputDir) throws JSONException, IOException {
 		File file = new File(outputDir, "results.json");
 		if (!file.exists()) {
 			JSONObject resultJson = new JSONObject();
@@ -120,14 +127,14 @@ public class PstConverter {
 		return new JSONObject(json);
 	}
 
-	private JSONArray getAllEmlFiles(String outputDir) throws JSONException {
+	private JSONArray getAllEmlFiles(String outputDir) throws JSONException, IOException {
 		JSONArray filesArray = new JSONArray();
 		File outputDirectory = new File(outputDir);
 		collectEmlFiles(outputDirectory, filesArray);
 		return filesArray;
 	}
 
-	private void collectEmlFiles(File directory, JSONArray emlFiles) throws JSONException {
+	private void collectEmlFiles(File directory, JSONArray emlFiles) throws JSONException, IOException {
 		if (!directory.exists() || !directory.isDirectory()) {
 			return;
 		}
@@ -135,12 +142,7 @@ public class PstConverter {
 		File[] files = directory.listFiles();
 		if (files != null) {
 			for (File file : files) {
-				// TODO: переписать этот код
-				try {
-					new ProcessBuilder("chmod", "755", file.getAbsolutePath()).start();
-				} catch (IOException e) {
-					log.error(e.getMessage(), e);
-				}
+				Files.setPosixFilePermissions(file.toPath(), permission);
 				if (file.isDirectory()) {
 					collectEmlFiles(file, emlFiles);
 				}
