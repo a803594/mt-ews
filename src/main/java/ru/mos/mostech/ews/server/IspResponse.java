@@ -50,7 +50,8 @@ public class IspResponse {
 
 		// String davUrl = (isSecure ? "https://" : "http://") + "localhost:" + davPort;
 		String davUrl = "http://" + "localhost:" + davPort;
-		String socketType = isSecure ? "ssl" : "plain";
+		// String socketType = isSecure ? "ssl" : "plain";
+		String socketType = "plain";
 		return TEMPLATE.replace("${domain}", domain)
 			.replace("${username}", username)
 			.replace("${imapPort}", String.valueOf(imapPort))
