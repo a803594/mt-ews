@@ -135,16 +135,16 @@ public class PstConverter {
 		File[] files = directory.listFiles();
 		if (files != null) {
 			for (File file : files) {
+				// TODO: переписать этот код
+				try {
+					new ProcessBuilder("chmod", "755", file.getAbsolutePath()).start();
+				} catch (IOException e) {
+					log.error(e.getMessage(), e);
+				}
 				if (file.isDirectory()) {
 					collectEmlFiles(file, emlFiles);
 				}
 				else if (file.isFile() && file.getName().endsWith(".eml")) {
-					// TODO: переписать этот код
-					try {
-						new ProcessBuilder("chmod", "777", file.getAbsolutePath()).start();
-					} catch (IOException e) {
-						log.error(e.getMessage(), e);
-					}
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put("name", file.getName());
 					jsonObject.put("path", file.getAbsolutePath());
