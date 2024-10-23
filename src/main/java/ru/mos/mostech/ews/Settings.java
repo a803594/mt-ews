@@ -687,7 +687,8 @@ public final class Settings {
 	}
 
 	public static boolean isSecure() {
-		return isSecure;
+		// return isSecure;
+		return false;
 	}
 
 	public static void setUserConfig(boolean value) {
