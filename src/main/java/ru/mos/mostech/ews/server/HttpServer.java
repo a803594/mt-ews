@@ -74,16 +74,20 @@ public class HttpServer {
 
 	private static com.sun.net.httpserver.HttpServer createHttpServer(int port) throws NoSuchAlgorithmException,
 			KeyManagementException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
+		return com.sun.net.httpserver.HttpServer.create(new InetSocketAddress("localhost", port), 0);
+
+/*
 		String keystoreFile = Settings.getProperty("mt.ews.ssl.keystoreFile");
 		if (keystoreFile == null || keystoreFile.isEmpty()) {
-			return com.sun.net.httpserver.HttpServer.create(new InetSocketAddress("localhost", port), 0);
 		}
+		51081
 		SSLContext sslContext = SSLContext.getInstance("TLS");
 		sslContext.init(KeysUtils.getKeyManagers(), null, null);
 		// Создаем сервер на указанном порту
 		HttpsServer server = HttpsServer.create(new InetSocketAddress("localhost", port), 0);
 		server.setHttpsConfigurator(new HttpsConfigurator(sslContext));
 		return server;
+*/
 	}
 
 	public static void stop() {
