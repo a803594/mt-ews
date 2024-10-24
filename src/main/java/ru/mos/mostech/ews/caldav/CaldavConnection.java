@@ -366,7 +366,8 @@ public class CaldavConnection extends AbstractConnection {
 					response.close();
 				}
 				else {
-					sendHttpResponse(HttpStatus.SC_OK, buildEtagHeader(folder.etag), "text/html", (byte[]) null, true);
+					sendHttpResponse(HttpStatus.SC_OK, buildEtagHeader(folder.getEtag()), "text/html", (byte[]) null,
+							true);
 				}
 			}
 			else {
@@ -552,18 +553,18 @@ public class CaldavConnection extends AbstractConnection {
 			}
 		}
 		if (request.hasProperty("getetag")) {
-			response.appendProperty("D:getetag", folder.etag);
+			response.appendProperty("D:getetag", folder.getEtag());
 		}
 		if (request.hasProperty("getctag")) {
 			response.appendProperty("CS:getctag", "CS=\"http://calendarserver.org/ns/\"",
-					IOUtil.encodeBase64AsString(folder.ctag));
+					IOUtil.encodeBase64AsString(folder.getCtag()));
 		}
 		if (request.hasProperty("displayname")) {
 			if (subFolder == null || subFolder.length() == 0) {
 				// use i18n calendar name as display name
 				String displayname = request.getLastPath();
 				if ("calendar".equals(displayname)) {
-					displayname = folder.displayName;
+					displayname = folder.getDisplayName();
 				}
 				response.appendProperty("D:displayname", displayname);
 			}
@@ -607,8 +608,8 @@ public class CaldavConnection extends AbstractConnection {
 		if (!session.isSharedFolder(folderPath)) {
 			try {
 				ExchangeSession.Folder folder = session.getFolder(folderPath);
-				ctag = IOUtil.encodeBase64AsString(folder.ctag);
-				etag = IOUtil.encodeBase64AsString(folder.etag);
+				ctag = IOUtil.encodeBase64AsString(folder.getCtag());
+				etag = IOUtil.encodeBase64AsString(folder.getEtag());
 			}
 			catch (HttpResponseException e) {
 				// unauthorized access, probably an inbox on shared calendar
@@ -754,7 +755,7 @@ public class CaldavConnection extends AbstractConnection {
 				if (folderList != null) {
 					for (ExchangeSession.Folder subFolder : folderList) {
 						appendFolderOrItem(response, request, subFolder,
-								subFolder.folderPath.substring(subFolder.folderPath.indexOf('/') + 1));
+								subFolder.getFolderPath().substring(subFolder.getFolderPath().indexOf('/') + 1));
 					}
 				}
 			}
@@ -940,7 +941,7 @@ public class CaldavConnection extends AbstractConnection {
 		if (request.hasProperty("getctag")) {
 			ExchangeSession.Folder rootFolder = session.getFolder("");
 			response.appendProperty("CS:getctag", "CS=\"http://calendarserver.org/ns/\"",
-					IOUtil.encodeBase64AsString(rootFolder.ctag));
+					IOUtil.encodeBase64AsString(rootFolder.getCtag()));
 		}
 		response.endPropStatOK();
 		if (request.getDepth() == 1) {

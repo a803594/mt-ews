@@ -228,8 +228,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 		else if (folderPath.startsWith(SENT)) {
 			exchangeFolderPath = mailPath + sentitemsName + folderPath.substring(SENT.length());
 		}
-		else if (folderPath.startsWith(SENDMSG)) {
-			exchangeFolderPath = mailPath + sendmsgName + folderPath.substring(SENDMSG.length());
+		else if (folderPath.startsWith(SEND_MSG)) {
+			exchangeFolderPath = mailPath + sendmsgName + folderPath.substring(SEND_MSG.length());
 		}
 		else if (folderPath.startsWith(CONTACTS)) {
 			exchangeFolderPath = mailPath + contactsName + folderPath.substring(CONTACTS.length());
@@ -266,8 +266,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 				else if (localPath.startsWith(CONTACTS)) {
 					localPath = contactsName + localPath.substring(CONTACTS.length());
 				}
-				else if (localPath.startsWith(ADDRESSBOOK)) {
-					localPath = contactsName + localPath.substring(ADDRESSBOOK.length());
+				else if (localPath.startsWith(ADDRESS_BOOK)) {
+					localPath = contactsName + localPath.substring(ADDRESS_BOOK.length());
 				}
 			}
 			else {
@@ -736,7 +736,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 				log.warn("{}", new BundleMessage("EXCEPTION_UNABLE_TO_GET_MAIL_FOLDER", mailPath));
 			}
 			else {
-				displayName = rootFolder.displayName;
+				displayName = rootFolder.getDisplayName();
 			}
 		}
 		catch (IOException e) {
@@ -1870,53 +1870,53 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 		String href = URIUtil.decode(entity.getHref());
 		Folder folder = new Folder();
 		DavPropertySet properties = entity.getProperties(HttpStatus.SC_OK);
-		folder.displayName = getPropertyIfExists(properties, "displayname");
-		folder.folderClass = getPropertyIfExists(properties, "folderclass");
-		folder.hasChildren = "1".equals(getPropertyIfExists(properties, "hassubs"));
-		folder.noInferiors = "1".equals(getPropertyIfExists(properties, "nosubs"));
-		folder.count = getIntPropertyIfExists(properties, "count");
-		folder.unreadCount = getIntPropertyIfExists(properties, "unreadcount");
+		folder.setDisplayName(getPropertyIfExists(properties, "displayname"));
+		folder.setFolderClass(getPropertyIfExists(properties, "folderclass"));
+		folder.setHasChildren("1".equals(getPropertyIfExists(properties, "hassubs")));
+		folder.setNoInferiors("1".equals(getPropertyIfExists(properties, "nosubs")));
+		folder.setCount(getIntPropertyIfExists(properties, "count"));
+		folder.setUnreadCount(getIntPropertyIfExists(properties, "unreadcount"));
 		// fake recent value
-		folder.recent = folder.unreadCount;
-		folder.ctag = getPropertyIfExists(properties, "contenttag");
-		folder.etag = getPropertyIfExists(properties, "lastmodified");
+		folder.setRecent(folder.getUnreadCount());
+		folder.setCtag(getPropertyIfExists(properties, "contenttag"));
+		folder.setEtag(getPropertyIfExists(properties, "lastmodified"));
 
-		folder.uidNext = getIntPropertyIfExists(properties, "uidNext");
+		folder.setUidNext(getIntPropertyIfExists(properties, "uidNext"));
 
 		// replace well known folder names
 		if (inboxUrl != null && href.startsWith(inboxUrl)) {
-			folder.folderPath = href.replaceFirst(inboxUrl, INBOX);
+			folder.setFolderPath(href.replaceFirst(inboxUrl, INBOX));
 		}
 		else if (sentitemsUrl != null && href.startsWith(sentitemsUrl)) {
-			folder.folderPath = href.replaceFirst(sentitemsUrl, SENT);
+			folder.setFolderPath(href.replaceFirst(sentitemsUrl, SENT));
 		}
 		else if (draftsUrl != null && href.startsWith(draftsUrl)) {
-			folder.folderPath = href.replaceFirst(draftsUrl, DRAFTS);
+			folder.setFolderPath(href.replaceFirst(draftsUrl, DRAFTS));
 		}
 		else if (deleteditemsUrl != null && href.startsWith(deleteditemsUrl)) {
-			folder.folderPath = href.replaceFirst(deleteditemsUrl, TRASH);
+			folder.setFolderPath(href.replaceFirst(deleteditemsUrl, TRASH));
 		}
 		else if (calendarUrl != null && href.startsWith(calendarUrl)) {
-			folder.folderPath = href.replaceFirst(calendarUrl, CALENDAR);
+			folder.setFolderPath(href.replaceFirst(calendarUrl, CALENDAR));
 		}
 		else if (contactsUrl != null && href.startsWith(contactsUrl)) {
-			folder.folderPath = href.replaceFirst(contactsUrl, CONTACTS);
+			folder.setFolderPath(href.replaceFirst(contactsUrl, CONTACTS));
 		}
 		else {
 			int index = href.indexOf(mailPath.substring(0, mailPath.length() - 1));
 			if (index >= 0) {
 				if (index + mailPath.length() > href.length()) {
-					folder.folderPath = "";
+					folder.setFolderPath("");
 				}
 				else {
-					folder.folderPath = href.substring(index + mailPath.length());
+					folder.setFolderPath(href.substring(index + mailPath.length()));
 				}
 			}
 			else {
 				try {
 					java.net.URI folderURI = new java.net.URI(href);
-					folder.folderPath = folderURI.getPath();
-					if (folder.folderPath == null) {
+					folder.setFolderPath(folderURI.getPath());
+					if (folder.getFolderPath() == null) {
 						throw new MosTechEwsException("EXCEPTION_INVALID_FOLDER_URL", href);
 					}
 				}
@@ -1925,8 +1925,8 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 				}
 			}
 		}
-		if (folder.folderPath.endsWith("/")) {
-			folder.folderPath = folder.folderPath.substring(0, folder.folderPath.length() - 1);
+		if (folder.getFolderPath().endsWith("/")) {
+			folder.setFolderPath(folder.getFolderPath().substring(0, folder.getFolderPath().length() - 1));
 		}
 		return folder;
 	}
@@ -1965,7 +1965,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 		Folder folder = null;
 		if (responses.length > 0) {
 			folder = buildFolder(responses[0]);
-			folder.folderPath = folderPath;
+			folder.setFolderPath(folderPath);
 		}
 		return folder;
 	}
@@ -1986,7 +1986,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 			Folder folder = buildFolder(response);
 			folders.add(buildFolder(response));
 			if (isPublic && recursive) {
-				getSubFolders(folder.folderPath, condition, recursive);
+				getSubFolders(folder.getFolderPath(), condition, recursive);
 			}
 		}
 		return folders;
@@ -2786,7 +2786,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 	 * @throws IOException when unable to create message
 	 */
 	@Override
-	public Message createMessage(String folderPath, String messageName, HashMap<String, String> properties,
+	public Message createMessage(String folderPath, String messageName, Map<String, String> properties,
 			MimeMessage mimeMessage) throws IOException {
 		String messageUrl = URIUtil.encodePathQuery(getFolderPath(folderPath) + '/' + messageName);
 
@@ -3014,7 +3014,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 			}
 			createMessage(DRAFTS, itemName, properties, mimeMessage);
 			HttpMove httpMove = new HttpMove(URIUtil.encodePath(getFolderPath(DRAFTS + '/' + itemName)),
-					URIUtil.encodePath(getFolderPath(SENDMSG)), false);
+					URIUtil.encodePath(getFolderPath(SEND_MSG)), false);
 			// set header if saveInSent is disabled
 			if (!Settings.getBooleanProperty("mt.ews.smtpSaveInSent", true)) {
 				httpMove.setHeader("Saveinsent", "f");

@@ -3,6 +3,8 @@ DIT
  */
 package ru.mos.mostech.ews.exchange;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
@@ -47,7 +49,7 @@ public abstract class ExchangeSession {
 	 */
 	public static final String CONTACTS = "contacts";
 
-	protected static final String ADDRESSBOOK = "addressbook";
+	protected static final String ADDRESS_BOOK = "addressbook";
 
 	protected static final String INBOX = "INBOX";
 
@@ -57,7 +59,7 @@ public abstract class ExchangeSession {
 
 	protected static final String SENT = "Sent";
 
-	protected static final String SENDMSG = "##MtEwsSubmissionURI##";
+	protected static final String SEND_MSG = "##MtEwsSubmissionURI##";
 
 	protected static final String DRAFTS = "Drafts";
 
@@ -69,10 +71,24 @@ public abstract class ExchangeSession {
 
 	protected static final List<String> SPECIAL = Arrays.asList(SENT, DRAFTS, TRASH, JUNK);
 
+	public static final String FALSE_STRING = "false";
+
+	public static final String YYYY_MMDD_T_HHMMSS_Z = "yyyyMMdd'T'HHmmss'Z'";
+
+	public static final String FOLDER_CLASS = "folderclass";
+
+	public static final String DISPLAY_NAME = "displayname";
+
+	public static final String IPF_APPOINTMENT = "IPF.Appointment";
+
+	public static final String X_0028_ = "_x0028_";
+
+	public static final String X_0029_ = "_x0029_";
+
 	static {
 		// Adjust Mime decoder settings
 		System.setProperty("mail.mime.ignoreunknownencoding", "true");
-		System.setProperty("mail.mime.decodetext.strict", "false");
+		System.setProperty("mail.mime.decodetext.strict", FALSE_STRING);
 	}
 
 	protected String publicFolderUrl;
@@ -99,7 +115,7 @@ public abstract class ExchangeSession {
 
 	protected static final String YYYY_MM_DD_HH_MM_SS = "yyyy/MM/dd HH:mm:ss";
 
-	private static final String YYYYMMDD_T_HHMMSS_Z = "yyyyMMdd'T'HHmmss'Z'";
+	private static final String YYYYMMDD_T_HHMMSS_Z = YYYY_MMDD_T_HHMMSS_Z;
 
 	protected static final String YYYY_MM_DD_T_HHMMSS_Z = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
@@ -107,7 +123,7 @@ public abstract class ExchangeSession {
 
 	private static final String YYYY_MM_DD_T_HHMMSS_SSS_Z = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
-	public ExchangeSession() {
+	protected ExchangeSession() {
 		// empty constructor
 	}
 
@@ -150,7 +166,7 @@ public abstract class ExchangeSession {
 			dateFormat.setTimeZone(GMT_TIMEZONE);
 		}
 		else if (value.length() == 16) {
-			dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.ENGLISH);
+			dateFormat = new SimpleDateFormat(YYYY_MMDD_T_HHMMSS_Z, Locale.ENGLISH);
 			dateFormat.setTimeZone(GMT_TIMEZONE);
 		}
 		else {
@@ -209,7 +225,7 @@ public abstract class ExchangeSession {
 	 * @param mimeMessage MIME message
 	 * @throws IOException when unable to create message
 	 */
-	public abstract Message createMessage(String folderPath, String messageName, HashMap<String, String> properties,
+	public abstract Message createMessage(String folderPath, String messageName, Map<String, String> properties,
 			MimeMessage mimeMessage) throws IOException;
 
 	/**
@@ -237,9 +253,11 @@ public abstract class ExchangeSession {
 
 	protected static final Set<String> POP_MESSAGE_ATTRIBUTES = new HashSet<>();
 
+	public static final String IMAP_UID = "imapUid";
+
 	static {
 		POP_MESSAGE_ATTRIBUTES.add("uid");
-		POP_MESSAGE_ATTRIBUTES.add("imapUid");
+		POP_MESSAGE_ATTRIBUTES.add(IMAP_UID);
 		POP_MESSAGE_ATTRIBUTES.add("messageSize");
 	}
 
@@ -255,12 +273,20 @@ public abstract class ExchangeSession {
 
 	protected static final Set<String> IMAP_MESSAGE_ATTRIBUTES = new HashSet<>();
 
+	public static final String URL_COMPNAME = "urlcompname";
+
+	public static final String LAST_MODIFIED = "lastmodified";
+
+	public static final String KEYWORDS = "keywords";
+
+	public static final String CONTENTCLASS = "contentclass";
+
 	static {
 		IMAP_MESSAGE_ATTRIBUTES.add("permanenturl");
-		IMAP_MESSAGE_ATTRIBUTES.add("urlcompname");
+		IMAP_MESSAGE_ATTRIBUTES.add(URL_COMPNAME);
 		IMAP_MESSAGE_ATTRIBUTES.add("uid");
 		IMAP_MESSAGE_ATTRIBUTES.add("messageSize");
-		IMAP_MESSAGE_ATTRIBUTES.add("imapUid");
+		IMAP_MESSAGE_ATTRIBUTES.add(IMAP_UID);
 		IMAP_MESSAGE_ATTRIBUTES.add("junk");
 		IMAP_MESSAGE_ATTRIBUTES.add("flagStatus");
 		IMAP_MESSAGE_ATTRIBUTES.add("messageFlags");
@@ -268,10 +294,10 @@ public abstract class ExchangeSession {
 		IMAP_MESSAGE_ATTRIBUTES.add("read");
 		IMAP_MESSAGE_ATTRIBUTES.add("deleted");
 		IMAP_MESSAGE_ATTRIBUTES.add("date");
-		IMAP_MESSAGE_ATTRIBUTES.add("lastmodified");
+		IMAP_MESSAGE_ATTRIBUTES.add(LAST_MODIFIED);
 		// OSX IMAP requests content-class
-		IMAP_MESSAGE_ATTRIBUTES.add("contentclass");
-		IMAP_MESSAGE_ATTRIBUTES.add("keywords");
+		IMAP_MESSAGE_ATTRIBUTES.add(CONTENTCLASS);
+		IMAP_MESSAGE_ATTRIBUTES.add(KEYWORDS);
 	}
 
 	protected static final Set<String> UID_MESSAGE_ATTRIBUTES = new HashSet<>();
@@ -286,6 +312,7 @@ public abstract class ExchangeSession {
 	 * @return message list
 	 * @throws IOException on error
 	 */
+	@SuppressWarnings("unused")
 	public MessageList searchMessages(String folderPath) throws IOException {
 		return searchMessages(folderPath, IMAP_MESSAGE_ATTRIBUTES, null);
 	}
@@ -313,14 +340,7 @@ public abstract class ExchangeSession {
 	public abstract MessageList searchMessages(String folderName, Set<String> attributes, Condition condition)
 			throws IOException;
 
-	/**
-	 * Get server version (Exchange2003, Exchange2007 or Exchange2010)
-	 * @return server version
-	 */
-	public String getServerVersion() {
-		return serverVersion;
-	}
-
+	@SuppressWarnings("java:S115")
 	public enum Operator {
 
 		Or, And, Not, IsEqualTo, IsGreaterThan, IsGreaterThanOrEqualTo, IsLessThan, IsLessThanOrEqualTo, IsNull, IsTrue,
@@ -359,10 +379,12 @@ public abstract class ExchangeSession {
 	 */
 	public abstract static class AttributeCondition implements Condition {
 
+		@Getter
 		protected final String attributeName;
 
 		protected final Operator operator;
 
+		@Getter
 		protected final String value;
 
 		protected AttributeCondition(String attributeName, Operator operator, String value) {
@@ -375,27 +397,12 @@ public abstract class ExchangeSession {
 			return false;
 		}
 
-		/**
-		 * Get attribute name.
-		 * @return attribute name
-		 */
-		public String getAttributeName() {
-			return attributeName;
-		}
-
-		/**
-		 * Condition value.
-		 * @return value
-		 */
-		public String getValue() {
-			return value;
-		}
-
 	}
 
 	/**
 	 * Multiple condition.
 	 */
+	@Getter
 	public abstract static class MultiCondition implements Condition {
 
 		protected final Operator operator;
@@ -410,22 +417,6 @@ public abstract class ExchangeSession {
 					this.conditions.add(condition);
 				}
 			}
-		}
-
-		/**
-		 * Conditions list.
-		 * @return conditions
-		 */
-		public List<Condition> getConditions() {
-			return conditions;
-		}
-
-		/**
-		 * Condition operator.
-		 * @return operator
-		 */
-		public Operator getOperator() {
-			return operator;
 		}
 
 		/**
@@ -515,7 +506,7 @@ public abstract class ExchangeSession {
 		public boolean isMatch(ExchangeSession.Contact contact) {
 			String actualValue = contact.get(attributeName);
 			return (operator == Operator.IsNull && actualValue == null)
-					|| (operator == Operator.IsFalse && "false".equals(actualValue))
+					|| (operator == Operator.IsFalse && FALSE_STRING.equals(actualValue))
 					|| (operator == Operator.IsTrue && "true".equals(actualValue));
 		}
 
@@ -654,16 +645,16 @@ public abstract class ExchangeSession {
 	public List<Folder> getSubFolders(String folderName, boolean recursive, boolean wildcard) throws IOException {
 		MultiCondition folderCondition = and();
 		if (!Settings.getBooleanProperty("mt.ews.imapIncludeSpecialFolders", false)) {
-			folderCondition.add(or(isEqualTo("folderclass", "IPF.Note"),
-					isEqualTo("folderclass", "IPF.Note.Microsoft.Conversation"), isNull("folderclass")));
+			folderCondition.add(or(isEqualTo(FOLDER_CLASS, "IPF.Note"),
+					isEqualTo(FOLDER_CLASS, "IPF.Note.Microsoft.Conversation"), isNull(FOLDER_CLASS)));
 		}
 		if (wildcard) {
-			folderCondition.add(startsWith("displayname", folderName));
+			folderCondition.add(startsWith(DISPLAY_NAME, folderName));
 			folderName = "";
 		}
 		List<Folder> results = getSubFolders(folderName, folderCondition, recursive);
 		// need to include base folder in recursive search, except on root
-		if (recursive && folderName.length() > 0) {
+		if (recursive && !folderName.isEmpty()) {
 			results.add(getFolder(folderName));
 		}
 
@@ -678,7 +669,7 @@ public abstract class ExchangeSession {
 	 * @throws IOException on error
 	 */
 	public List<Folder> getSubCalendarFolders(String folderName, boolean recursive) throws IOException {
-		return getSubFolders(folderName, isEqualTo("folderclass", "IPF.Appointment"), recursive);
+		return getSubFolders(folderName, isEqualTo(FOLDER_CLASS, IPF_APPOINTMENT), recursive);
 	}
 
 	/**
@@ -715,7 +706,7 @@ public abstract class ExchangeSession {
 		log.debug("Delete messages in " + folderPath + " not modified since " + cal.getTime());
 
 		MessageList messages = searchMessages(folderPath, UID_MESSAGE_ATTRIBUTES,
-				lt("lastmodified", formatSearchDate(cal.getTime())));
+				lt(LAST_MODIFIED, formatSearchDate(cal.getTime())));
 
 		for (Message message : messages) {
 			message.delete();
@@ -748,7 +739,7 @@ public abstract class ExchangeSession {
 		// detect duplicate send command
 		String messageId = mimeMessage.getMessageID();
 		if (lastSentMessageId != null && lastSentMessageId.equals(messageId)) {
-			log.debug("Dropping message id " + messageId + ": already sent");
+			log.debug("Dropping message id {}: already sent", messageId);
 			return;
 		}
 		lastSentMessageId = messageId;
@@ -830,11 +821,11 @@ public abstract class ExchangeSession {
 		Folder newFolder = getFolder(currentFolder.folderPath);
 		if (currentFolder.ctag == null || !currentFolder.ctag.equals(newFolder.ctag)
 		// ctag stamp is limited to second, check message count
-				|| !(currentFolder.count == newFolder.count)) {
+				|| currentFolder.count != newFolder.count) {
 			if (log.isDebugEnabled()) {
-				log.debug("Contenttag or count changed on " + currentFolder.folderPath + " ctag: " + currentFolder.ctag
-						+ " => " + newFolder.ctag + " count: " + currentFolder.count + " => " + newFolder.count
-						+ ", reloading messages");
+				log.debug("Contenttag or count changed on {} ctag: {} => {} count: {} => {}, reloading messages",
+						currentFolder.folderPath, currentFolder.ctag, newFolder.ctag, currentFolder.count,
+						newFolder.count);
 			}
 			currentFolder.hasChildren = newFolder.hasChildren;
 			currentFolder.noInferiors = newFolder.noInferiors;
@@ -869,7 +860,7 @@ public abstract class ExchangeSession {
 	 * @throws IOException on error
 	 */
 	public int createCalendarFolder(String folderName, Map<String, String> properties) throws IOException {
-		return createFolder(folderName, "IPF.Appointment", properties);
+		return createFolder(folderName, IPF_APPOINTMENT, properties);
 	}
 
 	/**
@@ -1016,7 +1007,7 @@ public abstract class ExchangeSession {
 	 * @param flags IMAP flags
 	 * @return keyword value
 	 */
-	public String convertFlagsToKeywords(HashSet<String> flags) {
+	public String convertFlagsToKeywords(Set<String> flags) {
 		HashSet<String> keywordSet = new HashSet<>();
 		for (String flag : flags) {
 			keywordSet.add(decodeKeyword(convertFlagToKeyword(flag)));
@@ -1026,8 +1017,8 @@ public abstract class ExchangeSession {
 
 	protected String decodeKeyword(String keyword) {
 		String result = keyword;
-		if (keyword.contains("_x0028_") || keyword.contains("_x0029_")) {
-			result = result.replaceAll("_x0028_", "(").replaceAll("_x0029_", ")");
+		if (keyword.contains(X_0028_) || keyword.contains(X_0029_)) {
+			result = result.replace(X_0028_, "(").replace(X_0029_, ")");
 		}
 		return result;
 	}
@@ -1035,7 +1026,7 @@ public abstract class ExchangeSession {
 	protected String encodeKeyword(String keyword) {
 		String result = keyword;
 		if (keyword.indexOf('(') >= 0 || keyword.indexOf(')') >= 0) {
-			result = result.replaceAll("\\(", "_x0028_").replaceAll("\\)", "_x0029_");
+			result = result.replace("(", X_0028_).replace(")", X_0029_);
 		}
 		return result;
 	}
@@ -1043,72 +1034,74 @@ public abstract class ExchangeSession {
 	/**
 	 * Exchange folder with IMAP properties
 	 */
+	@Setter
+	@Getter
 	public class Folder {
 
 		/**
 		 * Logical (IMAP) folder path.
 		 */
-		public String folderPath;
+		private String folderPath;
 
 		/**
 		 * Display Name.
 		 */
-		public String displayName;
+		private String displayName;
 
 		/**
 		 * Folder class (PR_CONTAINER_CLASS).
 		 */
-		public String folderClass;
+		private String folderClass;
 
 		/**
 		 * Folder message count.
 		 */
-		public int count;
+		private int count;
 
 		/**
 		 * Folder unread message count.
 		 */
-		public int unreadCount;
+		private int unreadCount;
 
 		/**
 		 * true if folder has subfolders (DAV:hassubs).
 		 */
-		public boolean hasChildren;
+		private boolean hasChildren;
 
 		/**
 		 * true if folder has no subfolders (DAV:nosubs).
 		 */
-		public boolean noInferiors;
+		private boolean noInferiors;
 
 		/**
 		 * Folder content tag (to detect folder content changes).
 		 */
-		public String ctag;
+		private String ctag;
 
 		/**
 		 * Folder etag (to detect folder object changes).
 		 */
-		public String etag;
+		private String etag;
 
 		/**
 		 * Next IMAP uid
 		 */
-		public long uidNext;
+		private long uidNext;
 
 		/**
 		 * recent count
 		 */
-		public int recent;
+		private int recent;
 
 		/**
 		 * Folder message list, empty before loadMessages call.
 		 */
-		public ExchangeSession.MessageList messages;
+		private ExchangeSession.MessageList messages;
 
 		/**
 		 * Permanent uid (PR_SEARCH_KEY) to IMAP UID map.
 		 */
-		private final HashMap<String, Long> permanentUrlToImapUidMap = new HashMap<>();
+		private final Map<String, Long> permanentUrlToImapUidMap = new HashMap<>();
 
 		/**
 		 * Get IMAP folder flags.
@@ -1202,21 +1195,13 @@ public abstract class ExchangeSession {
 		 * Folder message count.
 		 * @return message count
 		 */
-		public int count() {
+		public int getMessagesCount() {
 			if (messages == null) {
 				return count;
 			}
 			else {
 				return messages.size();
 			}
-		}
-
-		/**
-		 * Compute IMAP uidnext.
-		 * @return max(messageuids)+1
-		 */
-		public long getUidNext() {
-			return uidNext;
 		}
 
 		/**
@@ -1245,7 +1230,7 @@ public abstract class ExchangeSession {
 		 * @return true if this is a calendar folder
 		 */
 		public boolean isCalendar() {
-			return "IPF.Appointment".equals(folderClass);
+			return IPF_APPOINTMENT.equals(folderClass);
 		}
 
 		/**
@@ -1886,7 +1871,7 @@ public abstract class ExchangeSession {
 			// common name
 			String cn = get("cn");
 			if (cn == null) {
-				cn = get("displayname");
+				cn = get(DISPLAY_NAME);
 			}
 			String sn = get("sn");
 			if (sn == null) {
@@ -1957,7 +1942,7 @@ public abstract class ExchangeSession {
 				writer.appendProperty("SEX", "1");
 			}
 
-			writer.appendProperty("CATEGORIES", get("keywords"));
+			writer.appendProperty("CATEGORIES", get(KEYWORDS));
 
 			writer.appendProperty("FBURL", get("fburl"));
 
@@ -1969,7 +1954,7 @@ public abstract class ExchangeSession {
 			writer.appendProperty("X-MANAGER", get("manager"));
 			writer.appendProperty("X-SPOUSE", get("spousecn"));
 
-			writer.appendProperty("REV", get("lastmodified"));
+			writer.appendProperty("REV", get(LAST_MODIFIED));
 
 			ContactPhoto contactPhoto = null;
 
@@ -2673,7 +2658,7 @@ public abstract class ExchangeSession {
 		VObject vcard = new VObject(new ICSBufferedReader(new StringReader(itemBody)));
 		if ("group".equalsIgnoreCase(vcard.getPropertyValue("KIND"))) {
 			properties.put("outlookmessageclass", "IPM.DistList");
-			properties.put("displayname", vcard.getPropertyValue("FN"));
+			properties.put(DISPLAY_NAME, vcard.getPropertyValue("FN"));
 		}
 		else {
 			properties.put("outlookmessageclass", "IPM.Contact");
@@ -2792,12 +2777,12 @@ public abstract class ExchangeSession {
 					properties.put("anniversary", convertBDayToZulu(property.getValue()));
 				}
 				else if ("CATEGORIES".equals(property.getKey())) {
-					properties.put("keywords", property.getValue());
+					properties.put(KEYWORDS, property.getValue());
 				}
 				else if ("CLASS".equals(property.getKey())) {
 					if ("PUBLIC".equals(property.getValue())) {
 						properties.put("sensitivity", "0");
-						properties.put("private", "false");
+						properties.put("private", FALSE_STRING);
 					}
 					else {
 						properties.put("sensitivity", "2");
@@ -2833,8 +2818,8 @@ public abstract class ExchangeSession {
 			log.debug("Create or update contact " + itemName + ": " + properties);
 			// reset missing properties to null
 			for (String key : CONTACT_ATTRIBUTES) {
-				if (!"imapUid".equals(key) && !"etag".equals(key) && !"urlcompname".equals(key)
-						&& !"lastmodified".equals(key) && !"sensitivity".equals(key) && !properties.containsKey(key)) {
+				if (!IMAP_UID.equals(key) && !"etag".equals(key) && !URL_COMPNAME.equals(key)
+						&& !LAST_MODIFIED.equals(key) && !"sensitivity".equals(key) && !properties.containsKey(key)) {
 					properties.put(key, null);
 				}
 			}
@@ -2979,9 +2964,9 @@ public abstract class ExchangeSession {
 	public static final Set<String> CONTACT_ATTRIBUTES = new HashSet<>();
 
 	static {
-		CONTACT_ATTRIBUTES.add("imapUid");
+		CONTACT_ATTRIBUTES.add(IMAP_UID);
 		CONTACT_ATTRIBUTES.add("etag");
-		CONTACT_ATTRIBUTES.add("urlcompname");
+		CONTACT_ATTRIBUTES.add(URL_COMPNAME);
 
 		CONTACT_ATTRIBUTES.add("extensionattribute1");
 		CONTACT_ATTRIBUTES.add("extensionattribute2");
@@ -3028,7 +3013,7 @@ public abstract class ExchangeSession {
 		CONTACT_ATTRIBUTES.add("description");
 		CONTACT_ATTRIBUTES.add("im");
 		CONTACT_ATTRIBUTES.add("middlename");
-		CONTACT_ATTRIBUTES.add("lastmodified");
+		CONTACT_ATTRIBUTES.add(LAST_MODIFIED);
 		CONTACT_ATTRIBUTES.add("otherstreet");
 		CONTACT_ATTRIBUTES.add("otherstate");
 		CONTACT_ATTRIBUTES.add("otherpostofficebox");
@@ -3036,7 +3021,7 @@ public abstract class ExchangeSession {
 		CONTACT_ATTRIBUTES.add("othercountry");
 		CONTACT_ATTRIBUTES.add("othercity");
 		CONTACT_ATTRIBUTES.add("haspicture");
-		CONTACT_ATTRIBUTES.add("keywords");
+		CONTACT_ATTRIBUTES.add(KEYWORDS);
 		CONTACT_ATTRIBUTES.add("othermobile");
 		CONTACT_ATTRIBUTES.add("otherTelephone");
 		CONTACT_ATTRIBUTES.add("gender");
@@ -3048,9 +3033,9 @@ public abstract class ExchangeSession {
 	protected static final Set<String> DISTRIBUTION_LIST_ATTRIBUTES = new HashSet<>();
 
 	static {
-		DISTRIBUTION_LIST_ATTRIBUTES.add("imapUid");
+		DISTRIBUTION_LIST_ATTRIBUTES.add(IMAP_UID);
 		DISTRIBUTION_LIST_ATTRIBUTES.add("etag");
-		DISTRIBUTION_LIST_ATTRIBUTES.add("urlcompname");
+		DISTRIBUTION_LIST_ATTRIBUTES.add(URL_COMPNAME);
 
 		DISTRIBUTION_LIST_ATTRIBUTES.add("cn");
 		DISTRIBUTION_LIST_ATTRIBUTES.add("members");

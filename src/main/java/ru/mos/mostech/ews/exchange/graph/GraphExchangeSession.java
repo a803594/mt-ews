@@ -116,8 +116,8 @@ public class GraphExchangeSession extends ExchangeSession {
 	}
 
 	@Override
-	public Message createMessage(String folderPath, String messageName, HashMap<String, String> properties,
-			MimeMessage mimeMessage) throws IOException {
+	public Message createMessage(String folderPath, String messageName, Map<String, String> properties,
+			MimeMessage mimeMessage) {
 		return null;
 	}
 
@@ -324,19 +324,19 @@ public class GraphExchangeSession extends ExchangeSession {
 			folder.folderId.mailbox = parentFolderId.mailbox;
 			if (!parentFolderPath.isEmpty()) {
 				if (parentFolderPath.endsWith("/")) {
-					folder.folderPath = parentFolderPath + folder.displayName;
+					folder.setFolderPath(parentFolderPath + folder.getDisplayName());
 				}
 				else {
-					folder.folderPath = parentFolderPath + '/' + folder.displayName;
+					folder.setFolderPath(parentFolderPath + '/' + folder.getDisplayName());
 				}
 				// TODO folderIdMap?
 			}
 			else {
-				folder.folderPath = folder.displayName;
+				folder.setFolderPath(folder.getDisplayName());
 			}
 			folders.add(folder);
-			if (recursive && folder.hasChildren) {
-				appendSubFolders(folders, folder.folderPath, folder.folderId, condition, true);
+			if (recursive && folder.isHasChildren()) {
+				appendSubFolders(folders, folder.getFolderPath(), folder.folderId, condition, true);
 			}
 		}
 
@@ -364,7 +364,7 @@ public class GraphExchangeSession extends ExchangeSession {
 		// throw new HttpNotFoundException("Folder " + folderPath + " not found");
 
 		Folder folder = buildFolder(jsonResponse);
-		folder.folderPath = folderPath;
+		folder.setFolderPath(folderPath);
 
 		return folder;
 	}
@@ -375,13 +375,13 @@ public class GraphExchangeSession extends ExchangeSession {
 			folder.folderId = new FolderId();
 			folder.folderId.id = jsonResponse.getString("id");
 			// TODO: reevaluate folder name encoding over graph
-			folder.displayName = EwsExchangeSession.encodeFolderName(jsonResponse.optString("displayName"));
-			folder.count = jsonResponse.getInt("totalItemCount");
-			folder.unreadCount = jsonResponse.getInt("unreadItemCount");
+			folder.setDisplayName(EwsExchangeSession.encodeFolderName(jsonResponse.optString("displayName")));
+			folder.setCount(jsonResponse.getInt("totalItemCount"));
+			folder.setUnreadCount(jsonResponse.getInt("unreadItemCount"));
 			// fake recent value
-			folder.recent = folder.unreadCount;
+			folder.setRecent(folder.getUnreadCount());
 			// hassubs computed from childFolderCount
-			folder.hasChildren = jsonResponse.getInt("childFolderCount") > 0;
+			folder.setHasChildren(jsonResponse.getInt("childFolderCount") > 0);
 
 			// retrieve property values
 			JSONArray singleValueExtendedProperties = jsonResponse.optJSONArray("singleValueExtendedProperties");
@@ -391,16 +391,16 @@ public class GraphExchangeSession extends ExchangeSession {
 					String singleValueId = singleValueProperty.getString("id");
 					String singleValue = singleValueProperty.getString("value");
 					if (Field.get("lastmodified").getGraphId().equals(singleValueId)) {
-						folder.etag = singleValue;
+						folder.setEtag(singleValue);
 					}
 					else if (Field.get("folderclass").getGraphId().equals(singleValueId)) {
-						folder.folderClass = singleValue;
+						folder.setFolderClass(singleValue);
 					}
 					else if (Field.get("uidNext").getGraphId().equals(singleValueId)) {
-						folder.uidNext = Long.parseLong(singleValue);
+						folder.setUidNext(Long.parseLong(singleValue));
 					}
 					else if (Field.get("ctag").getGraphId().equals(singleValueId)) {
-						folder.ctag = singleValue;
+						folder.setCtag(singleValue);
 					}
 
 				}

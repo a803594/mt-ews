@@ -169,8 +169,8 @@ public class ImapConnection extends AbstractConnection {
 														false);
 												for (ExchangeSession.Folder folder : folders) {
 													sendClient("* " + command + " (" + folder.getFlags() + ") \"/\" \""
-															+ encodeFolderPath(folder.folderPath) + '\"');
-													sendSubFolders(command, folder.folderPath, false, false,
+															+ encodeFolderPath(folder.getFolderPath()) + '\"');
+													sendSubFolders(command, folder.getFolderPath(), false, false,
 															specialOnly);
 												}
 												sendClient(commandId + " OK " + command + " completed");
@@ -218,7 +218,7 @@ public class ImapConnection extends AbstractConnection {
 												}
 												if (folder != null) {
 													sendClient("* " + command + " (" + folder.getFlags() + ") \"/\" \""
-															+ encodeFolderPath(folder.folderPath) + '\"');
+															+ encodeFolderPath(folder.getFolderPath()) + '\"');
 													sendClient(commandId + " OK " + command + " completed");
 												}
 												else {
@@ -243,22 +243,22 @@ public class ImapConnection extends AbstractConnection {
 										}
 										try {
 											currentFolder = session.getFolder(folderName);
-											if (currentFolder.count() <= 500) {
+											if (currentFolder.getMessagesCount() <= 500) {
 												// simple folder load
 												currentFolder.loadMessages();
-												sendClient("* " + currentFolder.count() + " EXISTS");
+												sendClient("* " + currentFolder.getMessagesCount() + " EXISTS");
 											}
 											else {
 												// load folder in a separate thread
 												log.debug("*");
 												os.write('*');
 												FolderLoadThread.loadFolder(currentFolder, os);
-												sendClient(" " + currentFolder.count() + " EXISTS");
+												sendClient(" " + currentFolder.getMessagesCount() + " EXISTS");
 											}
 
-											sendClient("* " + currentFolder.recent + " RECENT");
+											sendClient("* " + currentFolder.getRecent() + " RECENT");
 											sendClient("* OK [UIDVALIDITY 1]");
-											if (currentFolder.count() == 0) {
+											if (currentFolder.getMessagesCount() == 0) {
 												sendClient("* OK [UIDNEXT 1]");
 											}
 											else {
@@ -347,7 +347,7 @@ public class ImapConnection extends AbstractConnection {
 														parameters = tokens.nextToken();
 													}
 													UIDRangeIterator uidRangeIterator = new UIDRangeIterator(
-															currentFolder.messages, ranges);
+															currentFolder.getMessages(), ranges);
 													while (uidRangeIterator.hasNext()) {
 														MosTechEwsTray.switchIcon();
 														ExchangeSession.Message message = uidRangeIterator.next();
@@ -388,7 +388,7 @@ public class ImapConnection extends AbstractConnection {
 										}
 										else if ("store".equalsIgnoreCase(subcommand)) {
 											UIDRangeIterator uidRangeIterator = new UIDRangeIterator(
-													currentFolder.messages, tokens.nextToken());
+													currentFolder.getMessages(), tokens.nextToken());
 											String action = tokens.nextToken();
 											String flags = tokens.nextToken();
 											handleStore(commandId, uidRangeIterator, action, flags);
@@ -397,7 +397,7 @@ public class ImapConnection extends AbstractConnection {
 												|| "move".equalsIgnoreCase(subcommand)) {
 											try {
 												UIDRangeIterator uidRangeIterator = new UIDRangeIterator(
-														currentFolder.messages, tokens.nextToken());
+														currentFolder.getMessages(), tokens.nextToken());
 												String targetName = buildFolderContext(tokens.nextToken());
 												if (!uidRangeIterator.hasNext()) {
 													sendClient(commandId + " NO " + "No message found");
@@ -440,7 +440,7 @@ public class ImapConnection extends AbstractConnection {
 										else {
 											int currentIndex = 0;
 											StringBuilder buffer = new StringBuilder("* SEARCH");
-											for (ExchangeSession.Message message : currentFolder.messages) {
+											for (ExchangeSession.Message message : currentFolder.getMessages()) {
 												currentIndex++;
 												if (uidList.contains(message.getImapUid())) {
 													buffer.append(' ');
@@ -457,7 +457,7 @@ public class ImapConnection extends AbstractConnection {
 										sendClient(commandId + " NO no folder selected");
 									}
 									else {
-										RangeIterator rangeIterator = new RangeIterator(currentFolder.messages,
+										RangeIterator rangeIterator = new RangeIterator(currentFolder.getMessages(),
 												tokens.nextToken());
 										String parameters = null;
 										if (tokens.hasMoreTokens()) {
@@ -489,7 +489,7 @@ public class ImapConnection extends AbstractConnection {
 
 								}
 								else if ("store".equalsIgnoreCase(command)) {
-									RangeIterator rangeIterator = new RangeIterator(currentFolder.messages,
+									RangeIterator rangeIterator = new RangeIterator(currentFolder.getMessages(),
 											tokens.nextToken());
 									String action = tokens.nextToken();
 									String flags = tokens.nextToken();
@@ -498,7 +498,7 @@ public class ImapConnection extends AbstractConnection {
 								}
 								else if ("copy".equalsIgnoreCase(command) || "move".equalsIgnoreCase(command)) {
 									try {
-										RangeIterator rangeIterator = new RangeIterator(currentFolder.messages,
+										RangeIterator rangeIterator = new RangeIterator(currentFolder.getMessages(),
 												tokens.nextToken());
 										String targetName = decodeFolderPath(tokens.nextToken());
 										if (!rangeIterator.hasNext()) {
@@ -691,7 +691,7 @@ public class ImapConnection extends AbstractConnection {
 								else if ("noop".equalsIgnoreCase(command) || "check".equalsIgnoreCase(command)) {
 									if (currentFolder != null) {
 										MosTechEwsTray.debug(new BundleMessage("LOG_IMAP_COMMAND", command,
-												currentFolder.folderPath));
+												currentFolder.getFolderPath()));
 										TreeMap<Long, String> previousImapFlagMap = currentFolder.getImapFlagMap();
 										if (session.refreshFolder(currentFolder)) {
 											handleRefresh(previousImapFlagMap, currentFolder.getImapFlagMap());
@@ -714,7 +714,7 @@ public class ImapConnection extends AbstractConnection {
 										// only
 										log.debug("*");
 										os.write('*');
-										if (folder.count() <= 500) {
+										if (folder.getMessagesCount() <= 500) {
 											// simple folder load
 											folder.loadMessages();
 										}
@@ -729,17 +729,19 @@ public class ImapConnection extends AbstractConnection {
 										while (parametersTokens.hasMoreTokens()) {
 											String token = parametersTokens.nextToken();
 											if ("MESSAGES".equalsIgnoreCase(token)) {
-												answer.append("MESSAGES ").append(folder.count()).append(' ');
+												answer.append("MESSAGES ")
+													.append(folder.getMessagesCount())
+													.append(' ');
 											}
 											if ("RECENT".equalsIgnoreCase(token)) {
-												answer.append("RECENT ").append(folder.recent).append(' ');
+												answer.append("RECENT ").append(folder.getRecent()).append(' ');
 											}
 											if ("UIDNEXT".equalsIgnoreCase(token)) {
-												if (folder.count() == 0) {
+												if (folder.getMessagesCount() == 0) {
 													answer.append("UIDNEXT 1 ");
 												}
 												else {
-													if (folder.count() == 0) {
+													if (folder.getMessagesCount() == 0) {
 														answer.append("UIDNEXT 1 ");
 													}
 													else {
@@ -754,7 +756,7 @@ public class ImapConnection extends AbstractConnection {
 												answer.append("UIDVALIDITY 1 ");
 											}
 											if ("UNSEEN".equalsIgnoreCase(token)) {
-												answer.append("UNSEEN ").append(folder.unreadCount).append(' ');
+												answer.append("UNSEEN ").append(folder.getUnreadCount()).append(' ');
 											}
 										}
 										sendClient(" STATUS \"" + encodedFolderName + "\" (" + answer.toString().trim()
@@ -927,8 +929,8 @@ public class ImapConnection extends AbstractConnection {
 			}
 		}
 
-		sendClient("* " + currentFolder.count() + " EXISTS");
-		sendClient("* " + currentFolder.recent + " RECENT");
+		sendClient("* " + currentFolder.getMessagesCount() + " EXISTS");
+		sendClient("* " + currentFolder.getRecent() + " RECENT");
 	}
 
 	static class MessageWrapper {
@@ -1294,7 +1296,7 @@ public class ImapConnection extends AbstractConnection {
 		}
 		else if (conditions.indexRange != null) {
 			// range iterator is on folder messages, not messages returned from search
-			iterator = new RangeIterator(currentFolder.messages, conditions.indexRange);
+			iterator = new RangeIterator(currentFolder.getMessages(), conditions.indexRange);
 			localMessagesUidList = new ArrayList<>();
 			// build search result uid list
 			for (ExchangeSession.Message message : localMessages) {
@@ -1651,7 +1653,7 @@ public class ImapConnection extends AbstractConnection {
 			for (ExchangeSession.Folder folder : folders) {
 				if (!specialOnly || folder.isSpecial()) {
 					sendClient("* " + command + " (" + folder.getFlags() + ") \"/\" \""
-							+ encodeFolderPath(folder.folderPath) + '\"');
+							+ encodeFolderPath(folder.getFolderPath()) + '\"');
 				}
 			}
 		}
@@ -1866,9 +1868,9 @@ public class ImapConnection extends AbstractConnection {
 
 	protected boolean expunge(boolean silent) throws IOException {
 		boolean hasDeleted = false;
-		if (currentFolder.messages != null) {
+		if (currentFolder.getMessages() != null) {
 			int index = 1;
-			for (ExchangeSession.Message message : currentFolder.messages) {
+			for (ExchangeSession.Message message : currentFolder.getMessages()) {
 				if (message.deleted) {
 					message.delete();
 					hasDeleted = true;

@@ -398,7 +398,7 @@ public class EwsExchangeSession extends ExchangeSession {
 	}
 
 	@Override
-	public Message createMessage(String folderPath, String messageName, HashMap<String, String> properties,
+	public Message createMessage(String folderPath, String messageName, Map<String, String> properties,
 			MimeMessage mimeMessage) throws IOException {
 		EWSMethod.Item item = new EWSMethod.Item();
 		item.type = "Message";
@@ -454,7 +454,7 @@ public class EwsExchangeSession extends ExchangeSession {
 
 	@Override
 	public void deleteMessage(ExchangeSession.Message message) throws IOException {
-		log.debug("Delete " + message.imapUid);
+		log.debug("Delete {}", message.imapUid);
 		DeleteItemMethod deleteItemMethod = new DeleteItemMethod(((EwsExchangeSession.Message) message).itemId,
 				DeleteType.HardDelete, SendMeetingCancellations.SendToNone);
 		executeMethod(deleteItemMethod);
@@ -1074,17 +1074,17 @@ public class EwsExchangeSession extends ExchangeSession {
 	protected Folder buildFolder(EWSMethod.Item item) {
 		Folder folder = new Folder();
 		folder.folderId = new FolderId(item);
-		folder.displayName = encodeFolderName(item.get(Field.get("folderDisplayName").getResponseName()));
-		folder.folderClass = item.get(Field.get("folderclass").getResponseName());
-		folder.etag = item.get(Field.get("lastmodified").getResponseName());
-		folder.ctag = item.get(Field.get("ctag").getResponseName());
-		folder.count = item.getInt(Field.get("count").getResponseName());
-		folder.unreadCount = item.getInt(Field.get("unread").getResponseName());
+		folder.setDisplayName(encodeFolderName(item.get(Field.get("folderDisplayName").getResponseName())));
+		folder.setFolderClass(item.get(Field.get("folderclass").getResponseName()));
+		folder.setEtag(item.get(Field.get("lastmodified").getResponseName()));
+		folder.setCtag(item.get(Field.get("ctag").getResponseName()));
+		folder.setCount(item.getInt(Field.get("count").getResponseName()));
+		folder.setUnreadCount(item.getInt(Field.get("unread").getResponseName()));
 		// fake recent value
-		folder.recent = folder.unreadCount;
-		folder.hasChildren = item.getBoolean(Field.get("hassubs").getResponseName());
+		folder.setRecent(folder.getUnreadCount());
+		folder.setHasChildren(item.getBoolean(Field.get("hassubs").getResponseName()));
 		// noInferiors not implemented
-		folder.uidNext = item.getInt(Field.get("uidNext").getResponseName());
+		folder.setUidNext(item.getInt(Field.get("uidNext").getResponseName()));
 		return folder;
 	}
 
@@ -1117,23 +1117,23 @@ public class EwsExchangeSession extends ExchangeSession {
 			for (EWSMethod.Item item : findFolderMethod.getResponseItems()) {
 				resultCount++;
 				Folder folder = buildFolder(item);
-				if (parentFolderPath.length() > 0) {
+				if (!parentFolderPath.isEmpty()) {
 					if (parentFolderPath.endsWith("/")) {
-						folder.folderPath = parentFolderPath + folder.displayName;
+						folder.setFolderPath(parentFolderPath + folder.getDisplayName());
 					}
 					else {
-						folder.folderPath = parentFolderPath + '/' + folder.displayName;
+						folder.setFolderPath(parentFolderPath + '/' + folder.getDisplayName());
 					}
 				}
 				else if (folderIdMap.get(folder.folderId.value) != null) {
-					folder.folderPath = folderIdMap.get(folder.folderId.value);
+					folder.setFolderPath(folderIdMap.get(folder.folderId.value));
 				}
 				else {
-					folder.folderPath = folder.displayName;
+					folder.setFolderPath(folder.getDisplayName());
 				}
 				folders.add(folder);
-				if (recursive && folder.hasChildren) {
-					appendSubFolders(folders, folder.folderPath, folder.folderId, condition, true);
+				if (recursive && folder.isHasChildren()) {
+					appendSubFolders(folders, folder.getFolderPath(), folder.folderId, condition, true);
 				}
 			}
 		}
@@ -1155,7 +1155,7 @@ public class EwsExchangeSession extends ExchangeSession {
 		Folder folder;
 		if (item != null) {
 			folder = buildFolder(item);
-			folder.folderPath = folderPath;
+			folder.setFolderPath(folderPath);
 		}
 		else {
 			throw new HttpNotFoundException("Folder " + folderPath + " not found");

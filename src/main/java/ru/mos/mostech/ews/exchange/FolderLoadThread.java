@@ -62,7 +62,7 @@ public class FolderLoadThread extends Thread {
 				log.warn("Thread interrupted", e);
 				Thread.currentThread().interrupt();
 			}
-			log.debug("Still loading " + folder.folderPath + " (" + folder.count() + " messages)");
+			log.debug("Still loading {} ({} messages)", folder.getFolderPath(), folder.getMessagesCount());
 			if (Settings.getBooleanProperty("mt.ews.enableKeepAlive", false)) {
 				try {
 					outputStream.write(' ');

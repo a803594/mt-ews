@@ -30,6 +30,10 @@ import java.util.StringTokenizer;
  */
 public class SmtpConnection extends AbstractConnection {
 
+	public static final String BAD_SEQUENCE_OF_COMMANDS = "503 Bad sequence of commands";
+
+	public static final String UNRECOGNIZED_COMMAND = "500 Unrecognized command";
+
 	/**
 	 * Initialize the streams and start the thread.
 	 * @param clientSocket SMTP client socket
@@ -126,31 +130,24 @@ public class SmtpConnection extends AbstractConnection {
 						}
 						else {
 							state = State.INITIAL;
-							sendClient("503 Bad sequence of commands");
+							sendClient(BAD_SEQUENCE_OF_COMMANDS);
 						}
 					}
 					else if ("RCPT".equalsIgnoreCase(command)) {
 						if (state == State.STARTMAIL || state == State.RECIPIENT) {
 							if (line.toUpperCase().startsWith("RCPT TO:")) {
 								state = State.RECIPIENT;
-								try {
-									InternetAddress internetAddress = new InternetAddress(
-											line.substring("RCPT TO:".length()));
-									recipients.add(internetAddress.getAddress());
-								}
-								catch (AddressException e) {
-									throw new MosTechEwsException("EXCEPTION_INVALID_RECIPIENT", line);
-								}
+								rcptAddRecipient(line, recipients);
 								sendClient("250 Recipient OK");
 							}
 							else {
-								sendClient("500 Unrecognized command");
+								sendClient(UNRECOGNIZED_COMMAND);
 							}
 
 						}
 						else {
 							state = State.AUTHENTICATED;
-							sendClient("503 Bad sequence of commands");
+							sendClient(BAD_SEQUENCE_OF_COMMANDS);
 						}
 					}
 					else if ("DATA".equalsIgnoreCase(command)) {
@@ -158,34 +155,12 @@ public class SmtpConnection extends AbstractConnection {
 							state = State.MAILDATA;
 							sendClient("354 Start mail input; end with <CRLF>.<CRLF>");
 
-							try {
-								// read message in buffer
-								ByteArrayOutputStream baos = new ByteArrayOutputStream();
-								DoubleDotInputStream doubleDotInputStream = new DoubleDotInputStream(in);
-								int b;
-								while ((b = doubleDotInputStream.read()) >= 0) {
-									baos.write(b);
-								}
-								MimeMessage mimeMessage = new MimeMessage(null,
-										new SharedByteArrayInputStream(baos.toByteArray()));
-								session.sendMessage(recipients, mimeMessage);
-								state = State.AUTHENTICATED;
-								sendClient("250 Queued mail for delivery");
-							}
-							catch (Exception e) {
-								MosTechEwsTray.error(e);
-								state = State.AUTHENTICATED;
-								String error = e.getMessage();
-								if (error == null) {
-									error = e.toString();
-								}
-								sendClient("451 Error : " + error.replaceAll("[\\r\\n]", ""));
-							}
+							dataSendMessage(recipients);
 
 						}
 						else {
 							state = State.AUTHENTICATED;
-							sendClient("503 Bad sequence of commands");
+							sendClient(BAD_SEQUENCE_OF_COMMANDS);
 						}
 					}
 					else if ("RSET".equalsIgnoreCase(command)) {
@@ -201,11 +176,11 @@ public class SmtpConnection extends AbstractConnection {
 						sendClient("250 OK Reset");
 					}
 					else {
-						sendClient("500 Unrecognized command");
+						sendClient(UNRECOGNIZED_COMMAND);
 					}
 				}
 				else {
-					sendClient("500 Unrecognized command");
+					sendClient(UNRECOGNIZED_COMMAND);
 				}
 
 				os.flush();
@@ -231,6 +206,41 @@ public class SmtpConnection extends AbstractConnection {
 		MosTechEwsTray.resetIcon();
 	}
 
+	private void dataSendMessage(List<String> recipients) throws IOException {
+		try {
+			// read message in buffer
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			DoubleDotInputStream doubleDotInputStream = new DoubleDotInputStream(in);
+			int b;
+			while ((b = doubleDotInputStream.read()) >= 0) {
+				baos.write(b);
+			}
+			MimeMessage mimeMessage = new MimeMessage(null, new SharedByteArrayInputStream(baos.toByteArray()));
+			session.sendMessage(recipients, mimeMessage);
+			state = State.AUTHENTICATED;
+			sendClient("250 Queued mail for delivery");
+		}
+		catch (Exception e) {
+			MosTechEwsTray.error(e);
+			state = State.AUTHENTICATED;
+			String error = e.getMessage();
+			if (error == null) {
+				error = e.toString();
+			}
+			sendClient("451 Error : " + error.replaceAll("[\\r\\n]", ""));
+		}
+	}
+
+	private static void rcptAddRecipient(String line, List<String> recipients) throws MosTechEwsException {
+		try {
+			InternetAddress internetAddress = new InternetAddress(line.substring("RCPT TO:".length()));
+			recipients.add(internetAddress.getAddress());
+		}
+		catch (AddressException e) {
+			throw new MosTechEwsException("EXCEPTION_INVALID_RECIPIENT", line);
+		}
+	}
+
 	/**
 	 * Create authenticated session with Exchange server
 	 * @throws IOException on error
@@ -249,7 +259,7 @@ public class SmtpConnection extends AbstractConnection {
 			if (message == null) {
 				message = e.toString();
 			}
-			message = message.replaceAll("\\n", " ");
+			message = message.replace("\n", " ");
 			sendClient("535 Authentication failed " + message);
 			state = State.INITIAL;
 		}
