@@ -1,10 +1,6 @@
 package ru.mos.mostech.ews.server;
 
-import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpsConfigurator;
-import com.sun.net.httpserver.HttpsServer;
+import com.sun.net.httpserver.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONObject;
@@ -14,9 +10,9 @@ import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsParams;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsResults;
 import ru.mos.mostech.ews.pst.PstConverter;
 import ru.mos.mostech.ews.util.IOUtil;
+import ru.mos.mostech.ews.util.KeysUtils;
 import ru.mos.mostech.ews.util.MdcUserPathUtils;
 import ru.mos.mostech.ews.util.ZipUtil;
-import ru.mos.mostech.ews.util.KeysUtils;
 
 import javax.net.ssl.SSLContext;
 import java.io.*;
@@ -74,20 +70,17 @@ public class HttpServer {
 
 	private static com.sun.net.httpserver.HttpServer createHttpServer(int port) throws NoSuchAlgorithmException,
 			KeyManagementException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
-		return com.sun.net.httpserver.HttpServer.create(new InetSocketAddress("localhost", port), 0);
 
-/*
 		String keystoreFile = Settings.getProperty("mt.ews.ssl.keystoreFile");
 		if (keystoreFile == null || keystoreFile.isEmpty()) {
+			return com.sun.net.httpserver.HttpServer.create(new InetSocketAddress("localhost", port), 0);
 		}
-		51081
 		SSLContext sslContext = SSLContext.getInstance("TLS");
 		sslContext.init(KeysUtils.getKeyManagers(), null, null);
 		// Создаем сервер на указанном порту
 		HttpsServer server = HttpsServer.create(new InetSocketAddress("localhost", port), 0);
 		server.setHttpsConfigurator(new HttpsConfigurator(sslContext));
 		return server;
-*/
 	}
 
 	public static void stop() {

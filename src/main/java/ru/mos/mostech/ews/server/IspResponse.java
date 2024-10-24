@@ -49,7 +49,7 @@ public class IspResponse {
 	public String build(String domain, String username, int imapPort, int smtpPort, int davPort, boolean isSecure) {
 
 		String davUrl = (isSecure ? "https://" : "http://") + "localhost:" + davPort;
-		String socketType = isSecure ? "ssl" : "plain";
+		String socketType = isSecure ? "SSL" : "plain";
 		return TEMPLATE.replace("${domain}", domain)
 			.replace("${username}", username)
 			.replace("${imapPort}", String.valueOf(imapPort))
