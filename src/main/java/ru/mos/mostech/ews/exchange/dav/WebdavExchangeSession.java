@@ -63,7 +63,7 @@ import java.util.zip.GZIPInputStream;
  */
 @SuppressWarnings("rawtypes")
 @Slf4j
-public class MosTechEwsExchangeSession extends ExchangeSession {
+public class WebdavExchangeSession extends ExchangeSession {
 
 	protected enum FolderQueryTraversal {
 
@@ -571,7 +571,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 		return fbdata;
 	}
 
-	public MosTechEwsExchangeSession(HttpClientAdapter httpClientAdapter, java.net.URI uri, String userName)
+	public WebdavExchangeSession(HttpClientAdapter httpClientAdapter, java.net.URI uri, String userName)
 			throws IOException {
 		this.httpClientAdapter = httpClientAdapter;
 		this.userName = userName;
@@ -1299,7 +1299,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 				log.debug("Contact not found at " + encodedHref + ", searching permanenturl by urlcompname");
 				// failover, search item by urlcompname
 				MultiStatusResponse[] responses = searchItems(folderPath, EVENT_REQUEST_PROPERTIES,
-						MosTechEwsExchangeSession.this.isEqualTo("urlcompname", convertItemNameToEML(itemName)),
+						WebdavExchangeSession.this.isEqualTo("urlcompname", convertItemNameToEML(itemName)),
 						FolderQueryTraversal.Shallow, 1);
 				if (responses.length == 1) {
 					encodedHref = getPropertyIfExists(responses[0].getProperties(HttpStatus.SC_OK), "permanenturl");
@@ -1536,7 +1536,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 				eventProperties.add("datecompleted");
 
 				MultiStatusResponse[] responses = searchItems(folderPath, eventProperties,
-						MosTechEwsExchangeSession.this.isEqualTo("urlcompname", convertItemNameToEML(itemName)),
+						WebdavExchangeSession.this.isEqualTo("urlcompname", convertItemNameToEML(itemName)),
 						FolderQueryTraversal.Shallow, 1);
 				if (responses.length == 0) {
 					throw new HttpNotFoundException(permanentUrl + " not found");
@@ -1803,7 +1803,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 					log.debug("Event not found at " + encodedHref + ", searching permanenturl by urlcompname");
 					// failover, search item by urlcompname
 					MultiStatusResponse[] responses = searchItems(folderPath, EVENT_REQUEST_PROPERTIES,
-							MosTechEwsExchangeSession.this.isEqualTo("urlcompname", convertItemNameToEML(itemName)),
+							WebdavExchangeSession.this.isEqualTo("urlcompname", convertItemNameToEML(itemName)),
 							FolderQueryTraversal.Shallow, 1);
 					if (responses.length == 1) {
 						encodedHref = getPropertyIfExists(responses[0].getProperties(HttpStatus.SC_OK), "permanenturl");
@@ -2463,7 +2463,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 				for (ExchangeSession.Event event : events) {
 					if (itemName.equals(event.getName())) {
 						HttpPropfind permanentHttpPropfind = new HttpPropfind(
-								encodeAndFixUrl(((MosTechEwsExchangeSession.Event) event).getPermanentUrl()),
+								encodeAndFixUrl(((WebdavExchangeSession.Event) event).getPermanentUrl()),
 								EVENT_REQUEST_PROPERTIES_NAME_SET, 0);
 						try (CloseableHttpResponse response = httpClientAdapter.execute(permanentHttpPropfind)) {
 							responses = permanentHttpPropfind.getResponseBodyAsMultiStatus(response).getResponses();
@@ -2684,7 +2684,7 @@ public class MosTechEwsExchangeSession extends ExchangeSession {
 
 			MultiStatusResponse[] responses = searchItems("/users/" + getEmail() + "/NON_IPM_SUBTREE", attributes,
 					isEqualTo("messageclass", "IPM.Configuration.OWA.UserOptions"),
-					MosTechEwsExchangeSession.FolderQueryTraversal.Deep, 1);
+					WebdavExchangeSession.FolderQueryTraversal.Deep, 1);
 			if (responses.length == 1) {
 				byte[] roamingdictionary = getBinaryPropertyIfExists(responses[0].getProperties(HttpStatus.SC_OK),
 						"roamingdictionary");

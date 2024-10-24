@@ -10,7 +10,7 @@ import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.exchange.ExchangeSession;
 import ru.mos.mostech.ews.exchange.ExchangeSessionFactory;
-import ru.mos.mostech.ews.exchange.dav.MosTechEwsExchangeSession;
+import ru.mos.mostech.ews.exchange.dav.WebdavExchangeSession;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 
 import javax.naming.InvalidNameException;
@@ -788,7 +788,7 @@ public class LdapConnection extends AbstractConnection {
 
 		if ("uid".equalsIgnoreCase(attributeName) && sValue.equals(userName)) {
 			// replace with actual alias instead of login name search, only in Dav mode
-			if (session instanceof MosTechEwsExchangeSession) {
+			if (session instanceof WebdavExchangeSession) {
 				sValue = session.getAlias();
 				MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REPLACED_UID_FILTER", userName, sValue));
 			}

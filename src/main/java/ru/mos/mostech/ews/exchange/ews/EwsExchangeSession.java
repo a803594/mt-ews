@@ -476,7 +476,7 @@ public class EwsExchangeSession extends ExchangeSession {
 			messageDisposition = MessageDisposition.SendOnly;
 		}
 
-		CreateItemMethod createItemMethod = new CreateItemMethod(messageDisposition, getFolderId(SENT), item);
+		CreateItemMethod createItemMethod = new CreateItemMethod(messageDisposition, /*getFolderId(SENT)*/ null, item);
 		executeMethod(createItemMethod);
 	}
 

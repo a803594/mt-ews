@@ -13,7 +13,7 @@ import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.exception.WebdavNotAvailableException;
 import ru.mos.mostech.ews.exchange.auth.ExchangeAuthenticator;
 import ru.mos.mostech.ews.exchange.auth.ExchangeFormAuthenticator;
-import ru.mos.mostech.ews.exchange.dav.MosTechEwsExchangeSession;
+import ru.mos.mostech.ews.exchange.dav.WebdavExchangeSession;
 import ru.mos.mostech.ews.exchange.ews.EwsExchangeSession;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
 import ru.mos.mostech.ews.http.request.GetRequest;
@@ -207,7 +207,7 @@ public final class ExchangeSessionFactory {
 					exchangeFormAuthenticator.setPassword(poolKey.password);
 					exchangeFormAuthenticator.authenticate();
 					try {
-						session = new MosTechEwsExchangeSession(exchangeFormAuthenticator.getHttpClientAdapter(),
+						session = new WebdavExchangeSession(exchangeFormAuthenticator.getHttpClientAdapter(),
 								exchangeFormAuthenticator.getExchangeUri(), exchangeFormAuthenticator.getUsername());
 					}
 					catch (WebdavNotAvailableException e) {

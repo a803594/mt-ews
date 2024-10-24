@@ -16,7 +16,7 @@ import ru.mos.mostech.ews.exchange.ExchangeSession;
 import ru.mos.mostech.ews.exchange.ExchangeSessionFactory;
 import ru.mos.mostech.ews.exchange.ICSBufferedReader;
 import ru.mos.mostech.ews.exchange.XMLStreamUtil;
-import ru.mos.mostech.ews.exchange.dav.MosTechEwsExchangeSession;
+import ru.mos.mostech.ews.exchange.dav.WebdavExchangeSession;
 import ru.mos.mostech.ews.http.URIUtil;
 import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 import ru.mos.mostech.ews.util.IOUtil;
@@ -1382,7 +1382,7 @@ public class CaldavConnection extends AbstractConnection {
 			String scheduleMode;
 			// enable automatic scheduling over EWS, can be disabled
 			if (Settings.getBooleanProperty("mt.ews.caldavAutoSchedule", true)
-					&& !(session instanceof MosTechEwsExchangeSession)) {
+					&& !(session instanceof WebdavExchangeSession)) {
 				scheduleMode = "calendar-auto-schedule";
 			}
 			else {
