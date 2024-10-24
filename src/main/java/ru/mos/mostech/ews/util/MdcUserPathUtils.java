@@ -30,7 +30,7 @@ public class MdcUserPathUtils {
 		if (user == null) {
 			return Optional.empty();
 		}
-		return Optional.of(Path.of("/home", user, ".mt-ews"));
+		return Optional.of(Path.of("/home", user, ".mt-ews", "logs"));
 	}
 
 }
