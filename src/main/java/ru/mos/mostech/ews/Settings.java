@@ -191,9 +191,9 @@ public final class Settings {
 		SETTINGS_PROPERTIES.put("mt.ews.popMarkReadOnRetr", Boolean.FALSE.toString());
 		SETTINGS_PROPERTIES.put("mt.ews.smtpSaveInSent", Boolean.TRUE.toString());
 		SETTINGS_PROPERTIES.put("mt.ews.ssl.keystoreType", "JKS");
-		SETTINGS_PROPERTIES.put("mt.ews.ssl.keystoreFile", "");
-		SETTINGS_PROPERTIES.put("mt.ews.ssl.keystorePass", "");
-		SETTINGS_PROPERTIES.put("mt.ews.ssl.keyPass", "12345678");
+		SETTINGS_PROPERTIES.put("mt.ews.ssl.keystoreFile", "classpath:keys/localhost.jks");
+		SETTINGS_PROPERTIES.put("mt.ews.ssl.keystorePass", "123456");
+		SETTINGS_PROPERTIES.put("mt.ews.ssl.keyPass", "123456");
 		if (isWindows()) {
 			// default to MSCAPI on windows for native client certificate access
 			SETTINGS_PROPERTIES.put("mt.ews.ssl.clientKeystoreType", "MSCAPI");
