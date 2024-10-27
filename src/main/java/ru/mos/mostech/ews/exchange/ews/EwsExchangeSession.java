@@ -477,7 +477,7 @@ public class EwsExchangeSession extends ExchangeSession {
 		}
 
 		CreateItemMethod createItemMethod = new CreateItemMethod(messageDisposition,
-				/* getFolderId(SENT) */ null, item);
+				getFolderId(SENT), item);
 		executeMethod(createItemMethod);
 	}
 
