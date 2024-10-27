@@ -12,62 +12,63 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 @Slf4j
 @UtilityClass
 public class PstConverter {
 
-	private volatile ExecutorService executor;
-
-	private final Set<PosixFilePermission> permission = PosixFilePermissions.fromString("rwxr-xr-x");
-
-	public static void main(String[] args) {
-		start();
-		convert("./backup.pst");
-		// stop();
-	}
+	private static final AtomicReference<ExecutorService> EXECUTOR = new AtomicReference<>();
 
 	public void start() {
-		executor = Executors.newSingleThreadExecutor();
+		stop();
+		EXECUTOR.set(new ThreadPoolExecutor(3, 3, 0L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), (r, executor) -> {
+			throw new RejectedExecutionException("Все потоки заняты, задание было отклонено!");
+		}));
 	}
 
 	public void stop() {
+		ExecutorService executorService = EXECUTOR.get();
+		if (executorService == null || executorService.isShutdown()) {
+			return;
+		}
 		try {
-			executor.awaitTermination(1, TimeUnit.SECONDS);
+			boolean isStop = executorService.awaitTermination(1, TimeUnit.SECONDS);
+			log.debug("Stopping PST ExecutorService: {}", isStop);
 		}
 		catch (InterruptedException e) {
 			log.error("", e);
 			Thread.currentThread().interrupt();
 		}
-		executor.shutdownNow();
+		executorService.shutdownNow();
 	}
 
 	@SneakyThrows
-	public Path convert(String inputPath) {
+	public Path convert(String originalFilePath, Supplier<InputStream> is) {
 		File jar = findJar();
 		Objects.requireNonNull(jar, "pst library not found");
-		String userDirectory = getUserDirectory(inputPath);
-		Objects.requireNonNull(userDirectory, "user directory not found");
 
-		String fileName = Path.of(inputPath).getFileName().toString();
-		Path pstPathDir = Paths.get(userDirectory, ".mt-ews", "pst");
-		FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(permission);
-		Files.createDirectories(pstPathDir, attr);
-		Path tempDirectory = Files.createTempDirectory(pstPathDir, fileName, attr);
-		doConvert(jar.getAbsolutePath(), inputPath, tempDirectory.toString());
+		String user = getUser(originalFilePath);
+		Path pstPathDir = Paths.get("./.mt-ews", "pst", Objects.requireNonNullElse(user, "unknown"));
+		Files.createDirectories(pstPathDir);
+
+		String fileName = Path.of(originalFilePath).getFileName().toString();
+		Path inputFilePath = pstPathDir.resolve(fileName);
+		try (InputStream inputStream = is.get()) {
+			Files.copy(inputStream, inputFilePath, StandardCopyOption.REPLACE_EXISTING);
+		}
+
+		Path tempDirectory = Files.createTempDirectory(pstPathDir, fileName);
+		doConvert(jar.getAbsolutePath(), inputFilePath.toString(), tempDirectory.toString());
 		return tempDirectory;
 	}
 
 	private void doConvert(String jarPath, String inputPath, String outputDir) {
-		executor.submit(() -> {
+		EXECUTOR.get().submit(() -> {
 			try {
 				ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar", jarPath, "-i", inputPath, "-o",
 						outputDir, "-f", "EML", "-e", "windows-1251");
@@ -75,15 +76,18 @@ public class PstConverter {
 				processBuilder.redirectErrorStream(true);
 				Process process = processBuilder.start();
 				String processOut = IOUtil.readToString(process::getInputStream);
-				boolean success = process.waitFor() == 0; // Успех, если код завершения 0
+				boolean success = process.waitFor(5, TimeUnit.MINUTES);
+				if (!success) {
+					process.destroy();
+				}
 				createResultJson(outputDir, success, processOut);
 			}
 			catch (InterruptedException e) {
-				log.error("", e);
+				log.error("Converting PST Interrupted", e);
 				Thread.currentThread().interrupt();
 			}
 			catch (Exception e) {
-				log.error("", e);
+				log.error("Converting PST Error", e);
 			}
 		});
 	}
@@ -108,7 +112,7 @@ public class PstConverter {
 		}
 	}
 
-	public JSONObject getStatus(String outputDir) throws JSONException, IOException {
+	public JSONObject getStatus(String outputDir) throws JSONException {
 		File file = new File(outputDir, "results.json");
 		if (!file.exists()) {
 			JSONObject resultJson = new JSONObject();
@@ -121,20 +125,20 @@ public class PstConverter {
 				return new FileInputStream(file);
 			}
 			catch (FileNotFoundException e) {
-				throw new RuntimeException(e);
+				throw new UnsupportedOperationException("PST Status JSON is not found", e);
 			}
 		});
 		return new JSONObject(json);
 	}
 
-	private JSONArray getAllEmlFiles(String outputDir) throws JSONException, IOException {
+	private JSONArray getAllEmlFiles(String outputDir) throws JSONException {
 		JSONArray filesArray = new JSONArray();
 		File outputDirectory = new File(outputDir);
 		collectEmlFiles(outputDirectory, filesArray);
 		return filesArray;
 	}
 
-	private void collectEmlFiles(File directory, JSONArray emlFiles) throws JSONException, IOException {
+	private void collectEmlFiles(File directory, JSONArray emlFiles) throws JSONException {
 		if (!directory.exists() || !directory.isDirectory()) {
 			return;
 		}
@@ -142,7 +146,6 @@ public class PstConverter {
 		File[] files = directory.listFiles();
 		if (files != null) {
 			for (File file : files) {
-				Files.setPosixFilePermissions(file.toPath(), permission);
 				if (file.isDirectory()) {
 					collectEmlFiles(file, emlFiles);
 				}
@@ -159,7 +162,7 @@ public class PstConverter {
 	private File findJar() {
 		String directoryPath = "./"; // Путь к папке для поиска
 		String fileNamePattern1 = "mt-ews-pst.*\\with-dependencies.jar"; // Шаблон имени
-																			// файла
+		// файла
 		String fileNamePattern2 = "mt-ews-pst.*\\.jar"; // Шаблон имени файла
 
 		File foundFile = findFile(directoryPath, fileNamePattern1);
@@ -199,18 +202,16 @@ public class PstConverter {
 		return null; // Если файл не найден
 	}
 
-	public String getUserDirectory(String filePath) {
+	public String getUser(String filePath) {
 		Path path = Path.of(filePath).toAbsolutePath();
 		Path homePath = Paths.get("/home");
 
-		// Проверяем, содержит ли путь директорию /home
 		if (path.startsWith(homePath) && path.getNameCount() > 1) {
-			// Извлекаем первую часть после /home, которая будет именем пользователя
-			Path userPath = homePath.resolve(path.getName(1));
+			Path userPath = path.getName(1);
 			return userPath.toString();
 		}
 
-		return null; // Если путь не содержит /home или структура некорректна
+		return null;
 	}
 
 }

@@ -11,7 +11,6 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ContentType;
-import org.codehaus.stax2.typed.TypedXMLStreamReader;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.exchange.XMLStreamUtil;
@@ -123,7 +122,7 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 	 * @param methodName method name
 	 * @param responseCollectionName item response collection name
 	 */
-	public EWSMethod(String itemType, String methodName, String responseCollectionName) {
+	protected EWSMethod(String itemType, String methodName, String responseCollectionName) {
 		super(URI.create("/ews/exchange.asmx"));
 		this.itemType = itemType;
 		this.methodName = methodName;
@@ -1135,14 +1134,7 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 	}
 
 	protected void handleMimeContent(XMLStreamReader reader, Item responseItem) throws XMLStreamException {
-		if (reader instanceof TypedXMLStreamReader) {
-			// Stax2 parser: use enhanced base64 conversion
-			responseItem.mimeContent = ((TypedXMLStreamReader) reader).getElementAsBinary();
-		}
-		else {
-			// failover: slow and memory consuming conversion
-			responseItem.mimeContent = Base64.decodeBase64(reader.getElementText().getBytes(StandardCharsets.US_ASCII));
-		}
+		responseItem.mimeContent = Base64.decodeBase64(reader.getElementText().getBytes(StandardCharsets.US_ASCII));
 	}
 
 	protected void addExtendedPropertyValue(XMLStreamReader reader, Item item) throws XMLStreamException {

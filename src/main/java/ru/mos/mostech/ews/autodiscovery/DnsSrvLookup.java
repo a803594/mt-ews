@@ -11,11 +11,6 @@ import java.util.List;
 @Slf4j
 public class DnsSrvLookup {
 
-	public static void main(String[] args) {
-		String dnsQuery = "mos.ru";
-		lookupSrvRecords(dnsQuery);
-	}
-
 	public static List<LookupResult> lookupSrvRecords(String query) {
 		List<LookupResult> results = new ArrayList<>();
 		try {

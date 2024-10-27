@@ -2,6 +2,7 @@ package ru.mos.mostech.ews.server;
 
 import com.sun.net.httpserver.*;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONObject;
 import ru.mos.mostech.ews.Settings;
@@ -17,7 +18,9 @@ import ru.mos.mostech.ews.util.ZipUtil;
 import javax.net.ssl.SSLContext;
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -29,8 +32,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 @Slf4j
+@UtilityClass
 public class HttpServer {
 
 	public static final String CONTENT_TYPE = "Content-Type";
@@ -45,30 +51,35 @@ public class HttpServer {
 
 	public static final String APPLICATION_ZIP = "application/zip";
 
-	private static volatile com.sun.net.httpserver.HttpServer server;
+	private static final String ERROR_FIELD = "error";
 
-	private static final Map<ResolveEwsParams, ResolveEwsResults> cache = new ConcurrentHashMap<>();
+	private static final AtomicReference<com.sun.net.httpserver.HttpServer> SERVER = new AtomicReference<>();
+
+	private static final Map<ResolveEwsParams, ResolveEwsResults> CACHE = new ConcurrentHashMap<>();
 
 	@SneakyThrows
-	public static void start(int port) {
-		server = createHttpServer(port);
+	public void start(int port) {
+		stop();
 
-		// Определяем обработчик для корневого пути ("/")
+		com.sun.net.httpserver.HttpServer server = createHttpServer(port);
+
 		server.createContext("/pst", new MdcHttpHandler(new PstHandler()));
 		server.createContext("/pst-status", new MdcHttpHandler(new PstStatusHandler()));
+		server.createContext("/pst-eml-file", new MdcHttpHandler(new PstEmlFileHandler()));
 		server.createContext("/autodiscovery", new MdcHttpHandler(new AutoDiscoveryHandler()));
 		server.createContext("/ews-settings", new MdcHttpHandler(new EwsSettingsHandler()));
 		server.createContext("/ews-logs", new MdcHttpHandler(new EwsLogsHandler()));
 
 		// Запускаем сервер
+		SERVER.set(server);
 		server.setExecutor(null); // Используем стандартный исполнитель
 		server.start();
-		PstConverter.start();
 
+		PstConverter.start();
 		log.info("HTTP-сервер для обработки запросов от mt-mail запущен на порту {}", port);
 	}
 
-	private static com.sun.net.httpserver.HttpServer createHttpServer(int port) throws NoSuchAlgorithmException,
+	private com.sun.net.httpserver.HttpServer createHttpServer(int port) throws NoSuchAlgorithmException,
 			KeyManagementException, CertificateException, IOException, KeyStoreException, UnrecoverableKeyException {
 
 		String keystoreFile = Settings.getProperty("mt.ews.ssl.keystoreFile");
@@ -83,8 +94,12 @@ public class HttpServer {
 		return server;
 	}
 
-	public static void stop() {
-		server.stop(1000);
+	public void stop() {
+		com.sun.net.httpserver.HttpServer httpServer = SERVER.get();
+		if (httpServer == null) {
+			return;
+		}
+		httpServer.stop(1000);
 		PstConverter.stop();
 	}
 
@@ -95,12 +110,18 @@ public class HttpServer {
 		@Override
 		public void handle(HttpExchange exchange) {
 			try {
+				String query = Objects.requireNonNullElse(exchange.getRequestURI().getQuery(), "");
+				String[] split = query.split("=");
+				if (split.length != 2 || !split[0].equalsIgnoreCase("fullPath")) {
+					throw new IllegalArgumentException("Параметр путь к файлу не передан");
+				}
+				String fullPath = split[1];
+				if (fullPath == null || fullPath.isEmpty()) {
+					throw new IllegalArgumentException("Значение путь к файлу пустое");
+				}
+				fullPath = URLDecoder.decode(fullPath, StandardCharsets.UTF_8);
 
-				String body = readBodyRequest(exchange);
-
-				JSONObject json = new JSONObject(body);
-				String path = json.optString("path");
-				Path outputDir = PstConverter.convert(path);
+				Path outputDir = PstConverter.convert(fullPath, exchange::getRequestBody);
 
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("path", outputDir.toAbsolutePath().toString());
@@ -110,7 +131,7 @@ public class HttpServer {
 			catch (Exception e) {
 				log.error(e.getMessage(), e);
 				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("error", e.getMessage());
+				jsonObject.put(ERROR_FIELD, e.getMessage());
 				String response = jsonObject.toString();
 				sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
 			}
@@ -136,7 +157,36 @@ public class HttpServer {
 			catch (Exception e) {
 				log.error(e.getMessage(), e);
 				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("error", e.getMessage());
+				jsonObject.put(ERROR_FIELD, e.getMessage());
+				String response = jsonObject.toString();
+				sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
+			}
+
+		}
+
+	}
+
+	static class PstEmlFileHandler implements HttpHandler {
+
+		@SneakyThrows
+		@Override
+		public void handle(HttpExchange exchange) {
+			try {
+				String body = readBodyRequest(exchange);
+
+				JSONObject json = new JSONObject(body);
+				String path = json.optString("path");
+				String eml = Files.readString(Path.of(path), StandardCharsets.UTF_8);
+
+				JSONObject emlContent = new JSONObject();
+				emlContent.put("eml", eml);
+				String response = emlContent.toString();
+				sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
+			}
+			catch (Exception e) {
+				log.error(e.getMessage(), e);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put(ERROR_FIELD, e.getMessage());
 				String response = jsonObject.toString();
 				sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
 			}
@@ -162,7 +212,7 @@ public class HttpServer {
 
 				ResolveEwsParams resolveEwsParams = ResolveEwsParams.builder().email(email).password(password).build();
 
-				ResolveEwsResults results = cache.get(resolveEwsParams);
+				ResolveEwsResults results = CACHE.get(resolveEwsParams);
 				if (results == null
 						|| results.getTime() < (System.currentTimeMillis() - Duration.ofMinutes(1).toMillis())) {
 					results = AutoDiscoveryFacade.resolveEws(resolveEwsParams).orElse(null);
@@ -174,7 +224,7 @@ public class HttpServer {
 					return;
 				}
 
-				cache.put(resolveEwsParams, results);
+				CACHE.put(resolveEwsParams, results);
 
 				if (query.contains("responseType=json")) {
 					response200Json(results, exchange);
@@ -243,7 +293,7 @@ public class HttpServer {
 			catch (Exception e) {
 				log.error(e.getMessage(), e);
 				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("error", e.getMessage());
+				jsonObject.put(ERROR_FIELD, e.getMessage());
 				String response = jsonObject.toString();
 				sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
 			}
@@ -265,13 +315,13 @@ public class HttpServer {
 					sendZipFile(exchange, 200, file);
 				}
 				else {
-					throw new Exception("Не удалось найти имя пользователя");
+					throw new UnsupportedOperationException("Не удалось найти имя пользователя");
 				}
 			}
 			catch (Exception e) {
 				log.error(e.getMessage(), e);
 				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("error", e.getMessage());
+				jsonObject.put(ERROR_FIELD, e.getMessage());
 				String response = jsonObject.toString();
 				sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
 			}

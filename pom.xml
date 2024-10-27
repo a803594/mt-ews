@@ -6,7 +6,7 @@
     <artifactId>mt-ews</artifactId>
     <packaging>jar</packaging>
     <version>${MT_EWS_VERSION}</version>
-    <name>MT-EWS IMAP/SMTP/Caldav/Carddav Exchange Gateway</name>
+    <name>MT-EWS Exchange Gateway</name>
     <organization>
         <name>DIT</name>
     </organization>
@@ -66,16 +66,6 @@
             <version>2.29</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.woodstox</groupId>
-            <artifactId>woodstox-core</artifactId>
-            <version>6.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.freeutils</groupId>
-            <artifactId>jcharset</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
             <version>1.5.4</version>
@@ -84,16 +74,19 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>17.0.12</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
             <version>17.0.12</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
             <version>17.0.12</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -117,7 +110,6 @@
             <version>1.18.34</version>
             <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/dnsjava/dnsjava -->
         <dependency>
             <groupId>dnsjava</groupId>
             <artifactId>dnsjava</artifactId>
