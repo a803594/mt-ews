@@ -16,11 +16,11 @@ import java.util.ArrayList;
  */
 public class OSXAwtGatewayTray extends AwtGatewayTray implements OSXTrayInterface {
 
-	protected static final String OSX_TRAY_ACTIVE_PNG = "osxtray2.png";
+	protected static final String OSX_TRAY_ACTIVE_PNG = "logo.png";
 
-	protected static final String OSX_TRAY_PNG = "osxtray.png";
+	protected static final String OSX_TRAY_PNG = "logo.png";
 
-	protected static final String OSX_TRAY_INACTIVE_PNG = "osxtrayinactive.png";
+	protected static final String OSX_TRAY_INACTIVE_PNG = "logo.png";
 
 	@Override
 	protected void loadIcons() {

@@ -21,17 +21,17 @@ import java.util.ArrayList;
  */
 public class AwtGatewayTray implements MosTechEwsTrayInterface {
 
-	protected static final String TRAY_PNG = "tray.png";
+	protected static final String TRAY_PNG = "logo.png";
 
-	protected static final String TRAY_ACTIVE_PNG = "tray2.png";
+	protected static final String TRAY_ACTIVE_PNG = "logo.png";
 
-	protected static final String TRAY_INACTIVE_PNG = "trayinactive.png";
+	protected static final String TRAY_INACTIVE_PNG = "logo.png";
 
-	protected static final String TRAY128_PNG = "tray128.png";
+	protected static final String TRAY128_PNG = "logo.png";
 
-	protected static final String TRAY128_ACTIVE_PNG = "tray128active.png";
+	protected static final String TRAY128_ACTIVE_PNG = "logo.png";
 
-	protected static final String TRAY128_INACTIVE_PNG = "tray128inactive.png";
+	protected static final String TRAY128_INACTIVE_PNG = "logo.png";
 
 	protected AwtGatewayTray() {
 	}

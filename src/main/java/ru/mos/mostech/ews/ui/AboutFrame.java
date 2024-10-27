@@ -41,7 +41,7 @@ public class AboutFrame extends JFrame {
 		try {
 			JLabel imageLabel = new JLabel();
 			ClassLoader classloader = this.getClass().getClassLoader();
-			URL imageUrl = classloader.getResource("tray32.png");
+			URL imageUrl = classloader.getResource("logo.png");
 			if (imageUrl != null) {
 				Image iconImage = ImageIO.read(imageUrl);
 				ImageIcon icon = new ImageIcon(iconImage);
