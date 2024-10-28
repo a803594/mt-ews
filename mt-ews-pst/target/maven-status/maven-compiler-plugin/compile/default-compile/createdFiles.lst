@@ -1,9 +1,0 @@
-pt/cjmach/pstconv/PstConvertResult.class
-pt/cjmach/pstconv/PstUtil.class
-pt/cjmach/pstconv/mail/LocalFolder.class
-pt/cjmach/pstconv/mail/EmlFolder.class
-pt/cjmach/pstconv/mail/EmlStore.class
-pt/cjmach/pstconv/PstConverter.class
-pt/cjmach/pstconv/Launcher.class
-pt/cjmach/pstconv/MailMessageFormat.class
-pt/cjmach/pstconv/PstConverter$1.class
