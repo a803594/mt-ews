@@ -20,7 +20,6 @@ import ru.mos.mostech.ews.exchange.ICSBufferedReader;
 import ru.mos.mostech.ews.exchange.XMLStreamUtil;
 import ru.mos.mostech.ews.exchange.dav.WebdavExchangeSession;
 import ru.mos.mostech.ews.http.URIUtil;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 import ru.mos.mostech.ews.util.IOUtil;
 import ru.mos.mostech.ews.util.StringUtil;
 
@@ -169,7 +168,7 @@ public class CaldavConnection extends AbstractConnection {
 				keepAlive = MAX_KEEP_ALIVE_TIME;
 			}
 			client.setSoTimeout(keepAlive * 1000);
-			MosTechEwsTray.debug(new BundleMessage("LOG_SET_SOCKET_TIMEOUT", keepAlive));
+			log.debug("{}", new BundleMessage("LOG_SET_SOCKET_TIMEOUT", keepAlive));
 		}
 	}
 
@@ -209,30 +208,28 @@ public class CaldavConnection extends AbstractConnection {
 				}
 
 				os.flush();
-				MosTechEwsTray.resetIcon();
 			}
 		}
 		catch (SocketTimeoutException e) {
-			MosTechEwsTray.debug(new BundleMessage("LOG_CLOSE_CONNECTION_ON_TIMEOUT"));
+			log.debug("{}", new BundleMessage("LOG_CLOSE_CONNECTION_ON_TIMEOUT"));
 		}
 		catch (SocketException e) {
-			MosTechEwsTray.debug(new BundleMessage("LOG_CONNECTION_CLOSED"));
+			log.debug("", new BundleMessage("LOG_CONNECTION_CLOSED"));
 		}
 		catch (Exception e) {
 			if (!(e instanceof HttpNotFoundException)) {
-				MosTechEwsTray.log(e);
+				log.error("", e);
 			}
 			try {
 				sendErr(e);
 			}
 			catch (IOException e2) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
+				log.debug("{}", new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
 			}
 		}
 		finally {
 			close();
 		}
-		MosTechEwsTray.resetIcon();
 	}
 
 	private void checkSessionForEachRequest(String command, String path, Map<String, String> headers, String content)
@@ -500,8 +497,7 @@ public class CaldavConnection extends AbstractConnection {
 		if (contacts != null) {
 			int count = 0;
 			for (ExchangeSession.Contact contact : contacts) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_LISTING_ITEM", ++count, contacts.size()));
-				MosTechEwsTray.switchIcon();
+				log.debug("{}", new BundleMessage("LOG_LISTING_ITEM", ++count, contacts.size()));
 				appendItemResponse(response, request, contact);
 			}
 		}
@@ -513,8 +509,7 @@ public class CaldavConnection extends AbstractConnection {
 			int size = events.size();
 			int count = 0;
 			for (ExchangeSession.Event event : events) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_LISTING_ITEM", ++count, size));
-				MosTechEwsTray.switchIcon();
+				log.debug("{}", new BundleMessage("LOG_LISTING_ITEM", ++count, size));
 				appendItemResponse(response, request, event);
 			}
 		}
@@ -667,7 +662,7 @@ public class CaldavConnection extends AbstractConnection {
 			}
 			catch (HttpResponseException e) {
 				// unauthorized access, probably an inbox on shared calendar
-				MosTechEwsTray.debug(new BundleMessage("LOG_ACCESS_FORBIDDEN", folderPath, e.getMessage()));
+				log.debug("{}", new BundleMessage("LOG_ACCESS_FORBIDDEN", folderPath, e.getMessage()));
 			}
 		}
 		response.startResponse(encodePath(request, request.getPath(subFolder)));
@@ -743,15 +738,14 @@ public class CaldavConnection extends AbstractConnection {
 		// do not try to access inbox on shared calendar
 		if (!session.isSharedFolder(request.getFolderPath(null)) && request.getDepth() == 1 && !request.isLightning()) {
 			try {
-				MosTechEwsTray.debug(new BundleMessage("LOG_SEARCHING_CALENDAR_MESSAGES"));
+				log.debug("{}", new BundleMessage("LOG_SEARCHING_CALENDAR_MESSAGES"));
 				List<ExchangeSession.Event> events = session.getEventMessages(request.getFolderPath());
-				MosTechEwsTray.debug(new BundleMessage("LOG_FOUND_CALENDAR_MESSAGES", events.size()));
+				log.debug("{}", new BundleMessage("LOG_FOUND_CALENDAR_MESSAGES", events.size()));
 				appendEventsResponses(response, request, events);
 			}
 			catch (HttpResponseException e) {
 				// unauthorized access, probably an inbox on shared calendar
-				MosTechEwsTray
-					.debug(new BundleMessage("LOG_ACCESS_FORBIDDEN", request.getFolderPath(), e.getMessage()));
+				log.debug("{}", new BundleMessage("LOG_ACCESS_FORBIDDEN", request.getFolderPath(), e.getMessage()));
 			}
 		}
 		response.endMultistatus();
@@ -875,8 +869,7 @@ public class CaldavConnection extends AbstractConnection {
 			int count = 0;
 			int total = request.getHrefs().size();
 			for (String href : request.getHrefs()) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_REPORT_ITEM", ++count, total));
-				MosTechEwsTray.switchIcon();
+				log.debug("{}", new BundleMessage("LOG_REPORT_ITEM", ++count, total));
 				String eventName = getEventFileNameFromPath(href);
 				try {
 					// ignore cases for Sunbird
@@ -884,7 +877,7 @@ public class CaldavConnection extends AbstractConnection {
 							&& !CALENDAR.equals(eventName)) {
 						ExchangeSession.Item item = getItem(request, folderPath, eventName);
 						if (!eventName.equals(item.getName())) {
-							MosTechEwsTray.warn(new BundleMessage("LOG_MESSAGE",
+							log.warn("{}", new BundleMessage("LOG_MESSAGE",
 									"wrong item name requested " + eventName + " received " + item.getName()));
 							// force item name to requested value
 							item.setItemName(eventName);
@@ -898,7 +891,7 @@ public class CaldavConnection extends AbstractConnection {
 				}
 				catch (Exception e) {
 					log.debug(e.getMessage(), e);
-					MosTechEwsTray.warn(new BundleMessage("LOG_ITEM_NOT_AVAILABLE", eventName, href));
+					log.warn("{}", new BundleMessage("LOG_ITEM_NOT_AVAILABLE", eventName, href));
 					notFound.add(href);
 				}
 			}
@@ -1343,7 +1336,7 @@ public class CaldavConnection extends AbstractConnection {
 	 */
 	private void sendNotFound(CaldavRequest request) throws IOException {
 		BundleMessage message = new BundleMessage("LOG_UNSUPPORTED_REQUEST", request);
-		MosTechEwsTray.warn(message);
+		log.warn("{}", message);
 		sendErr(HttpStatus.SC_NOT_FOUND, message.format());
 	}
 
@@ -1699,7 +1692,7 @@ public class CaldavConnection extends AbstractConnection {
 					depth = Integer.parseInt(depthValue);
 				}
 				catch (NumberFormatException e) {
-					MosTechEwsTray.warn(new BundleMessage("LOG_INVALID_DEPTH", depthValue));
+					log.warn("{}", new BundleMessage("LOG_INVALID_DEPTH", depthValue));
 				}
 			}
 		}
@@ -1753,7 +1746,7 @@ public class CaldavConnection extends AbstractConnection {
 					}
 				}
 				catch (XMLStreamException e) {
-					MosTechEwsTray.error(e);
+					log.error("", e);
 				}
 			}
 		}

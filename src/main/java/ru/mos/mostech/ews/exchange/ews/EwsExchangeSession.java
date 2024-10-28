@@ -18,7 +18,6 @@ import ru.mos.mostech.ews.exchange.VProperty;
 import ru.mos.mostech.ews.exchange.auth.O365Token;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
 import ru.mos.mostech.ews.http.request.GetRequest;
-import ru.mos.mostech.ews.ui.NotificationDialog;
 import ru.mos.mostech.ews.util.IOUtil;
 import ru.mos.mostech.ews.util.StringUtil;
 
@@ -1926,26 +1925,7 @@ public class EwsExchangeSession extends ExchangeSession {
 						SendMeetingInvitations sendMeetingInvitations = SendMeetingInvitations.SendToAllAndSaveCopy;
 						MessageDisposition messageDisposition = MessageDisposition.SendAndSaveCopy;
 						String body = null;
-						// This is a meeting response, let user edit notification message
-						if (Settings.getBooleanProperty("mt.ews.caldavEditNotifications")) {
-							String vEventSubject = vCalendar.getFirstVeventPropertyValue("SUMMARY");
-							if (vEventSubject == null) {
-								vEventSubject = BundleMessage.format("MEETING_REQUEST");
-							}
 
-							String status = vCalendar.getAttendeeStatus();
-							String notificationSubject = (status != null)
-									? (BundleMessage.format(status) + vEventSubject) : subject;
-
-							NotificationDialog notificationDialog = new NotificationDialog(notificationSubject, "");
-							if (!notificationDialog.getSendNotification()) {
-								log.debug("Notification canceled by user");
-								sendMeetingInvitations = SendMeetingInvitations.SendToNone;
-								messageDisposition = MessageDisposition.SaveOnly;
-							}
-							// get description from dialog
-							body = notificationDialog.getBody();
-						}
 						EWSMethod.Item item = new EWSMethod.Item();
 
 						item.type = partstatToResponseMap.get(vCalendar.getAttendeeStatus());
@@ -2662,30 +2642,11 @@ public class EwsExchangeSession extends ExchangeSession {
 				// cancel meeting
 				SendMeetingInvitations sendMeetingInvitations = SendMeetingInvitations.SendToAllAndSaveCopy;
 				MessageDisposition messageDisposition = MessageDisposition.SendAndSaveCopy;
-				String body = null;
-				// This is a meeting cancel, let user edit notification message
-				if (Settings.getBooleanProperty("mt.ews.caldavEditNotifications")) {
-					String vEventSubject = item.get(Field.get("subject").getResponseName());
-					if (vEventSubject == null) {
-						vEventSubject = "";
-					}
-					String notificationSubject = (BundleMessage.format("CANCELLED") + vEventSubject);
 
-					NotificationDialog notificationDialog = new NotificationDialog(notificationSubject, "");
-					if (!notificationDialog.getSendNotification()) {
-						log.debug("Notification canceled by user");
-						sendMeetingInvitations = SendMeetingInvitations.SendToNone;
-						messageDisposition = MessageDisposition.SaveOnly;
-					}
-					// get description from dialog
-					body = notificationDialog.getBody();
-				}
 				EWSMethod.Item cancelItem = new EWSMethod.Item();
 				cancelItem.type = "CancelCalendarItem";
 				cancelItem.referenceItemId = new ItemId("ReferenceItemId", item);
-				if (body != null && body.length() > 0) {
-					item.put("Body", body);
-				}
+
 				CreateItemMethod cancelItemMethod = new CreateItemMethod(messageDisposition, sendMeetingInvitations,
 						getFolderId(SENT), cancelItem);
 				executeMethod(cancelItemMethod);

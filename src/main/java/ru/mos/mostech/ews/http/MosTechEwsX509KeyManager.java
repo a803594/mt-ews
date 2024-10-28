@@ -5,7 +5,6 @@ package ru.mos.mostech.ews.http;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
-import ru.mos.mostech.ews.ui.SelectCertificateDialog;
 
 import javax.net.ssl.X509KeyManager;
 import java.awt.*;
@@ -115,18 +114,7 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
 				}
 				descriptionsArray[i++] = subject + " [" + issuer + "]";
 			}
-			String selectedAlias;
-			if (Settings.getBooleanProperty("mt.ews.server") || GraphicsEnvironment.isHeadless()) {
-				// headless or server mode
-				selectedAlias = chooseClientAlias(aliasesArray, descriptionsArray);
-			}
-			else {
-				SelectCertificateDialog selectCertificateDialog = new SelectCertificateDialog(aliasesArray,
-						descriptionsArray);
-
-				selectedAlias = selectCertificateDialog.getSelectedAlias();
-				log.debug("User selected Key Alias: " + selectedAlias);
-			}
+			String selectedAlias = chooseClientAlias(aliasesArray, descriptionsArray);
 
 			cachedAlias = stripAlias(selectedAlias);
 			log.debug("Stored Key Alias Pattern: " + cachedAlias);

@@ -15,7 +15,6 @@ import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.exchange.XMLStreamUtil;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 import ru.mos.mostech.ews.util.StringUtil;
 
 import javax.xml.stream.XMLStreamConstants;
@@ -173,9 +172,8 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 						}
 						outputStream.write(content, i, length);
 						if (!firstPass) {
-							MosTechEwsTray.debug(new BundleMessage("LOG_UPLOAD_PROGRESS",
+							log.debug("{}", new BundleMessage("LOG_UPLOAD_PROGRESS",
 									String.valueOf((i + length) / 1024), (i + length) * 100 / content.length));
-							MosTechEwsTray.switchIcon();
 						}
 						i += CHUNK_LENGTH;
 					}
@@ -679,7 +677,7 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 
 		/**
 		 * Получить значение свойства как long
-		 * @param ключ название свойства в ответе
+		 * @param key название свойства в ответе
 		 * @return значение свойства
 		 */
 		public long getLong(String key) {
@@ -1242,9 +1240,8 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 					int count = super.read(buffer, offset, length);
 					totalCount += count;
 					if (totalCount - lastLogCount > 1024 * 128) {
-						MosTechEwsTray.debug(new BundleMessage("LOG_DOWNLOAD_PROGRESS",
-								String.valueOf(totalCount / 1024), EWSMethod.this.getURI()));
-						MosTechEwsTray.switchIcon();
+						log.debug("{}", new BundleMessage("LOG_DOWNLOAD_PROGRESS", String.valueOf(totalCount / 1024),
+								EWSMethod.this.getURI()));
 						lastLogCount = totalCount;
 					}
 					/*

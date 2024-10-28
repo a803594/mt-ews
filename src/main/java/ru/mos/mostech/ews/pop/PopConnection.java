@@ -12,7 +12,6 @@ import ru.mos.mostech.ews.exchange.DoubleDotOutputStream;
 import ru.mos.mostech.ews.exchange.ExchangeSession;
 import ru.mos.mostech.ews.exchange.ExchangeSessionFactory;
 import ru.mos.mostech.ews.exchange.MessageLoadThread;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 import ru.mos.mostech.ews.util.IOUtil;
 
 import java.io.FilterOutputStream;
@@ -138,7 +137,7 @@ public class PopConnection extends AbstractConnection {
 								log.warn("{}", BundleMessage.formatLog("LOG_CLIENT_CLOSED_CONNECTION"));
 							}
 							catch (Exception e) {
-								MosTechEwsTray.error(e);
+								log.error("", e);
 								sendERR(e);
 							}
 						}
@@ -219,7 +218,7 @@ public class PopConnection extends AbstractConnection {
 									log.warn(BundleMessage.formatLog("LOG_CLIENT_CLOSED_CONNECTION"));
 								}
 								catch (Exception e) {
-									MosTechEwsTray.error(new BundleMessage("LOG_ERROR_RETRIEVING_MESSAGE"), e);
+									log.error("{}", new BundleMessage("LOG_ERROR_RETRIEVING_MESSAGE"), e);
 									sendERR("error retrieving message " + e + ' ' + e.getMessage());
 								}
 							}
@@ -263,7 +262,6 @@ public class PopConnection extends AbstractConnection {
 							}
 							catch (Exception e) {
 								sendERR("error retreiving top of messages");
-								MosTechEwsTray.error(e);
 							}
 						}
 						else if ("RSET".equalsIgnoreCase(command)) {
@@ -283,21 +281,20 @@ public class PopConnection extends AbstractConnection {
 			}
 		}
 		catch (SocketException e) {
-			MosTechEwsTray.debug(new BundleMessage("LOG_CONNECTION_CLOSED"));
+			log.debug("{}", new BundleMessage("LOG_CONNECTION_CLOSED"));
 		}
 		catch (Exception e) {
-			MosTechEwsTray.log(e);
+			log.error("", e);
 			try {
 				sendERR(e.getMessage());
 			}
 			catch (IOException e2) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
+				log.debug("{}", new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
 			}
 		}
 		finally {
 			close();
 		}
-		MosTechEwsTray.resetIcon();
 	}
 
 	protected void sendOK(String message) throws IOException {

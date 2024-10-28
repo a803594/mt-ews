@@ -4,7 +4,6 @@ DIT
 package ru.mos.mostech.ews.http;
 
 import ru.mos.mostech.ews.BundleMessage;
-import ru.mos.mostech.ews.ui.PasswordPromptDialog;
 
 import java.awt.*;
 
@@ -21,9 +20,7 @@ public final class MosTechEwsOTPPrompt {
 	 * @return одноразовый пароль, предоставленный пользователем
 	 */
 	public static String getOneTimePassword() {
-		PasswordPromptDialog passwordPromptDialog = new PasswordPromptDialog(
-				BundleMessage.format("UI_OTP_PASSWORD_PROMPT"));
-		return String.valueOf(passwordPromptDialog.getPassword());
+		return "";
 	}
 
 	/**
@@ -32,9 +29,7 @@ public final class MosTechEwsOTPPrompt {
 	 * @return одноразовый пароль, предоставленный пользователем
 	 */
 	public static String getCaptchaValue(Image captchaImage) {
-		PasswordPromptDialog passwordPromptDialog = new PasswordPromptDialog(BundleMessage.format("UI_CAPTCHA_PROMPT"),
-				captchaImage);
-		return String.valueOf(passwordPromptDialog.getPassword());
+		return "";
 	}
 
 }

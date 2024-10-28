@@ -6,7 +6,6 @@ package ru.mos.mostech.ews;
 import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.exchange.ExchangeSession;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 import ru.mos.mostech.ews.util.MdcUserPathUtils;
 
 import java.io.*;
@@ -148,7 +147,7 @@ public abstract class AbstractConnection extends Thread implements Closeable {
 		}
 		catch (IOException e) {
 			close();
-			MosTechEwsTray.error(new BundleMessage("LOG_EXCEPTION_GETTING_SOCKET_STREAMS"), e);
+			log.error("{}", new BundleMessage("LOG_EXCEPTION_GETTING_SOCKET_STREAMS"), e);
 		}
 	}
 
@@ -174,10 +173,10 @@ public abstract class AbstractConnection extends Thread implements Closeable {
 	public void sendClient(String prefix, String message) throws IOException {
 		if (prefix != null) {
 			os.write(prefix.getBytes(StandardCharsets.UTF_8));
-			MosTechEwsTray.debug(new BundleMessage("LOG_SEND_CLIENT_PREFIX_MESSAGE", prefix, message));
+			log.debug("{}", new BundleMessage("LOG_SEND_CLIENT_PREFIX_MESSAGE", prefix, message));
 		}
 		else {
-			MosTechEwsTray.debug(new BundleMessage("LOG_SEND_CLIENT_MESSAGE", message));
+			log.debug("{}", new BundleMessage("LOG_SEND_CLIENT_MESSAGE", message));
 		}
 		os.write(message.getBytes(StandardCharsets.UTF_8));
 		os.write((char) 13);
@@ -215,32 +214,32 @@ public abstract class AbstractConnection extends Thread implements Closeable {
 		String line = in.readLine();
 		if (line != null) {
 			if (line.startsWith("PASS")) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_READ_CLIENT_PASS"));
+				log.debug("{}", new BundleMessage("LOG_READ_CLIENT_PASS"));
 				// SMTP LOGIN
 			}
 			else if (line.startsWith("AUTH LOGIN ")) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_READ_CLIENT_AUTH_LOGIN"));
+				log.debug("{}", new BundleMessage("LOG_READ_CLIENT_AUTH_LOGIN"));
 				// IMAP LOGIN
 			}
 			else if (state == State.INITIAL && line.indexOf(' ') >= 0
 					&& line.substring(line.indexOf(' ') + 1).toUpperCase().startsWith("LOGIN")) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_READ_CLIENT_LOGIN"));
+				log.debug("{}", new BundleMessage("LOG_READ_CLIENT_LOGIN"));
 			}
 			else if (state == State.PASSWORD) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_READ_CLIENT_PASSWORD"));
+				log.debug("{}", new BundleMessage("LOG_READ_CLIENT_PASSWORD"));
 				// HTTP Basic Authentication
 			}
 			else if (line.startsWith("Authorization:")) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_READ_CLIENT_AUTHORIZATION"));
+				log.debug("{}", new BundleMessage("LOG_READ_CLIENT_AUTHORIZATION"));
 			}
 			else if (line.startsWith("AUTH PLAIN")) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_READ_CLIENT_AUTH_PLAIN"));
+				log.debug("{}", new BundleMessage("LOG_READ_CLIENT_AUTH_PLAIN"));
 			}
 			else {
-				MosTechEwsTray.debug(new BundleMessage("LOG_READ_CLIENT_LINE", line));
+				log.debug("{}", new BundleMessage("LOG_READ_CLIENT_LINE", line));
 			}
 		}
-		MosTechEwsTray.switchIcon();
+
 		return line;
 	}
 
@@ -278,7 +277,7 @@ public abstract class AbstractConnection extends Thread implements Closeable {
 			client.close();
 		}
 		catch (IOException e2) {
-			MosTechEwsTray.debug(new BundleMessage("LOG_EXCEPTION_CLOSING_CLIENT_SOCKET"), e2);
+			log.debug("{}", new BundleMessage("LOG_EXCEPTION_CLOSING_CLIENT_SOCKET"), e2);
 		}
 	}
 

@@ -37,7 +37,6 @@ import ru.mos.mostech.ews.exchange.*;
 import ru.mos.mostech.ews.http.HttpClientAdapter;
 import ru.mos.mostech.ews.http.URIUtil;
 import ru.mos.mostech.ews.http.request.ExchangePropPatchRequest;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 import ru.mos.mostech.ews.util.IOUtil;
 import ru.mos.mostech.ews.util.StringUtil;
 
@@ -2344,10 +2343,10 @@ public class WebdavExchangeSession extends ExchangeSession {
 			condition.appendTo(searchRequest);
 		}
 		searchRequest.append(" ORDER BY ").append(Field.getRequestPropertyString("imapUid")).append(" DESC");
-		MosTechEwsTray.debug(new BundleMessage("LOG_SEARCH_QUERY", searchRequest));
+		log.debug("{}", new BundleMessage("LOG_SEARCH_QUERY", searchRequest));
 		MultiStatusResponse[] responses = httpClientAdapter.executeSearchRequest(encodeAndFixUrl(folderUrl),
 				searchRequest.toString(), maxCount);
-		MosTechEwsTray.debug(new BundleMessage("LOG_SEARCH_RESULT", responses.length));
+		log.debug("{}", new BundleMessage("LOG_SEARCH_RESULT", responses.length));
 		return responses;
 	}
 
@@ -3152,9 +3151,8 @@ public class WebdavExchangeSession extends ExchangeSession {
 					int count = super.read(buffer, offset, length);
 					totalCount += count;
 					if (totalCount - lastLogCount > 1024 * 128) {
-						MosTechEwsTray.debug(new BundleMessage("LOG_DOWNLOAD_PROGRESS",
-								String.valueOf(totalCount / 1024), httpGet.getURI()));
-						MosTechEwsTray.switchIcon();
+						log.debug("{}", new BundleMessage("LOG_DOWNLOAD_PROGRESS", String.valueOf(totalCount / 1024),
+								httpGet.getURI()));
 						lastLogCount = totalCount;
 					}
 					return count;

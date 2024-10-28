@@ -11,7 +11,6 @@ import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.exchange.ExchangeSession;
 import ru.mos.mostech.ews.exchange.ExchangeSessionFactory;
 import ru.mos.mostech.ews.exchange.dav.WebdavExchangeSession;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 
 import javax.naming.InvalidNameException;
 import javax.naming.ldap.Rdn;
@@ -378,7 +377,7 @@ public class LdapConnection extends AbstractConnection {
 		}
 		catch (IOException e) {
 			close();
-			MosTechEwsTray.error(new BundleMessage("LOG_EXCEPTION_GETTING_SOCKET_STREAMS"), e);
+			log.error("{}", new BundleMessage("LOG_EXCEPTION_GETTING_SOCKET_STREAMS"), e);
 		}
 	}
 
@@ -465,26 +464,23 @@ public class LdapConnection extends AbstractConnection {
 					offset += bytesread;
 					bytesleft -= bytesread;
 				}
-
-				MosTechEwsTray.switchIcon();
-
 				handleRequest(inbuf, offset);
 			}
 
 		}
 		catch (SocketException e) {
-			MosTechEwsTray.debug(new BundleMessage("LOG_CONNECTION_CLOSED"));
+			log.debug("{}", new BundleMessage("LOG_CONNECTION_CLOSED"));
 		}
 		catch (SocketTimeoutException e) {
-			MosTechEwsTray.debug(new BundleMessage("LOG_CLOSE_CONNECTION_ON_TIMEOUT"));
+			log.debug("{}", new BundleMessage("LOG_CLOSE_CONNECTION_ON_TIMEOUT"));
 		}
 		catch (Exception e) {
-			MosTechEwsTray.log(e);
+			log.error("", e);
 			try {
 				sendErr(0, LDAP_REP_BIND, e);
 			}
 			catch (IOException e2) {
-				MosTechEwsTray.warn(new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
+				log.warn("{}", new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
 			}
 		}
 		finally {
@@ -496,7 +492,6 @@ public class LdapConnection extends AbstractConnection {
 			}
 			close();
 		}
-		MosTechEwsTray.resetIcon();
 	}
 
 	protected static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
@@ -549,17 +544,17 @@ public class LdapConnection extends AbstractConnection {
 						serverResponse = saslServer.evaluateResponse(clientResponse);
 						status = LDAP_SUCCESS;
 
-						MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_BIND_USER", currentMessageId, userName));
+						log.debug("{}", new BundleMessage("LOG_LDAP_REQ_BIND_USER", currentMessageId, userName));
 						try {
 							session = ExchangeSessionFactory.getInstance(userName, password);
 							logConnection("LOGON", userName);
-							MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_BIND_SUCCESS"));
+							log.debug("{}", new BundleMessage("LOG_LDAP_REQ_BIND_SUCCESS"));
 						}
 						catch (IOException e) {
 							logConnection("FAILED", userName);
 							serverResponse = EMPTY_BYTE_ARRAY;
 							status = LDAP_INVALID_CREDENTIALS;
-							MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_BIND_INVALID_CREDENTIALS"));
+							log.debug("{}", new BundleMessage("LOG_LDAP_REQ_BIND_INVALID_CREDENTIALS"));
 						}
 
 					}
@@ -595,21 +590,21 @@ public class LdapConnection extends AbstractConnection {
 					password = reqBer.parseStringWithTag(Ber.ASN_CONTEXT, isLdapV3(), null);
 
 					if (userName.length() > 0 && password.length() > 0) {
-						MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_BIND_USER", currentMessageId, userName));
+						log.debug("{}", new BundleMessage("LOG_LDAP_REQ_BIND_USER", currentMessageId, userName));
 						try {
 							session = ExchangeSessionFactory.getInstance(userName, password);
 							logConnection("LOGON", userName);
-							MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_BIND_SUCCESS"));
+							log.debug("{}", new BundleMessage("LOG_LDAP_REQ_BIND_SUCCESS"));
 							sendClient(currentMessageId, LDAP_REP_BIND, LDAP_SUCCESS, "");
 						}
 						catch (IOException e) {
 							logConnection("FAILED", userName);
-							MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_BIND_INVALID_CREDENTIALS"));
+							log.debug("{}", new BundleMessage("LOG_LDAP_REQ_BIND_INVALID_CREDENTIALS"));
 							sendClient(currentMessageId, LDAP_REP_BIND, LDAP_INVALID_CREDENTIALS, "");
 						}
 					}
 					else {
-						MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_BIND_ANONYMOUS", currentMessageId));
+						log.debug("{}", new BundleMessage("LOG_LDAP_REQ_BIND_ANONYMOUS", currentMessageId));
 						// anonymous bind
 						sendClient(currentMessageId, LDAP_REP_BIND, LDAP_SUCCESS, "");
 					}
@@ -617,7 +612,7 @@ public class LdapConnection extends AbstractConnection {
 
 			}
 			else if (requestOperation == LDAP_REQ_UNBIND) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_UNBIND", currentMessageId));
+				log.debug("{}", new BundleMessage("LOG_LDAP_REQ_UNBIND", currentMessageId));
 				if (session != null) {
 					session = null;
 				}
@@ -665,11 +660,10 @@ public class LdapConnection extends AbstractConnection {
 						searchThreadMap.remove(currentMessageId);
 					}
 				}
-				MosTechEwsTray
-					.debug(new BundleMessage("LOG_LDAP_REQ_ABANDON_SEARCH", currentMessageId, abandonMessageId));
+				log.debug("{}", new BundleMessage("LOG_LDAP_REQ_ABANDON_SEARCH", currentMessageId, abandonMessageId));
 			}
 			else {
-				MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_UNSUPPORTED_OPERATION", requestOperation));
+				log.debug("{}", new BundleMessage("LOG_LDAP_UNSUPPORTED_OPERATION", requestOperation));
 				sendClient(currentMessageId, LDAP_REP_RESULT, LDAP_OTHER, "Unsupported operation");
 			}
 		}
@@ -679,7 +673,7 @@ public class LdapConnection extends AbstractConnection {
 				sendErr(currentMessageId, LDAP_REP_RESULT, e);
 			}
 			catch (IOException e2) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
+				log.debug("{}", new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
 			}
 			throw e;
 		}
@@ -783,7 +777,7 @@ public class LdapConnection extends AbstractConnection {
 			value.append(reqBer.parseString(isLdapV3()));
 		}
 		else {
-			MosTechEwsTray.warn(new BundleMessage("LOG_LDAP_UNSUPPORTED_FILTER_VALUE"));
+			log.warn("{}", new BundleMessage("LOG_LDAP_UNSUPPORTED_FILTER_VALUE"));
 		}
 
 		String sValue = value.toString();
@@ -792,7 +786,7 @@ public class LdapConnection extends AbstractConnection {
 			// replace with actual alias instead of login name search, only in Dav mode
 			if (session instanceof WebdavExchangeSession) {
 				sValue = session.getAlias();
-				MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REPLACED_UID_FILTER", userName, sValue));
+				log.debug("{}", new BundleMessage("LOG_LDAP_REPLACED_UID_FILTER", userName, sValue));
 			}
 		}
 
@@ -816,7 +810,7 @@ public class LdapConnection extends AbstractConnection {
 	 * @throws IOException в случае ошибки
 	 */
 	protected void sendRootDSE(int currentMessageId) throws IOException {
-		MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_SEND_ROOT_DSE"));
+		log.debug("{}", new BundleMessage("LOG_LDAP_SEND_ROOT_DSE"));
 
 		Map<String, Object> attributes = new HashMap<>();
 		attributes.put("objectClass", "top");
@@ -898,7 +892,7 @@ public class LdapConnection extends AbstractConnection {
 		addIf(attributes, returningAttributes, "cn", getCurrentHostName());
 
 		String dn = "cn=" + getCurrentHostName() + ", " + COMPUTER_CONTEXT;
-		MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_SEND_COMPUTER_CONTEXT", dn, attributes));
+		log.debug("{}", new BundleMessage("LOG_LDAP_SEND_COMPUTER_CONTEXT", dn, attributes));
 
 		sendEntry(currentMessageId, dn, attributes);
 	}
@@ -1214,7 +1208,7 @@ public class LdapConnection extends AbstractConnection {
 				return true;
 			}
 			else if (CRITERIA_MAP.get(attributeName) == null && getContactAttributeName(attributeName) == null) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_UNSUPPORTED_FILTER_ATTRIBUTE", attributeName, value));
+				log.debug("{}", new BundleMessage("LOG_LDAP_UNSUPPORTED_FILTER_ATTRIBUTE", attributeName, value));
 
 				return true;
 			}
@@ -1349,7 +1343,7 @@ public class LdapConnection extends AbstractConnection {
 
 		public void add(LdapFilter filter) {
 			// Should never be called
-			MosTechEwsTray.error(new BundleMessage("LOG_LDAP_UNSUPPORTED_FILTER", "nested simple filters"));
+			log.debug("{}", new BundleMessage("LOG_LDAP_UNSUPPORTED_FILTER", "nested simple filters"));
 		}
 
 	}
@@ -1372,7 +1366,7 @@ public class LdapConnection extends AbstractConnection {
 			}
 		}
 		else if (!"hassubordinates".equals(ldapAttributeName)) {
-			MosTechEwsTray.debug(new BundleMessage("UNKNOWN_ATTRIBUTE", ldapAttributeName));
+			log.debug("{}", new BundleMessage("UNKNOWN_ATTRIBUTE", ldapAttributeName));
 		}
 		return contactAttributeName;
 	}
@@ -1450,7 +1444,7 @@ public class LdapConnection extends AbstractConnection {
 		public void run() {
 			try {
 				int size = 0;
-				MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_SEARCH", currentMessageId, dn, scope, sizeLimit,
+				log.debug("{}", new BundleMessage("LOG_LDAP_REQ_SEARCH", currentMessageId, dn, scope, sizeLimit,
 						timelimit, ldapFilter.toString(), returningAttributes));
 
 				if (scope == SCOPE_BASE_OBJECT) {
@@ -1498,12 +1492,12 @@ public class LdapConnection extends AbstractConnection {
 							sendPersons(currentMessageId, dn.substring(dn.indexOf(',')), persons, returningAttributes);
 						}
 						else {
-							MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_SEARCH_ANONYMOUS_ACCESS_FORBIDDEN",
+							log.debug("{}", new BundleMessage("LOG_LDAP_REQ_SEARCH_ANONYMOUS_ACCESS_FORBIDDEN",
 									currentMessageId, dn));
 						}
 					}
 					else {
-						MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_SEARCH_INVALID_DN", currentMessageId, dn));
+						log.debug("{}", new BundleMessage("LOG_LDAP_REQ_SEARCH_INVALID_DN", currentMessageId, dn));
 					}
 				}
 				else if (COMPUTER_CONTEXT.equals(dn) || COMPUTER_CONTEXT_LION.equals(dn)) {
@@ -1573,30 +1567,28 @@ public class LdapConnection extends AbstractConnection {
 						}
 
 						size = persons.size();
-						MosTechEwsTray
-							.debug(new BundleMessage("LOG_LDAP_REQ_SEARCH_FOUND_RESULTS", currentMessageId, size));
+						log.debug("{}", new BundleMessage("LOG_LDAP_REQ_SEARCH_FOUND_RESULTS", currentMessageId, size));
 						sendPersons(currentMessageId, ", " + dn, persons, returningAttributes);
-						MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_SEARCH_END", currentMessageId));
+						log.debug("{}", new BundleMessage("LOG_LDAP_REQ_SEARCH_END", currentMessageId));
 					}
 					else {
-						MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_SEARCH_ANONYMOUS_ACCESS_FORBIDDEN",
+						log.debug("{}", new BundleMessage("LOG_LDAP_REQ_SEARCH_ANONYMOUS_ACCESS_FORBIDDEN",
 								currentMessageId, dn));
 					}
 				}
 				else if (dn != null && dn.length() > 0 && !OD_CONFIG_CONTEXT.equals(dn)
 						&& !OD_GROUP_CONTEXT.equals(dn)) {
-					MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_SEARCH_INVALID_DN", currentMessageId, dn));
+					log.debug("{}", new BundleMessage("LOG_LDAP_REQ_SEARCH_INVALID_DN", currentMessageId, dn));
 				}
 
 				// iCal: do not send LDAP_SIZE_LIMIT_EXCEEDED on apple-computer search by
 				// cn with sizelimit 1
 				if (size > 1 && size == sizeLimit) {
-					MosTechEwsTray
-						.debug(new BundleMessage("LOG_LDAP_REQ_SEARCH_SIZE_LIMIT_EXCEEDED", currentMessageId));
+					log.debug("{}", new BundleMessage("LOG_LDAP_REQ_SEARCH_SIZE_LIMIT_EXCEEDED", currentMessageId));
 					sendClient(currentMessageId, LDAP_REP_RESULT, LDAP_SIZE_LIMIT_EXCEEDED, "");
 				}
 				else {
-					MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_SEARCH_SUCCESS", currentMessageId));
+					log.debug("{}", new BundleMessage("LOG_LDAP_REQ_SEARCH_SUCCESS", currentMessageId));
 					sendClient(currentMessageId, LDAP_REP_RESULT, LDAP_SUCCESS, "");
 				}
 			}
@@ -1605,12 +1597,12 @@ public class LdapConnection extends AbstractConnection {
 				log.warn(BundleMessage.formatLog("LOG_CLIENT_CLOSED_CONNECTION"));
 			}
 			catch (IOException e) {
-				MosTechEwsTray.log(e);
+				log.error("", e);
 				try {
 					sendErr(currentMessageId, LDAP_REP_RESULT, e);
 				}
 				catch (IOException e2) {
-					MosTechEwsTray.debug(new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
+					log.debug("{}", new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
 				}
 			}
 			finally {
@@ -1618,8 +1610,6 @@ public class LdapConnection extends AbstractConnection {
 					searchThreadMap.remove(currentMessageId);
 				}
 			}
-
-			MosTechEwsTray.resetIcon();
 		}
 
 		/**
@@ -1750,7 +1740,7 @@ public class LdapConnection extends AbstractConnection {
 						ldapPerson.put("uidnumber", userName);
 					}
 				}
-				MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_REQ_SEARCH_SEND_PERSON", currentMessageId,
+				log.debug("{}", new BundleMessage("LOG_LDAP_REQ_SEARCH_SEND_PERSON", currentMessageId,
 						ldapPerson.get("uid"), baseContext, ldapPerson));
 
 				try {

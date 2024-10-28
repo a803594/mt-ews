@@ -3,13 +3,13 @@ DIT
  */
 package ru.mos.mostech.ews.smtp;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.AbstractConnection;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.MosTechEws;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.exchange.DoubleDotInputStream;
 import ru.mos.mostech.ews.exchange.ExchangeSessionFactory;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 import ru.mos.mostech.ews.util.IOUtil;
 
 import javax.mail.internet.AddressException;
@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
 /**
  * Реализация соединения SMTP для Dav Gateway
  */
+@Slf4j
 public class SmtpConnection extends AbstractConnection {
 
 	public static final String BAD_SEQUENCE_OF_COMMANDS = "503 Bad sequence of commands";
@@ -188,22 +189,21 @@ public class SmtpConnection extends AbstractConnection {
 
 		}
 		catch (SocketException e) {
-			MosTechEwsTray.debug(new BundleMessage("LOG_CONNECTION_CLOSED"));
+			log.debug("{}", new BundleMessage("LOG_CONNECTION_CLOSED"));
 		}
 		catch (Exception e) {
-			MosTechEwsTray.log(e);
+			log.debug(e.getMessage(), e);
 			try {
 				// append a line feed to avoid thunderbird message drop
 				sendClient("421 " + ((e.getMessage() == null) ? e : e.getMessage()) + "\n");
 			}
 			catch (IOException e2) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
+				log.debug("{}", new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
 			}
 		}
 		finally {
 			close();
 		}
-		MosTechEwsTray.resetIcon();
 	}
 
 	private void dataSendMessage(List<String> recipients) throws IOException {
@@ -221,7 +221,6 @@ public class SmtpConnection extends AbstractConnection {
 			sendClient("250 Queued mail for delivery");
 		}
 		catch (Exception e) {
-			MosTechEwsTray.error(e);
 			state = State.AUTHENTICATED;
 			String error = e.getMessage();
 			if (error == null) {
@@ -254,7 +253,6 @@ public class SmtpConnection extends AbstractConnection {
 		}
 		catch (Exception e) {
 			logConnection("FAILED", userName);
-			MosTechEwsTray.error(e);
 			String message = e.getMessage();
 			if (message == null) {
 				message = e.toString();

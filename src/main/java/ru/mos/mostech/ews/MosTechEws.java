@@ -12,8 +12,6 @@ import ru.mos.mostech.ews.imap.ImapServer;
 import ru.mos.mostech.ews.ldap.LdapServer;
 import ru.mos.mostech.ews.server.HttpServer;
 import ru.mos.mostech.ews.smtp.SmtpServer;
-import ru.mos.mostech.ews.ui.SimpleUi;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 
 import java.awt.*;
 import java.io.IOException;
@@ -97,9 +95,6 @@ public final class MosTechEws {
 			}
 			else {
 				log.debug("Start MT-EWS in GUI mode");
-				if (!notray) {
-					SimpleUi.start();
-				}
 			}
 
 			start();
@@ -110,7 +105,7 @@ public final class MosTechEws {
 					@Override
 					public void run() {
 						shutdown = true;
-						MosTechEwsTray.debug(new BundleMessage("LOG_GATEWAY_INTERRUPTED"));
+						log.debug("{}", new BundleMessage("LOG_GATEWAY_INTERRUPTED"));
 						MosTechEws.stop();
 						synchronized (LOCK) {
 							LOCK.notifyAll();
@@ -125,7 +120,7 @@ public final class MosTechEws {
 						}
 					}
 					catch (InterruptedException e) {
-						MosTechEwsTray.debug(new BundleMessage("LOG_GATEWAY_INTERRUPTED"));
+						log.debug("{}", new BundleMessage("LOG_GATEWAY_INTERRUPTED"));
 						Thread.currentThread().interrupt();
 					}
 				}
@@ -161,9 +156,10 @@ public final class MosTechEws {
 			try {
 				server.bind();
 				server.start();
-				MosTechEwsTray.info(new BundleMessage("LOG_MT_EWS_GATEWAY_LISTENING",
-						new BundleMessage("LOG_PROTOCOL_PORT", server.getProtocolName(), server.getPort()),
-						Settings.getProperty("mt.ews.bindAddress")));
+				log.info("{}",
+						new BundleMessage("LOG_MT_EWS_GATEWAY_LISTENING",
+								new BundleMessage("LOG_PROTOCOL_PORT", server.getProtocolName(), server.getPort()),
+								Settings.getProperty("mt.ews.bindAddress")));
 			}
 			catch (MosTechEwsException e) {
 				log.error("Ошибка при запуске приложения", e);
@@ -188,8 +184,7 @@ public final class MosTechEws {
 		MosTechEws.stopServers();
 		// close pooled connections
 		ExchangeSessionFactory.shutdown();
-		MosTechEwsTray.info(new BundleMessage("LOG_GATEWAY_STOP"));
-		MosTechEwsTray.dispose();
+		log.info("{}", new BundleMessage("LOG_GATEWAY_STOP"));
 	}
 
 	/**
@@ -209,7 +204,7 @@ public final class MosTechEws {
 				server.join();
 			}
 			catch (InterruptedException e) {
-				MosTechEwsTray.warn(new BundleMessage("LOG_EXCEPTION_WAITING_SERVER_THREAD_DIE"), e);
+				log.warn("{}", new BundleMessage("LOG_EXCEPTION_WAITING_SERVER_THREAD_DIE"), e);
 				Thread.currentThread().interrupt();
 			}
 		}

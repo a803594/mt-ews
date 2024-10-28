@@ -4,8 +4,8 @@ DIT
 package ru.mos.mostech.ews;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 import ru.mos.mostech.ews.util.KeysUtils;
 
 import javax.net.ServerSocketFactory;
@@ -24,6 +24,7 @@ import java.util.HashSet;
 /**
  * Обобщенный абстрактный сервер, общий для реализаций SMTP и POP3
  */
+@Slf4j
 public abstract class AbstractServer extends Thread {
 
 	protected boolean nosslFlag; // will cause same behavior as before with unchanged
@@ -156,7 +157,7 @@ public abstract class AbstractServer extends Thread {
 				clientSocket = serverSocket.accept();
 				// set default timeout to 5 minutes
 				clientSocket.setSoTimeout(Settings.getIntProperty("mt.ews.clientSoTimeout", 300) * 1000);
-				MosTechEwsTray.debug(new BundleMessage("LOG_CONNECTION_FROM", clientSocket.getInetAddress(), port));
+				log.debug("{}", new BundleMessage("LOG_CONNECTION_FROM", clientSocket.getInetAddress(), port));
 				// only accept localhost connections for security reasons
 				if (Settings.getBooleanProperty("mt.ews.allowRemote")
 						|| clientSocket.getInetAddress().isLoopbackAddress() ||
@@ -169,7 +170,7 @@ public abstract class AbstractServer extends Thread {
 
 				}
 				else {
-					MosTechEwsTray.warn(new BundleMessage("LOG_EXTERNAL_CONNECTION_REFUSED"));
+					log.warn("{}", new BundleMessage("LOG_EXTERNAL_CONNECTION_REFUSED"));
 				}
 			}
 
@@ -177,7 +178,7 @@ public abstract class AbstractServer extends Thread {
 		catch (IOException e) {
 			// do not warn if exception on socket close (gateway restart)
 			if (!serverSocket.isClosed()) {
-				MosTechEwsTray.warn(new BundleMessage("LOG_EXCEPTION_LISTENING_FOR_CONNECTIONS"), e);
+				log.warn("{}", new BundleMessage("LOG_EXCEPTION_LISTENING_FOR_CONNECTIONS"), e);
 			}
 		}
 		finally {
@@ -187,7 +188,7 @@ public abstract class AbstractServer extends Thread {
 				}
 			}
 			catch (IOException e) {
-				MosTechEwsTray.warn(new BundleMessage("LOG_EXCEPTION_CLOSING_CLIENT_SOCKET"), e);
+				log.warn("{}", new BundleMessage("LOG_EXCEPTION_CLOSING_CLIENT_SOCKET"), e);
 			}
 			if (connection != null) {
 				connection.close();
@@ -213,7 +214,7 @@ public abstract class AbstractServer extends Thread {
 			}
 		}
 		catch (IOException e) {
-			MosTechEwsTray.warn(new BundleMessage("LOG_EXCEPTION_CLOSING_SERVER_SOCKET"), e);
+			log.warn("{}", new BundleMessage("LOG_EXCEPTION_CLOSING_SERVER_SOCKET"), e);
 		}
 	}
 

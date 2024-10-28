@@ -16,7 +16,6 @@ import ru.mos.mostech.ews.exception.HttpNotFoundException;
 import ru.mos.mostech.ews.exception.InsufficientStorageException;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.exchange.*;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 import ru.mos.mostech.ews.util.IOUtil;
 import ru.mos.mostech.ews.util.StringUtil;
 
@@ -106,7 +105,7 @@ public class ImapConnection extends AbstractConnection {
 							}
 							catch (Exception e) {
 								logConnection("FAILED", userName);
-								MosTechEwsTray.error(e);
+								log.error("", e);
 								if (Settings.getBooleanProperty("mt.ews.enableKerberos")) {
 									sendClient(commandId + " NO LOGIN Kerberos authentication failed");
 								}
@@ -136,7 +135,7 @@ public class ImapConnection extends AbstractConnection {
 									}
 									catch (Exception e) {
 										logConnection("FAILED", userName);
-										MosTechEwsTray.error(e);
+										log.error(e.getMessage(), e);
 										sendClient(commandId + " NO LOGIN failed");
 										state = State.INITIAL;
 									}
@@ -203,17 +202,17 @@ public class ImapConnection extends AbstractConnection {
 												}
 												catch (HttpForbiddenException e) {
 													// access forbidden, ignore
-													MosTechEwsTray.debug(new BundleMessage(
-															"LOG_FOLDER_ACCESS_FORBIDDEN", folderQuery));
+													log.debug("{}", new BundleMessage("LOG_FOLDER_ACCESS_FORBIDDEN",
+															folderQuery));
 												}
 												catch (HttpNotFoundException e) {
 													// not found, ignore
-													MosTechEwsTray
-														.debug(new BundleMessage("LOG_FOLDER_NOT_FOUND", folderQuery));
+													log.debug("{}",
+															new BundleMessage("LOG_FOLDER_NOT_FOUND", folderQuery));
 												}
 												catch (HttpResponseException e) {
 													// other errors, ignore
-													MosTechEwsTray.debug(new BundleMessage("LOG_FOLDER_ACCESS_ERROR",
+													log.debug("{}", new BundleMessage("LOG_FOLDER_ACCESS_ERROR",
 															folderQuery, e.getMessage()));
 												}
 												if (folder != null) {
@@ -349,7 +348,6 @@ public class ImapConnection extends AbstractConnection {
 													UIDRangeIterator uidRangeIterator = new UIDRangeIterator(
 															currentFolder.getMessages(), ranges);
 													while (uidRangeIterator.hasNext()) {
-														MosTechEwsTray.switchIcon();
 														ExchangeSession.Message message = uidRangeIterator.next();
 														try {
 															handleFetch(message, uidRangeIterator.currentIndex,
@@ -364,7 +362,7 @@ public class ImapConnection extends AbstractConnection {
 															throw e;
 														}
 														catch (IOException e) {
-															MosTechEwsTray.log(e);
+															log.warn("", e);
 															log.warn("Ignore broken message "
 																	+ uidRangeIterator.currentIndex + ' '
 																	+ e.getMessage());
@@ -464,7 +462,6 @@ public class ImapConnection extends AbstractConnection {
 											parameters = tokens.nextToken();
 										}
 										while (rangeIterator.hasNext()) {
-											MosTechEwsTray.switchIcon();
 											ExchangeSession.Message message = rangeIterator.next();
 											try {
 												handleFetch(message, rangeIterator.currentIndex, parameters);
@@ -478,7 +475,7 @@ public class ImapConnection extends AbstractConnection {
 												throw e;
 											}
 											catch (IOException e) {
-												MosTechEwsTray.log(e);
+												log.warn("", e);
 												log.warn("Ignore broken message " + rangeIterator.currentIndex + ' '
 														+ e.getMessage());
 											}
@@ -506,7 +503,6 @@ public class ImapConnection extends AbstractConnection {
 										}
 										else {
 											while (rangeIterator.hasNext()) {
-												MosTechEwsTray.switchIcon();
 												ExchangeSession.Message message = rangeIterator.next();
 												if ("copy".equalsIgnoreCase(command)) {
 													session.copyMessage(message, targetName);
@@ -641,7 +637,6 @@ public class ImapConnection extends AbstractConnection {
 										sendClient("+ idling ");
 										// clear cache before going to idle mode
 										currentFolder.clearCache();
-										MosTechEwsTray.resetIcon();
 										int originalTimeout = client.getSoTimeout();
 										try {
 											int count = 0;
@@ -690,7 +685,7 @@ public class ImapConnection extends AbstractConnection {
 								}
 								else if ("noop".equalsIgnoreCase(command) || "check".equalsIgnoreCase(command)) {
 									if (currentFolder != null) {
-										MosTechEwsTray.debug(new BundleMessage("LOG_IMAP_COMMAND", command,
+										log.debug("{}", new BundleMessage("LOG_IMAP_COMMAND", command,
 												currentFolder.getFolderPath()));
 										TreeMap<Long, String> previousImapFlagMap = currentFolder.getImapFlagMap();
 										if (session.refreshFolder(currentFolder)) {
@@ -781,25 +776,24 @@ public class ImapConnection extends AbstractConnection {
 				else {
 					sendClient("BAD Null command");
 				}
-				MosTechEwsTray.resetIcon();
 			}
 
 			os.flush();
 		}
 		catch (SocketTimeoutException e) {
-			MosTechEwsTray.debug(new BundleMessage("LOG_CLOSE_CONNECTION_ON_TIMEOUT"));
+			log.debug("{}", new BundleMessage("LOG_CLOSE_CONNECTION_ON_TIMEOUT"));
 			try {
 				sendClient("* BYE Closing connection");
 			}
 			catch (IOException e1) {
-				MosTechEwsTray.debug(new BundleMessage("LOG_EXCEPTION_CLOSING_CONNECTION_ON_TIMEOUT"));
+				log.debug("{}", new BundleMessage("LOG_EXCEPTION_CLOSING_CONNECTION_ON_TIMEOUT"));
 			}
 		}
 		catch (SocketException e) {
 			log.warn(BundleMessage.formatLog("LOG_CLIENT_CLOSED_CONNECTION"));
 		}
 		catch (Exception e) {
-			MosTechEwsTray.log(e);
+			log.error("", e);
 			try {
 				String message = ((e.getMessage() == null) ? e.toString() : e.getMessage()).replaceAll("\\n", " ");
 				if (commandId != null) {
@@ -810,13 +804,12 @@ public class ImapConnection extends AbstractConnection {
 				}
 			}
 			catch (IOException e2) {
-				MosTechEwsTray.warn(new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
+				log.warn("{}", new BundleMessage("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT"), e2);
 			}
 		}
 		finally {
 			close();
 		}
-		MosTechEwsTray.resetIcon();
 	}
 
 	private String getReturnOption(ImapTokenizer tokens) {
@@ -1234,7 +1227,6 @@ public class ImapConnection extends AbstractConnection {
 	protected void handleStore(String commandId, AbstractRangeIterator rangeIterator, String action, String flags)
 			throws IOException {
 		while (rangeIterator.hasNext()) {
-			MosTechEwsTray.switchIcon();
 			ExchangeSession.Message message = rangeIterator.next();
 			updateFlags(message, action, flags);
 			sendClient("* " + (rangeIterator.getCurrentIndex()) + " FETCH (UID " + message.getImapUid() + " FLAGS ("
@@ -1347,7 +1339,7 @@ public class ImapConnection extends AbstractConnection {
 			appendEnvelope(buffer, mimeMessage);
 		}
 		catch (MessagingException me) {
-			MosTechEwsTray.warn(me);
+			log.warn("", me);
 			// send fake envelope
 			buffer.append(" ENVELOPE (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL)");
 		}
@@ -1420,7 +1412,7 @@ public class ImapConnection extends AbstractConnection {
 				}
 			}
 			catch (AddressException | UnsupportedEncodingException e) {
-				MosTechEwsTray.warn(e);
+				log.warn("", e);
 				buffer.append("NIL");
 			}
 		}
@@ -1459,7 +1451,7 @@ public class ImapConnection extends AbstractConnection {
 			}
 		}
 		catch (UnsupportedEncodingException | MessagingException e) {
-			MosTechEwsTray.warn(e);
+			log.warn("", e);
 			// failover: send default bodystructure
 			buffer.append("(\"TEXT\" \"PLAIN\" (\"CHARSET\" \"US-ASCII\") NIL NIL \"7BIT\" 0 0)");
 		}
@@ -1487,7 +1479,7 @@ public class ImapConnection extends AbstractConnection {
 				buffer.append("(\"TEXT\" \"PLAIN\" (\"CHARSET\" \"US-ASCII\") NIL NIL \"7BIT\" 0 0)");
 			}
 			catch (MessagingException me) {
-				MosTechEwsTray.warn(me);
+				log.warn("", me);
 				// failover: send default bodystructure
 				buffer.append("(\"TEXT\" \"PLAIN\" (\"CHARSET\" \"US-ASCII\") NIL NIL \"7BIT\" 0 0)");
 			}
@@ -1659,15 +1651,15 @@ public class ImapConnection extends AbstractConnection {
 		}
 		catch (HttpForbiddenException e) {
 			// access forbidden, ignore
-			MosTechEwsTray.debug(new BundleMessage("LOG_SUBFOLDER_ACCESS_FORBIDDEN", folderPath));
+			log.debug("{}", new BundleMessage("LOG_SUBFOLDER_ACCESS_FORBIDDEN", folderPath));
 		}
 		catch (HttpNotFoundException e) {
 			// not found, ignore
-			MosTechEwsTray.debug(new BundleMessage("LOG_FOLDER_NOT_FOUND", folderPath));
+			log.debug("{}", new BundleMessage("LOG_FOLDER_NOT_FOUND", folderPath));
 		}
 		catch (HttpResponseException e) {
 			// other errors, ignore
-			MosTechEwsTray.debug(new BundleMessage("LOG_FOLDER_ACCESS_ERROR", folderPath, e.getMessage()));
+			log.debug("{}", new BundleMessage("LOG_FOLDER_ACCESS_ERROR", folderPath, e.getMessage()));
 		}
 	}
 

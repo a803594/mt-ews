@@ -5,7 +5,6 @@ package ru.mos.mostech.ews;
 
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.event.Level;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -139,7 +138,7 @@ public final class Settings {
 			}
 		}
 		catch (IOException e) {
-			MosTechEwsTray.error(new BundleMessage("LOG_UNABLE_TO_LOAD_SETTINGS"), e);
+			log.error("{}", new BundleMessage("LOG_UNABLE_TO_LOAD_SETTINGS"), e);
 		}
 	}
 
@@ -312,7 +311,7 @@ public final class Settings {
 				}
 			}
 			catch (IOException e) {
-				MosTechEwsTray.error(new BundleMessage("LOG_UNABLE_TO_STORE_SETTINGS"), e);
+				log.error("{}", new BundleMessage("LOG_UNABLE_TO_STORE_SETTINGS"), e);
 			}
 		}
 	}
@@ -331,7 +330,7 @@ public final class Settings {
 			}
 		}
 		catch (IOException e) {
-			MosTechEwsTray.error(new BundleMessage("LOG_UNABLE_TO_LOAD_SETTINGS"), e);
+			log.error("{}", new BundleMessage("LOG_UNABLE_TO_LOAD_SETTINGS"), e);
 		}
 	}
 
@@ -451,7 +450,7 @@ public final class Settings {
 			}
 		}
 		catch (NumberFormatException e) {
-			MosTechEwsTray.error(new BundleMessage("LOG_INVALID_SETTING_VALUE", property), e);
+			log.error("{}", new BundleMessage("LOG_INVALID_SETTING_VALUE", property), e);
 		}
 		return value;
 	}

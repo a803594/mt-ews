@@ -3,10 +3,9 @@ DIT
  */
 package ru.mos.mostech.ews.http;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
-import ru.mos.mostech.ews.ui.AcceptCertificateDialog;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -24,6 +23,7 @@ import java.text.SimpleDateFormat;
 /**
  * Пользовательский менеджер доверия, позволяет пользователю принимать или отвергать.
  */
+@Slf4j
 public class MosTechEwsX509TrustManager implements X509TrustManager {
 
 	private final X509TrustManager standardTrustManager;
@@ -72,17 +72,10 @@ public class MosTechEwsX509TrustManager implements X509TrustManager {
 		// if user already accepted a certificate,
 		if (acceptedCertificateHash != null && !acceptedCertificateHash.isEmpty()
 				&& acceptedCertificateHash.equalsIgnoreCase(certificateHash)) {
-			MosTechEwsTray.debug(new BundleMessage("LOG_FOUND_ACCEPTED_CERTIFICATE", acceptedCertificateHash));
+			log.debug("{}", new BundleMessage("LOG_FOUND_ACCEPTED_CERTIFICATE", acceptedCertificateHash));
 		}
 		else {
-			boolean isCertificateTrusted;
-			if (Settings.getBooleanProperty("mt.ews.server") || GraphicsEnvironment.isHeadless()) {
-				// headless or server mode
-				isCertificateTrusted = isCertificateTrusted(x509Certificates[0]);
-			}
-			else {
-				isCertificateTrusted = AcceptCertificateDialog.isCertificateTrusted(x509Certificates[0]);
-			}
+			boolean isCertificateTrusted = isCertificateTrusted(x509Certificates[0]);
 			if (!isCertificateTrusted) {
 				throw new CertificateException("User rejected certificate");
 			}

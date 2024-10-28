@@ -6,7 +6,6 @@ package ru.mos.mostech.ews.http;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.mos.mostech.ews.Settings;
-import ru.mos.mostech.ews.ui.PasswordPromptDialog;
 
 import javax.net.ssl.*;
 import javax.security.auth.callback.PasswordCallback;
@@ -126,17 +125,7 @@ public class MosTechEwsSSLSocketFactory extends SSLSocketFactory {
 			// request password at runtime through a callback
 			return new KeyStore.CallbackHandlerProtection(callbacks -> {
 				if (callbacks.length > 0 && callbacks[0] instanceof PasswordCallback) {
-					if (Settings.getBooleanProperty("mt.ews.server") || GraphicsEnvironment.isHeadless()) {
-						// headless or server mode
-						System.out.print(((PasswordCallback) callbacks[0]).getPrompt() + ": ");
-						String password1 = new BufferedReader(new InputStreamReader(System.in)).readLine();
-						((PasswordCallback) callbacks[0]).setPassword(password1.toCharArray());
-					}
-					else {
-						PasswordPromptDialog passwordPromptDialog = new PasswordPromptDialog(
-								((PasswordCallback) callbacks[0]).getPrompt());
-						((PasswordCallback) callbacks[0]).setPassword(passwordPromptDialog.getPassword());
-					}
+					throw new UnsupportedOperationException("");
 				}
 			});
 		}

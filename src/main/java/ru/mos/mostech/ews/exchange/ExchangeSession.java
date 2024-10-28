@@ -11,7 +11,6 @@ import ru.mos.mostech.ews.Settings;
 import ru.mos.mostech.ews.exception.HttpNotFoundException;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
 import ru.mos.mostech.ews.http.URIUtil;
-import ru.mos.mostech.ews.ui.NotificationDialog;
 import ru.mos.mostech.ews.util.StringUtil;
 
 import javax.mail.MessagingException;
@@ -2243,22 +2242,6 @@ public abstract class ExchangeSession {
 					cc = null;
 					notificationSubject = (status != null) ? (BundleMessage.format(status) + vEventSubject) : subject;
 					description = "";
-				}
-
-				// Allow end user notification edit
-				if (Settings.getBooleanProperty("mt.ews.caldavEditNotifications")) {
-					// create notification edit dialog
-					NotificationDialog notificationDialog = new NotificationDialog(to, cc, notificationSubject,
-							description);
-					if (!notificationDialog.getSendNotification()) {
-						log.debug("Notification canceled by user");
-						return null;
-					}
-					// get description from dialog
-					to = notificationDialog.getTo();
-					cc = notificationDialog.getCc();
-					notificationSubject = notificationDialog.getSubject();
-					description = notificationDialog.getBody();
 				}
 
 				// do not send notification if no recipients found

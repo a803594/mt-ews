@@ -6,7 +6,6 @@ package ru.mos.mostech.ews.http;
 import lombok.extern.slf4j.Slf4j;
 import org.ietf.jgss.*;
 import ru.mos.mostech.ews.Settings;
-import ru.mos.mostech.ews.ui.CredentialPromptDialog;
 
 import javax.security.auth.RefreshFailedException;
 import javax.security.auth.Subject;
@@ -54,19 +53,9 @@ public class KerberosHelper {
 			for (Callback callback : callbacks) {
 				if (callback instanceof NameCallback) {
 					if (principal == null) {
-						// if we get there kerberos token is missing or invalid
-						if (Settings.getBooleanProperty("mt.ews.server") || GraphicsEnvironment.isHeadless()) {
-							// headless or server mode
-							System.out.print(((NameCallback) callback).getPrompt());
-							BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
-							principal = inReader.readLine();
-						}
-						else {
-							CredentialPromptDialog credentialPromptDialog = new CredentialPromptDialog(
-									((NameCallback) callback).getPrompt());
-							principal = credentialPromptDialog.getPrincipal();
-							password = String.valueOf(credentialPromptDialog.getPassword());
-						}
+						System.out.print(((NameCallback) callback).getPrompt());
+						BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
+						principal = inReader.readLine();
 					}
 					if (principal == null) {
 						throw new IOException("KerberosCallbackHandler: failed to retrieve principal");
