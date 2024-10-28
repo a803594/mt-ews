@@ -14,8 +14,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Custom proxy selector based on MT-EWS settings. Interactive O365 authentication relies
- * on native HttpUrlConnection so we need to override default proxy selector.
+ * Пользовательский селектор прокси, основанный на настройках MT-EWS. Интерактивная
+ * аутентификация O365 зависит от нативного HttpUrlConnection, поэтому нам нужно
+ * переопределить селектор прокси по умолчанию.
  */
 @Slf4j
 public class MosTechEwsProxySelector extends ProxySelector {

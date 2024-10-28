@@ -27,9 +27,6 @@ public class AlternateId extends ElementOption {
 		this.mailbox = mailbox;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void write(Writer writer) throws IOException {
 		writer.write("<t:AlternateId  Format=\"");

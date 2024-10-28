@@ -7,13 +7,13 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 
 /**
- * HttpResponseException with 404 not found status.
+ * Исключение HttpResponse с статусом 404 не найдено.
  */
 public class HttpNotFoundException extends HttpResponseException {
 
 	/**
-	 * HttpResponseException with 404 not found status.
-	 * @param message exception message
+	 * HttpResponseException с статусом 404 не найдено.
+	 * @param message сообщение исключения
 	 */
 	public HttpNotFoundException(String message) {
 		super(HttpStatus.SC_NOT_FOUND, message);

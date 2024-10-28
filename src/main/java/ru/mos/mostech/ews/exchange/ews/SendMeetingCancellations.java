@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Item update option.
+ * Опция обновления элемента.
  */
 @SuppressWarnings({ "UnusedDeclaration" })
 public final class SendMeetingCancellations extends AttributeOption {

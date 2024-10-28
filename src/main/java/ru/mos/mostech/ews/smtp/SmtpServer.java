@@ -10,18 +10,18 @@ import ru.mos.mostech.ews.Settings;
 import java.net.Socket;
 
 /**
- * SMTP server, handle message send requests.
+ * SMTP сервер, обрабатывает запросы на отправку сообщений.
  */
 public class SmtpServer extends AbstractServer {
 
 	/**
-	 * Default SMTP Caldav port
+	 * Порт по умолчанию для SMTP Caldav
 	 */
 	public static final int DEFAULT_PORT = 25;
 
 	/**
-	 * Create a ServerSocket to listen for connections. Start the thread.
-	 * @param port smtp port
+	 * Создайте ServerSocket для ожидания подключений. Запустите поток.
+	 * @param port порт smtp
 	 */
 	public SmtpServer(int port) {
 		super(SmtpServer.class.getName(), port, SmtpServer.DEFAULT_PORT);

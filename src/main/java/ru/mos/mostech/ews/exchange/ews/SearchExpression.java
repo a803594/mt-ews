@@ -4,13 +4,13 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * EWS Search Expression.
+ * Выражение поиска EWS.
  */
 public interface SearchExpression {
 
 	/**
-	 * Append search expression to buffer.
-	 * @param buffer search buffer
+	 * Добавить поисковое выражение в буфер.
+	 * @param buffer буфер поиска
 	 */
 	void appendTo(StringBuilder buffer);
 

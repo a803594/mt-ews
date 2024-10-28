@@ -4,17 +4,17 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * EWS Find Item Method.
+ * Метод поиска элемента EWS.
  */
 public class FindItemMethod extends EWSMethod {
 
 	/**
-	 * Find item method.
-	 * @param traversal folder traversal mode
-	 * @param baseShape base item shape
-	 * @param parentFolderId parent folder id
-	 * @param offset start offset
-	 * @param maxCount maximum result count
+	 * Метод поиска элемента.
+	 * @param traversal режим обхода папки
+	 * @param baseShape форма базового элемента
+	 * @param parentFolderId идентификатор родительской папки
+	 * @param offset начальный смещение
+	 * @param maxCount максимальное количество результатов
 	 */
 	public FindItemMethod(FolderQueryTraversal traversal, BaseShape baseShape, FolderId parentFolderId, int offset,
 			int maxCount) {

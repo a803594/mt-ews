@@ -4,15 +4,15 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Delete Item method.
+ * Метод удаления элемента.
  */
 public class DeleteItemMethod extends EWSMethod {
 
 	/**
-	 * Delete item method.
-	 * @param itemId item id
-	 * @param deleteType delete mode
-	 * @param sendMeetingCancellations send meeting cancellation notifications
+	 * Метод удаления элемента.
+	 * @param itemId идентификатор элемента
+	 * @param deleteType режим удаления
+	 * @param sendMeetingCancellations отправить уведомления об отмене встреч
 	 */
 	public DeleteItemMethod(ItemId itemId, DeleteType deleteType, SendMeetingCancellations sendMeetingCancellations) {
 		super("Item", "DeleteItem");

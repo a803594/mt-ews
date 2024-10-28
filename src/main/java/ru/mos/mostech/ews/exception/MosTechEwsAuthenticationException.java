@@ -4,23 +4,23 @@ DIT
 package ru.mos.mostech.ews.exception;
 
 /**
- * I18 AuthenticationException subclass.
+ * Подкласс AuthenticationException для I18.
  */
 public class MosTechEwsAuthenticationException extends MosTechEwsException {
 
 	/**
-	 * Create a MT-EWS authentication exception with the given BundleMessage key.
-	 * @param key message key
+	 * Создать исключение аутентификации MT-EWS с заданным ключом BundleMessage.
+	 * @param ключ ключ сообщения
 	 */
 	public MosTechEwsAuthenticationException(String key) {
 		super(key);
 	}
 
 	/**
-	 * Create a MT-EWS authentication exception with the given BundleMessage key and
-	 * arguments.
-	 * @param key message key
-	 * @param arguments message values
+	 * Создать исключение аутентификации MT-EWS с заданным ключом BundleMessage и
+	 * аргументами.
+	 * @param ключ ключ сообщения
+	 * @param аргументы значения сообщения
 	 */
 	public MosTechEwsAuthenticationException(String key, Object... arguments) {
 		super(key, arguments);

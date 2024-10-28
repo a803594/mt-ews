@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Folder Id.
+ * Идентификатор папки.
  */
 public class FolderId extends Option {
 
@@ -16,11 +16,11 @@ public class FolderId extends Option {
 	protected String mailbox;
 
 	/**
-	 * Create FolderId with specified tag name.
-	 * @param name field tag name
-	 * @param value id value
-	 * @param changeKey folder change key
-	 * @param mailbox shared mailbox name
+	 * Создать FolderId с указанным именем тега.
+	 * @param name имя тега поля
+	 * @param value значение id
+	 * @param changeKey ключ изменения папки
+	 * @param mailbox имя общей почтового ящика
 	 */
 	protected FolderId(String name, String value, String changeKey, String mailbox) {
 		this(name, value, changeKey);
@@ -28,10 +28,10 @@ public class FolderId extends Option {
 	}
 
 	/**
-	 * Create FolderId with specified tag name.
-	 * @param name field tag name
-	 * @param value id value
-	 * @param changeKey folder change key
+	 * Создать FolderId с указанным именем тега.
+	 * @param name имя поля тега
+	 * @param value значение id
+	 * @param changeKey ключ изменения папки
 	 */
 	protected FolderId(String name, String value, String changeKey) {
 		super(name, value);
@@ -39,16 +39,13 @@ public class FolderId extends Option {
 	}
 
 	/**
-	 * Build Folder id from response item.
-	 * @param item response item
+	 * Построить идентификатор папки из элемента ответа.
+	 * @param item элемент ответа
 	 */
 	public FolderId(EWSMethod.Item item) {
 		this("t:FolderId", item.get("FolderId"), item.get("ChangeKey"));
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void write(Writer writer) throws IOException {
 		writer.write('<');

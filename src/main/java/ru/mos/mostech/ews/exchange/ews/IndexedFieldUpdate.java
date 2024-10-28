@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Field update with multiple values.
+ * Обновление поля с несколькими значениями.
  */
 public class IndexedFieldUpdate extends FieldUpdate {
 
@@ -18,26 +18,26 @@ public class IndexedFieldUpdate extends FieldUpdate {
 	protected final String collectionName;
 
 	/**
-	 * Create indexed field update object.
-	 * @param collectionName values collection name e.g. EmailAddresses
+	 * Создать объект обновления индексируемого поля.
+	 * @param collectionName имя коллекции значений, напр. EmailAddresses
 	 */
 	public IndexedFieldUpdate(String collectionName) {
 		this.collectionName = collectionName;
 	}
 
 	/**
-	 * Add indexed field value.
-	 * @param fieldUpdate field update object
+	 * Добавить значение индексированного поля.
+	 * @param fieldUpdate объект обновления поля
 	 */
 	public void addFieldValue(FieldUpdate fieldUpdate) {
 		updates.add(fieldUpdate);
 	}
 
 	/**
-	 * Write field to request writer.
-	 * @param itemType item type
-	 * @param writer request writer
-	 * @throws IOException on error
+	 * Записать поле в писатель запроса.
+	 * @param itemType тип элемента
+	 * @param writer писатель запроса
+	 * @throws IOException в случае ошибки
 	 */
 	@Override
 	public void write(String itemType, Writer writer) throws IOException {

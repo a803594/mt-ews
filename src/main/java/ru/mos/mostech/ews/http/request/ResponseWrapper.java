@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * Http response wrapper.
+ * Обертка для HTTP-ответа.
  */
 public interface ResponseWrapper {
 

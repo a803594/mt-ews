@@ -4,13 +4,13 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Get Attachment Method.
+ * Получить метод вложения.
  */
 public class GetAttachmentMethod extends EWSMethod {
 
 	/**
-	 * Get Attachment Method.
-	 * @param attachmentId attachment id
+	 * Получить метод вложения.
+	 * @param attachmentId идентификатор вложения
 	 */
 	public GetAttachmentMethod(String attachmentId) {
 		super("Attachment", "GetAttachment");

@@ -10,13 +10,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 /**
- * Expand distribution list.
+ * Расширить список рассылки.
  */
 public class ExpandDLMethod extends EWSMethod {
 
 	/**
-	 * Build Resolve Names method
-	 * @param value search value
+	 * Метод построения имен для разрешения
+	 * @param value значение поиска
 	 */
 	public ExpandDLMethod(String value) {
 		super("Mailbox", "ExpandDL", "ExpandDLResponseMessage");

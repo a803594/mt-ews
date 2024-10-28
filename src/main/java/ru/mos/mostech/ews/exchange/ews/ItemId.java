@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.io.Writer;
 
 /**
- * Item id.
+ * Идентификатор элемента.
  */
 public class ItemId implements Serializable {
 
@@ -19,25 +19,25 @@ public class ItemId implements Serializable {
 	protected final String changeKey;
 
 	/**
-	 * Build Item id from response item.
-	 * @param item response item
+	 * Сформировать ID элемента из полученного элемента.
+	 * @param item полученный элемент
 	 */
 	public ItemId(EWSMethod.Item item) {
 		this("ItemId", item);
 	}
 
 	/**
-	 * Build Item id object from item id.
-	 * @param itemId item id
+	 * Построить объект идентификатора элемента из идентификатора элемента.
+	 * @param itemId идентификатор элемента
 	 */
 	public ItemId(String itemId) {
 		this("ItemId", itemId);
 	}
 
 	/**
-	 * Build Item id from response item.
-	 * @param name item name
-	 * @param item response item
+	 * Сформировать id элемента из элемента ответа.
+	 * @param name имя элемента
+	 * @param item элемент ответа
 	 */
 	public ItemId(String name, EWSMethod.Item item) {
 		this.name = name;
@@ -46,9 +46,9 @@ public class ItemId implements Serializable {
 	}
 
 	/**
-	 * Build Item id object from item id.
-	 * @param name item name
-	 * @param itemId item id
+	 * Построить объект id элемента из id элемента.
+	 * @param name имя элемента
+	 * @param itemId id элемента
 	 */
 	public ItemId(String name, String itemId) {
 		this.name = name;
@@ -57,10 +57,11 @@ public class ItemId implements Serializable {
 	}
 
 	/**
-	 * Build Item id object from item id and change key.
-	 * @param name item name
-	 * @param itemId item id
-	 * @param changeKey change key
+	 * Построить объект идентификатора элемента из идентификатора элемента и ключа
+	 * изменений.
+	 * @param name имя элемента
+	 * @param itemId идентификатор элемента
+	 * @param changeKey ключ изменений
 	 */
 	public ItemId(String name, String itemId, String changeKey) {
 		this.name = name;
@@ -69,9 +70,9 @@ public class ItemId implements Serializable {
 	}
 
 	/**
-	 * Write item id as XML.
-	 * @param writer request writer
-	 * @throws IOException on error
+	 * Запишите идентификатор элемента в виде XML.
+	 * @param writer писатель запроса
+	 * @throws IOException в случае ошибки
 	 */
 	public void write(Writer writer) throws IOException {
 		writer.write("<t:");

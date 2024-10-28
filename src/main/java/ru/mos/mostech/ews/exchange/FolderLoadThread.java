@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import java.net.SocketException;
 
 /**
- * Load folder messages in a separate thread.
+ * Загружать сообщения папки в отдельном потоке.
  */
 @Slf4j
 public class FolderLoadThread extends Thread {
@@ -46,10 +46,10 @@ public class FolderLoadThread extends Thread {
 	}
 
 	/**
-	 * Load folder in a separate thread.
-	 * @param folder current folder
-	 * @param outputStream client connection
-	 * @throws IOException on error
+	 * Загрузить папку в отдельном потоке.
+	 * @param folder текущая папка
+	 * @param outputStream соединение с клиентом
+	 * @throws IOException при ошибке
 	 */
 	public static void loadFolder(ExchangeSession.Folder folder, OutputStream outputStream) throws IOException {
 		FolderLoadThread folderLoadThread = new FolderLoadThread(currentThread().getName(), folder);

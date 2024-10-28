@@ -4,14 +4,14 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Create Attachment Method.
+ * Метод создания вложения.
  */
 public class CreateAttachmentMethod extends EWSMethod {
 
 	/**
-	 * Create attachment method.
-	 * @param parentItemId parent item id
-	 * @param attachment attachment object
+	 * Метод создания вложения.
+	 * @param parentItemId идентификатор родительского элемента
+	 * @param attachment объект вложения
 	 */
 	public CreateAttachmentMethod(ItemId parentItemId, FileAttachment attachment) {
 		super("Item", "CreateAttachment");

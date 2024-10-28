@@ -19,7 +19,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import java.security.cert.Certificate;
 
 /**
- * Duplicate of NTLMScheme from HttpClient to implement channel binding.
+ * Дубликат NTLMScheme из HttpClient для реализации связывания каналов.
  */
 public class MosTechEwsNTLMScheme extends AuthSchemeBase {
 

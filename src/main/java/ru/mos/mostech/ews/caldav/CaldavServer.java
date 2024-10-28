@@ -10,18 +10,18 @@ import ru.mos.mostech.ews.Settings;
 import java.net.Socket;
 
 /**
- * Calendar server, handle HTTP Caldav requests.
+ * Календарный сервер, обрабатывает HTTP Caldav запросы.
  */
 public class CaldavServer extends AbstractServer {
 
 	/**
-	 * Default HTTP Caldav port
+	 * Порт по умолчанию для HTTP Caldav
 	 */
 	public static final int DEFAULT_PORT = 80;
 
 	/**
-	 * Create a ServerSocket to listen for connections. Start the thread.
-	 * @param port pop listen port, 80 if not defined (0)
+	 * Создайте ServerSocket для прослушивания соединений. Запустите поток.
+	 * @param port порт прослушивания pop, 80 если не определен (0)
 	 */
 	public CaldavServer(int port) {
 		super(CaldavServer.class.getName(), port, CaldavServer.DEFAULT_PORT);

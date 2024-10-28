@@ -8,17 +8,15 @@ import java.io.*;
 import java.nio.ByteBuffer;
 
 /**
- * This class encodes a buffer into the classic: "Hexadecimal Dump" format of the past. It
- * is useful for analyzing the contents of binary buffers. The format produced is as
- * follows: <pre>
+ * Этот класс кодирует буфер в классический формат: "Шестнадцатеричный дамп" прошлого. Это
+ * полезно для анализа содержимого бинарных буферов. Получаемый формат таков: <pre>
  * xxxx: 00 11 22 33 44 55 66 77   88 99 aa bb cc dd ee ff ................
- * </pre> Where xxxx is the offset into the buffer in 16 byte chunks, followed by ascii
- * coded hexadecimal bytes followed by the ASCII representation of the bytes or '.' if
- * they are not valid bytes.
+ * </pre> Где xxxx - это смещение в буфере вChunks по 16 байт, за которым следуют
+ * кодированные шестнадцатеричные байты ASCII, за которыми следует ASCII-представление
+ * байтов или '.' , если они не являются допустимыми байтами.
  *
  * @author Chuck McManis
  */
-
 public class HexDumpEncoder {
 
 	private int offset;
@@ -97,12 +95,11 @@ public class HexDumpEncoder {
 		offset += thisLineLength;
 	}
 
-	/** Stream that understands "printing" */
+	/** Поток, который понимает "печать" */
 	protected PrintStream pStream;
 
 	/**
-	 * This method works around the bizarre semantics of BufferedInputStream's read
-	 * method.
+	 * Этот метод обходит странную семантику метода read класса BufferedInputStream.
 	 */
 	protected int readFully(InputStream in, byte[] buffer) throws java.io.IOException {
 		for (int i = 0; i < buffer.length; i++) {
@@ -115,9 +112,10 @@ public class HexDumpEncoder {
 	}
 
 	/**
-	 * Encode bytes from the input stream, and write them as text characters to the output
-	 * stream. This method will run until it exhausts the input stream, but does not print
-	 * the line suffix for a final line that is shorter than bytesPerLine().
+	 * Кодирует байты из входного потока и записывает их в виде текстовых символов в
+	 * выходной поток. Этот метод будет выполняться до тех пор, пока не исчерпает входной
+	 * поток, но не добавляет суффикс строки для последней строки, которая короче, чем
+	 * bytesPerLine().
 	 */
 	public void encode(InputStream inStream, OutputStream outStream) throws IOException {
 		int j;
@@ -145,8 +143,8 @@ public class HexDumpEncoder {
 	}
 
 	/**
-	 * A 'streamless' version of encode that simply takes a buffer of bytes and returns a
-	 * string containing the encoded buffer.
+	 * 'Безпоточный' вариант encode, который просто принимает буфер байтов и возвращает
+	 * строку, содержащую закодированный буфер.
 	 */
 	public String encode(byte[] aBuffer) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -165,23 +163,23 @@ public class HexDumpEncoder {
 	}
 
 	/**
-	 * Return a byte array from the remaining bytes in this ByteBuffer.
+	 * Вернуть массив байтов из оставшихся байтов в этом ByteBuffer.
 	 * <P>
-	 * The ByteBuffer's position will be advanced to ByteBuffer's limit.
+	 * Позиция ByteBuffer будет перемещена к лимиту ByteBuffer.
 	 * <P>
-	 * To avoid an extra copy, the implementation will attempt to return the byte array
-	 * backing the ByteBuffer. If this is not possible, a new byte array will be created.
+	 * Чтобы избежать лишнего копирования, реализация попытается вернуть массив байтов,
+	 * поддерживающий ByteBuffer. Если это невозможно, будет создан новый массив байтов.
 	 */
 	private byte[] getBytes(ByteBuffer bb) {
 		/*
-		 * This should never return a BufferOverflowException, as we're careful to
-		 * allocate just the right amount.
+		 * Это никогда не должно возвращать BufferOverflowException, так как мы осторожны
+		 * в том, чтобы выделить ровно столько, сколько нужно.
 		 */
 		byte[] buf = null;
 
 		/*
-		 * If it has a usable backing byte buffer, use it. Use only if the array exactly
-		 * represents the current ByteBuffer.
+		 * Если есть пригодный байтовый буфер, используйте его. Используйте только если
+		 * массив точно представляет текущий ByteBuffer.
 		 */
 		if (bb.hasArray()) {
 			byte[] tmp = bb.array();
@@ -193,13 +191,13 @@ public class HexDumpEncoder {
 
 		if (buf == null) {
 			/*
-			 * This class doesn't have a concept of encode(buf, len, off), so if we have a
-			 * partial buffer, we must reallocate space.
+			 * Этот класс не имеет концепции encode(buf, len, off), поэтому, если у нас
+			 * есть частичный буфер, мы должны перераспределить память.
 			 */
 			buf = new byte[bb.remaining()];
 
 			/*
-			 * position() automatically updated
+			 * позиция() автоматически обновляется
 			 */
 			bb.get(buf);
 		}
@@ -208,10 +206,10 @@ public class HexDumpEncoder {
 	}
 
 	/**
-	 * A 'streamless' version of encode that simply takes a ByteBuffer and returns a
-	 * string containing the encoded buffer.
+	 * 'Безпоточный' вариант кодирования, который просто берет ByteBuffer и возвращает
+	 * строку, содержащую закодированный буфер.
 	 * <P>
-	 * The ByteBuffer's position will be advanced to ByteBuffer's limit.
+	 * Позиция ByteBuffer будет продвинута до предела ByteBuffer.
 	 */
 	public String encode(ByteBuffer aBuffer) {
 		byte[] buf = getBytes(aBuffer);
@@ -219,10 +217,10 @@ public class HexDumpEncoder {
 	}
 
 	/**
-	 * Encode bytes from the input stream, and write them as text characters to the output
-	 * stream. This method will run until it exhausts the input stream. It differs from
-	 * encode in that it will add the line at the end of a final line that is shorter than
-	 * bytesPerLine().
+	 * Кодирует байты из входного потока и записывает их в виде текстовых символов в
+	 * выходной поток. Этот метод будет работать до тех пор, пока не исчерпает входной
+	 * поток. Он отличается от encode тем, что добавляет перевод строки в конце последней
+	 * строки, которая короче bytesPerLine().
 	 */
 	public void encodeBuffer(InputStream inStream, OutputStream outStream) throws IOException {
 		int j;
@@ -248,7 +246,7 @@ public class HexDumpEncoder {
 	}
 
 	/**
-	 * Encode the buffer in <i>aBuffer</i> and write the encoded result to the
+	 * Кодирует буфер в <i>aBuffer</i> и записывает закодированный результат в
 	 * OutputStream <i>aStream</i>.
 	 */
 	public void encodeBuffer(byte[] aBuffer, OutputStream aStream) throws IOException {
@@ -257,8 +255,8 @@ public class HexDumpEncoder {
 	}
 
 	/**
-	 * A 'streamless' version of encode that simply takes a buffer of bytes and returns a
-	 * string containing the encoded buffer.
+	 * 'Безпоточный' вариант encode, который просто принимает буфер байтов и возвращает
+	 * строку, содержащую закодированный буфер.
 	 */
 	@SuppressWarnings("unused")
 	public String encodeBuffer(byte[] aBuffer) {
@@ -275,10 +273,10 @@ public class HexDumpEncoder {
 	}
 
 	/**
-	 * Encode the <i>aBuffer</i> ByteBuffer and write the encoded result to the
+	 * Кодирует <i>aBuffer</i> ByteBuffer и записывает закодированный результат в
 	 * OutputStream <i>aStream</i>.
 	 * <P>
-	 * The ByteBuffer's position will be advanced to ByteBuffer's limit.
+	 * Позиция ByteBuffer будет продвинута до предела ByteBuffer.
 	 */
 	@SuppressWarnings("unused")
 	public void encodeBuffer(ByteBuffer aBuffer, OutputStream aStream) throws IOException {

@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
- * Extended Awt tray with OSX extensions.
+ * Расширенный Awt трей с расширениями для OSX.
  */
 public class OSXAwtGatewayTray extends AwtGatewayTray implements OSXTrayInterface {
 

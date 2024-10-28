@@ -11,7 +11,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
- * Get smartcard password
+ * Получить пароль смарт-карты
  */
 public class PasswordPromptDialog extends JDialog {
 
@@ -20,8 +20,8 @@ public class PasswordPromptDialog extends JDialog {
 	protected char[] password;
 
 	/**
-	 * Get user password.
-	 * @return user password as char array
+	 * Получить пароль пользователя.
+	 * @return пароль пользователя в виде массива символов
 	 */
 	public char[] getPassword() {
 		if (password != null) {
@@ -33,17 +33,17 @@ public class PasswordPromptDialog extends JDialog {
 	}
 
 	/**
-	 * Get smartcard password.
-	 * @param prompt password prompt from PKCS11 module
+	 * Получить пароль смарт-карты.
+	 * @param prompt запрос пароля от модуля PKCS11
 	 */
 	public PasswordPromptDialog(String prompt) {
 		this(prompt, null);
 	}
 
 	/**
-	 * Get smartcard password.
-	 * @param prompt password prompt from PKCS11 module
-	 * @param captchaImage ISA filter pinsafe image
+	 * Получить пароль смарт-карты.
+	 * @param prompt подсказка пароля от модуля PKCS11
+	 * @param captchaImage изображение фильтра ISA pinsafe
 	 */
 	public PasswordPromptDialog(String prompt, Image captchaImage) {
 		setAlwaysOnTop(true);

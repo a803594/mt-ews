@@ -7,13 +7,13 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 
 /**
- * HttpResponseException with 403 forbidden status.
+ * Исключение HttpResponse с статусом 403 запрещено.
  */
 public class HttpForbiddenException extends HttpResponseException {
 
 	/**
-	 * HttpResponseException with 403 forbidden status.
-	 * @param message exception message
+	 * HttpResponseException с статусом 403 запрещено.
+	 * @param message сообщение об исключении
 	 */
 	public HttpForbiddenException(String message) {
 		super(HttpStatus.SC_FORBIDDEN, message);

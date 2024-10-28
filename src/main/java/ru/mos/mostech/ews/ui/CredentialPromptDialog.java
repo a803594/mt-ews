@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Prompt for Exchange credential and password.
+ * Запрос учетных данных и пароля для Exchange.
  */
 public class CredentialPromptDialog extends JDialog {
 
@@ -20,8 +20,8 @@ public class CredentialPromptDialog extends JDialog {
 	protected char[] password;
 
 	/**
-	 * Get user password.
-	 * @return user password as char array
+	 * Получить пароль пользователя.
+	 * @return пароль пользователя в виде массива символов
 	 */
 	public char[] getPassword() {
 		if (password != null) {
@@ -33,16 +33,16 @@ public class CredentialPromptDialog extends JDialog {
 	}
 
 	/**
-	 * Get user principal.
-	 * @return user principal
+	 * Получить основной объект пользователя.
+	 * @return основной объект пользователя
 	 */
 	public String getPrincipal() {
 		return principal;
 	}
 
 	/**
-	 * Get credentials.
-	 * @param prompt Kerberos prompt from callback handler
+	 * Получить учетные данные.
+	 * @param prompt Запрос Kerberos от обработчика обратных вызовов
 	 */
 	public CredentialPromptDialog(String prompt) {
 		setAlwaysOnTop(true);

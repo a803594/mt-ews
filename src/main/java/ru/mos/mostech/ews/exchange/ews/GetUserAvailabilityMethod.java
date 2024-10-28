@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * GetUserAvailability method.
+ * Метод GetUserAvailability.
  */
 public class GetUserAvailabilityMethod extends EWSMethod {
 
@@ -25,11 +25,11 @@ public class GetUserAvailabilityMethod extends EWSMethod {
 	protected final int interval;
 
 	/**
-	 * Build EWS method
-	 * @param attendee attendee email address
-	 * @param start start date in Exchange zulu format
-	 * @param end end date in Exchange zulu format
-	 * @param interval freebusy interval in minutes
+	 * Создание метода EWS
+	 * @param attendee адрес электронной почты участника
+	 * @param start дата начала в формате zulu Exchange
+	 * @param end дата окончания в формате zulu Exchange
+	 * @param interval интервал занятости в минутах
 	 */
 	public GetUserAvailabilityMethod(String attendee, String start, String end, int interval) {
 		super("FreeBusy", "GetUserAvailabilityRequest");
@@ -70,8 +70,8 @@ public class GetUserAvailabilityMethod extends EWSMethod {
 	}
 
 	/**
-	 * Get merged freebusy string.
-	 * @return freebusy string
+	 * Получить объединённую строку занятости.
+	 * @return строка занятости
 	 */
 	public String getMergedFreeBusy() {
 		return mergedFreeBusy;

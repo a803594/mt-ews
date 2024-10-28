@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * DeleteItem disposal type.
+ * Тип утилизации элемента DeleteItem.
  */
 @SuppressWarnings({ "UnusedDeclaration" })
 public final class DeleteType extends AttributeOption {

@@ -8,17 +8,15 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * A BER decoder. Contains methods to parse a BER buffer.
+ * Декодер BER. Содержит методы для разбора буфера BER.
  *
- * @author Jagane Sundar
- * @author Vincent Ryan
  */
 public final class BerDecoder extends Ber {
 
 	private int origOffset; // The start point in buf to decode
 
 	/**
-	 * Creates a BER decoder that reads bytes from the specified buffer.
+	 * Создает декодер BER, который считывает байты из указанного буфера.
 	 */
 	public BerDecoder(byte[] buf, int offset, int bufsize) {
 
@@ -30,23 +28,23 @@ public final class BerDecoder extends Ber {
 	}
 
 	/**
-	 * Resets this decode to start parsing from the initial offset (ie., same state as
-	 * after calling the constructor).
+	 * Сбрасывает этот декодер, чтобы начать парсинг с начального смещения (т.е. в том же
+	 * состоянии, что и после вызова конструктора).
 	 */
 	public void reset() {
 		offset = origOffset;
 	}
 
 	/**
-	 * Returns the current parse position. It points to the byte that will be parsed next.
-	 * Useful for parsing sequences.
+	 * Возвращает текущую позицию разбора. Она указывает на байт, который будет разобран
+	 * следующим. Полезно для разбора последовательностей.
 	 */
 	public int getParsePosition() {
 		return offset;
 	}
 
 	/**
-	 * Parses a possibly variable length field.
+	 * Парсит поле возможной переменной длины.
 	 */
 	public int parseLength() throws DecodeException {
 
@@ -84,10 +82,10 @@ public final class BerDecoder extends Ber {
 	}
 
 	/**
-	 * Parses the next sequence in this BER buffer.
-	 * @param rlen An array for returning size of the sequence in bytes. If null, the size
-	 * is not returned.
-	 * @return The sequence's tag.
+	 * Парсит следующую последовательность в этом BER буфере.
+	 * @param rlen Массив для возвращения размера последовательности в байтах. Если null,
+	 * размер не возвращается.
+	 * @return Тег последовательности.
 	 */
 	public int parseSeq(int[] rlen) throws DecodeException {
 
@@ -100,9 +98,9 @@ public final class BerDecoder extends Ber {
 	}
 
 	/**
-	 * Used to skip bytes. Usually used when trying to recover from parse error. Don't
-	 * need to be public right now?
-	 * @param i The number of bytes to skip
+	 * Используется для пропуска байтов. Обычно применяется при попытке восстановиться от
+	 * ошибки парсинга. Необходимо ли это делать публичным сейчас?
+	 * @param i Количество байтов, которые нужно пропустить
 	 */
 	@SuppressWarnings("unused")
 	void seek(int i) throws DecodeException {
@@ -113,8 +111,8 @@ public final class BerDecoder extends Ber {
 	}
 
 	/**
-	 * Parses the next byte in this BER buffer.
-	 * @return The byte parsed.
+	 * Парсит следующий байт в этом BER буфере.
+	 * @return Парсируемый байт.
 	 */
 	public int parseByte() throws DecodeException {
 		if (bufsize - offset < 1) {
@@ -124,8 +122,8 @@ public final class BerDecoder extends Ber {
 	}
 
 	/**
-	 * Returns the next byte in this BER buffer without consuming it.
-	 * @return The next byte.
+	 * Возвращает следующий байт в этом BER буфере без его потребления.
+	 * @return Следующий байт.
 	 */
 	public int peekByte() throws DecodeException {
 		if (bufsize - offset < 1) {
@@ -135,8 +133,8 @@ public final class BerDecoder extends Ber {
 	}
 
 	/**
-	 * Parses an ASN_BOOLEAN tagged integer from this BER buffer.
-	 * @return true if the tagged integer is 0; false otherwise.
+	 * Разбирает целое число с тегом ASN_BOOLEAN из этого буфера BER.
+	 * @return true, если тегированное целое число равно 0; false в противном случае.
 	 */
 	@SuppressWarnings("UnusedReturnValue")
 	public boolean parseBoolean() throws DecodeException {
@@ -144,24 +142,24 @@ public final class BerDecoder extends Ber {
 	}
 
 	/**
-	 * Parses an ASN_ENUMERATED tagged integer from this BER buffer.
-	 * @return The tag of enumeration.
+	 * Парсит целое число с тегом ASN_ENUMERATED из этого BER буфера.
+	 * @return Тег перечисления.
 	 */
 	public int parseEnumeration() throws DecodeException {
 		return parseIntWithTag(ASN_ENUMERATED);
 	}
 
 	/**
-	 * Parses an ASN_INTEGER tagged integer from this BER buffer.
-	 * @return The value of the integer.
+	 * Парсит целое число с тегом ASN_INTEGER из этого BER буфера.
+	 * @return Значение целого числа.
 	 */
 	public int parseInt() throws DecodeException {
 		return parseIntWithTag(ASN_INTEGER);
 	}
 
 	/**
-	 * Parses an integer that's preceded by a tag. <blockquote><pre>
-	 * BER integer ::= tag length byte {byte}*
+	 * Парсит целое число, предшествующее тегу. <blockquote><pre>
+	 * Целое число в формате BER ::= тег длина байт {байт}*
 	 *</pre></blockquote>
 	 */
 	protected int parseIntWithTag(int tag) throws DecodeException {
@@ -184,7 +182,7 @@ public final class BerDecoder extends Ber {
 		int value;
 
 		value = fb & 0x7F;
-		for (int i = 1 /* first byte already read */ ; i < len; i++) {
+		for (int i = 1 /* первый байт уже прочитан */ ; i < len; i++) {
 			value <<= 8;
 			value |= (buf[offset++] & 0xff);
 		}
@@ -197,22 +195,23 @@ public final class BerDecoder extends Ber {
 	}
 
 	/**
-	 * Parses a string.
+	 * Разбирает строку.
 	 */
 	public String parseString(boolean decodeUTF8) throws DecodeException {
 		return parseStringWithTag(ASN_SIMPLE_STRING, decodeUTF8, null);
 	}
 
 	/**
-	 * Parses a string of a given tag from this BER buffer. <blockquote><pre>
-	 *BER simple string ::= tag length {byte}*
+	 * Парсит строку заданного тега из этого BER буфера. <blockquote><pre>
+	 *BER простая строка ::= тег длина {байт}*
 	 *</pre></blockquote>
-	 * @param rlen An array for holding the relative parsed offset; if null offset not
-	 * set.
-	 * @param decodeUTF8 If true, use UTF-8 when decoding the string; otherwise use
-	 * ISO-Latin-1 (8859_1). Use true for LDAPv3; false for LDAPv2.
-	 * @param tag The tag that precedes the string.
-	 * @return The non-null parsed string.
+	 * @param rlen Массив для хранения относительного разобранного смещения; если null,
+	 * смещение не устанавливается.
+	 * @param decodeUTF8 Если true, используйте UTF-8 при декодировании строки; в
+	 * противном случае используйте ISO-Latin-1 (8859_1). Используйте true для LDAPv3;
+	 * false для LDAPv2.
+	 * @param tag Тег, предшествующий строке.
+	 * @return Не-null разобранная строка.
 	 */
 	public String parseStringWithTag(int tag, boolean decodeUTF8, int[] rlen) throws DecodeException {
 
@@ -260,16 +259,15 @@ public final class BerDecoder extends Ber {
 	}
 
 	/**
-	 * Parses an octet string of a given type(tag) from this BER buffer. <blockquote><pre>
-	 * BER Binary Data of type "tag" ::= tag length {byte}*
+	 * Парсит октетную строку заданного типа (тег) из этого BER буфера. <blockquote><pre>
+	 * Двоичные данные BER типа "тег" ::= тег длина {байт}*
 	 *</pre></blockquote>
-	 * @param tag The tag to look for.
-	 * @param rlen An array for returning the relative parsed position. If null, the
-	 * relative parsed position is not returned.
-	 * @return A non-null array containing the octet string.
-	 * @throws DecodeException If the next byte in the BER buffer is not {@code tag}, or
-	 * if length specified in the BER buffer exceeds the number of bytes left in the
-	 * buffer.
+	 * @param tag Тег, который нужно найти.
+	 * @param rlen Массив для возвращения относительнойParsed позиции. Если null, то
+	 * относительнаяParsed позиция не возвращается.
+	 * @return Не нулевой массив, содержащий октетную строку.
+	 * @throws DecodeException Если следующий байт в BER буфере не {@code тег}, или если
+	 * длина, указанная в BER буфере, превышает количество оставшихся байт в буфере.
 	 */
 	public byte[] parseOctetString(int tag, int[] rlen) throws DecodeException {
 
@@ -300,7 +298,7 @@ public final class BerDecoder extends Ber {
 	}
 
 	/**
-	 * Returns the number of unparsed bytes in this BER buffer.
+	 * Возвращает количество нераспарсенных байтов в этом BER-буфере.
 	 */
 	public int bytesLeft() {
 		return bufsize - offset;

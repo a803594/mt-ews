@@ -7,13 +7,13 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 
 /**
- * HttpResponseException with 507 Insufficient Storage status.
+ * Исключение HttpResponse с кодом состояния 507 Нехватка памяти.
  */
 public class InsufficientStorageException extends HttpResponseException {
 
 	/**
-	 * HttpResponseException with 507 Insufficient Storage status.
-	 * @param message exception message
+	 * HttpResponseException с статусом 507 Недостаточно места для хранения.
+	 * @param message сообщение исключения
 	 */
 	public InsufficientStorageException(String message) {
 		super(HttpStatus.SC_INSUFFICIENT_STORAGE, message);

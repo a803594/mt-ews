@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Sort order.
+ * Порядок сортировки.
  */
 public class FieldOrder {
 
@@ -24,8 +24,8 @@ public class FieldOrder {
 	}
 
 	/**
-	 * Append sort order to buffer.
-	 * @param buffer search buffer
+	 * Добавить порядок сортировки в буфер.
+	 * @param buffer буфер поиска
 	 */
 	void appendTo(StringBuilder buffer) {
 		buffer.append("<t:FieldOrder Order=\"").append(order).append("\">");

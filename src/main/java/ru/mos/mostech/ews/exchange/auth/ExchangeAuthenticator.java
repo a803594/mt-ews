@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * Common interface for all Exchange and O365 authenticators. Implement this interface to
- * build custom authenticators for unsupported Exchange architecture
+ * Общий интерфейс для всех аутентификаторов Exchange и O365. Реализуйте этот интерфейс,
+ * чтобы создать пользовательские аутентификаторы для неподдерживаемой архитектуры
+ * Exchange
  */
 public interface ExchangeAuthenticator {
 
@@ -20,22 +21,22 @@ public interface ExchangeAuthenticator {
 	void setPassword(String password);
 
 	/**
-	 * Authenticate against Exchange or O365
-	 * @throws IOException on error
+	 * Аутентификация против Exchange или O365
+	 * @throws IOException в случае ошибки
 	 */
 	void authenticate() throws IOException;
 
 	O365Token getToken() throws IOException;
 
 	/**
-	 * Return default or computed Exchange or O365 url
-	 * @return target url
+	 * Вернуть URL по умолчанию или вычисленный URL для Exchange или O365
+	 * @return целевой URL
 	 */
 	URI getExchangeUri();
 
 	/**
-	 * Return a new HttpClientAdapter instance with pooling enabled for ExchangeSession
-	 * @return HttpClientAdapter instance
+	 * Возвращает новый экземпляр HttpClientAdapter с включенным пулом для ExchangeSession
+	 * @return экземпляр HttpClientAdapter
 	 */
 	HttpClientAdapter getHttpClientAdapter();
 

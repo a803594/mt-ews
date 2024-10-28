@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * O365 token wrapper
+ * Обертка для токена O365
  */
 @Slf4j
 public class O365Token {

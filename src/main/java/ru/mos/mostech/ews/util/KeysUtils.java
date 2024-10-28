@@ -21,12 +21,12 @@ import java.security.cert.CertificateException;
 public class KeysUtils {
 
 	/**
-	 * Build trust managers from truststore file.
-	 * @return trust managers
-	 * @throws CertificateException on error
-	 * @throws NoSuchAlgorithmException on error
-	 * @throws IOException on error
-	 * @throws KeyStoreException on error
+	 * Создание менеджеров доверия из файла хранилища доверия.
+	 * @return менеджеры доверия
+	 * @throws CertificateException в случае ошибки
+	 * @throws NoSuchAlgorithmException в случае ошибки
+	 * @throws IOException в случае ошибки
+	 * @throws KeyStoreException в случае ошибки
 	 */
 	public TrustManager[] getTrustManagers()
 			throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException {
@@ -45,12 +45,12 @@ public class KeysUtils {
 	}
 
 	/**
-	 * Build key managers from keystore file.
-	 * @return key managers
-	 * @throws CertificateException on error
-	 * @throws NoSuchAlgorithmException on error
-	 * @throws IOException on error
-	 * @throws KeyStoreException on error
+	 * Создание менеджеров ключей из файла хранилища ключей.
+	 * @return менеджеры ключей
+	 * @throws CertificateException в случае ошибки
+	 * @throws NoSuchAlgorithmException в случае ошибки
+	 * @throws IOException в случае ошибки
+	 * @throws KeyStoreException в случае ошибки
 	 */
 	public KeyManager[] getKeyManagers() throws CertificateException, NoSuchAlgorithmException, IOException,
 			KeyStoreException, UnrecoverableKeyException {

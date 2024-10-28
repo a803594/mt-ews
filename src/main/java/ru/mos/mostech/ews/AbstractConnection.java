@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
- * Generic connection common to pop3 and smtp implementations
+ * Генерическое соединение, общее для реализаций pop3 и smtp
  */
 @Slf4j
 public abstract class AbstractConnection extends Thread implements Closeable {
@@ -72,20 +72,20 @@ public abstract class AbstractConnection extends Thread implements Closeable {
 		}
 
 		/**
-		 * Read byteSize bytes from inputStream, return content as String.
-		 * @param byteSize content size
-		 * @return content
-		 * @throws IOException on error
+		 * Прочитать byteSize байт из inputStream, вернуть содержимое как String.
+		 * @param byteSize размер содержимого
+		 * @return содержимое
+		 * @throws IOException при ошибке
 		 */
 		public String readContentAsString(int byteSize) throws IOException {
 			return new String(readContent(byteSize), encoding);
 		}
 
 		/**
-		 * Read byteSize bytes from inputStream, return content as byte array.
-		 * @param byteSize content size
-		 * @return content
-		 * @throws IOException on error
+		 * Прочитать byteSize байт из inputStream, вернуть содержимое в виде массива байт.
+		 * @param byteSize размер содержимого
+		 * @return содержимое
+		 * @throws IOException в случае ошибки
 		 */
 		public byte[] readContent(int byteSize) throws IOException {
 			byte[] buffer = new byte[byteSize];
@@ -122,9 +122,9 @@ public abstract class AbstractConnection extends Thread implements Closeable {
 	protected ExchangeSession session;
 
 	/**
-	 * Only set the thread name and socket
-	 * @param name thread type name
-	 * @param clientSocket client socket
+	 * Установить только имя потока и сокет
+	 * @param name имя типа потока
+	 * @param clientSocket сокет клиента
 	 */
 	protected AbstractConnection(String name, Socket clientSocket) {
 		super(name + '-' + clientSocket.getPort());
@@ -133,10 +133,10 @@ public abstract class AbstractConnection extends Thread implements Closeable {
 	}
 
 	/**
-	 * Initialize the streams and set thread name.
-	 * @param name thread type name
-	 * @param clientSocket client socket
-	 * @param encoding socket stream encoding
+	 * Инициализировать потоки и установить имя потока.
+	 * @param name имя типа потока
+	 * @param clientSocket клиентский сокет
+	 * @param encoding кодировка сокетного потока
 	 */
 	protected AbstractConnection(String name, Socket clientSocket, String encoding) {
 		super(name + '-' + clientSocket.getPort());
@@ -157,19 +157,19 @@ public abstract class AbstractConnection extends Thread implements Closeable {
 	}
 
 	/**
-	 * Send message to client followed by CRLF.
-	 * @param message message
-	 * @throws IOException on error
+	 * Отправить сообщение клиенту, за которым следует CRLF.
+	 * @param message сообщение
+	 * @throws IOException в случае ошибки
 	 */
 	public void sendClient(String message) throws IOException {
 		sendClient(null, message);
 	}
 
 	/**
-	 * Send prefix and message to client followed by CRLF.
-	 * @param prefix prefix
-	 * @param message message
-	 * @throws IOException on error
+	 * Отправить префикс и сообщение клиенту, завершая CRLF.
+	 * @param prefix префикс
+	 * @param message сообщение
+	 * @throws IOException при ошибке
 	 */
 	public void sendClient(String prefix, String message) throws IOException {
 		if (prefix != null) {
@@ -186,20 +186,20 @@ public abstract class AbstractConnection extends Thread implements Closeable {
 	}
 
 	/**
-	 * Send only bytes to client.
-	 * @param messageBytes content
-	 * @throws IOException on error
+	 * Отправить только байты клиенту.
+	 * @param messageBytes контент
+	 * @throws IOException в случае ошибки
 	 */
 	public void sendClient(byte[] messageBytes) throws IOException {
 		sendClient(messageBytes, 0, messageBytes.length);
 	}
 
 	/**
-	 * Send only bytes to client.
-	 * @param messageBytes content
-	 * @param offset the start offset in the data.
-	 * @param length the number of bytes to write.
-	 * @throws IOException on error
+	 * Отправить только байты клиенту.
+	 * @param messageBytes содержимое
+	 * @param offset начальное смещение в данных.
+	 * @param length количество байтов для записи.
+	 * @throws IOException в случае ошибки
 	 */
 	public void sendClient(byte[] messageBytes, int offset, int length) throws IOException {
 		os.write(messageBytes, offset, length);
@@ -207,9 +207,9 @@ public abstract class AbstractConnection extends Thread implements Closeable {
 	}
 
 	/**
-	 * Read a line from the client connection. Log message to logger
-	 * @return command line or null
-	 * @throws IOException when unable to read line
+	 * Прочитать строку из клиентского соединения. Записать сообщение в лог
+	 * @return строку команды или null
+	 * @throws IOException если невозможно прочитать строку
 	 */
 	public String readClient() throws IOException {
 		String line = in.readLine();
@@ -245,7 +245,7 @@ public abstract class AbstractConnection extends Thread implements Closeable {
 	}
 
 	/**
-	 * Close client connection, streams and Exchange session .
+	 * Закрыть соединение с клиентом, потоки и сессию обмена.
 	 */
 	public void close() {
 		try {

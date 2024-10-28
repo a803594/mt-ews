@@ -10,9 +10,8 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Base class that defines common fields, constants, and debug method.
+ * Базовый класс, который определяет общие поля, константы и метод отладки.
  *
- * @author Jagane Sundar
  */
 @SuppressWarnings("unused")
 public abstract class Ber {

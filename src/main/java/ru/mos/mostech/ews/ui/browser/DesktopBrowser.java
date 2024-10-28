@@ -12,7 +12,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * Open default browser.
+ * Открыть браузер по умолчанию.
  */
 public final class DesktopBrowser {
 
@@ -20,9 +20,9 @@ public final class DesktopBrowser {
 	}
 
 	/**
-	 * Open default browser at location URI. User Java 6 Desktop class, OSX open command
-	 * or SWT program launch
-	 * @param location location URI
+	 * Открывает браузер по умолчанию по указанному URI. Использует класс Desktop из Java
+	 * 6, команду open в OSX или запуск программы SWT
+	 * @param location URI для места назначения
 	 */
 	public static void browse(URI location) {
 		try {
@@ -64,9 +64,9 @@ public final class DesktopBrowser {
 	}
 
 	/**
-	 * Open default browser at location. User Java 6 Desktop class, OSX open command or
-	 * SWT program launch
-	 * @param location target location
+	 * Открыть браузер по умолчанию по указанному пути. Используйте класс Desktop Java 6,
+	 * команду open для OSX или запуск программы SWT
+	 * @param location целевое местоположение
 	 */
 	public static void browse(String location) {
 		try {

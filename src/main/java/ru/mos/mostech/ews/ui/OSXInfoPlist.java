@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Handle OSX Info.plist file access
+ * Обработка доступа к файлу Info.plist на OSX
  */
 @Slf4j
 public class OSXInfoPlist {
@@ -34,8 +34,8 @@ public class OSXInfoPlist {
 	}
 
 	/**
-	 * Test current LSUIElement (hide from dock) value
-	 * @return true if application is hidden from dock
+	 * Тестирует текущее значение LSUIElement (скрыть из дока)
+	 * @return true, если приложение скрыто из дока
 	 */
 	public static boolean isHideFromDock() {
 		boolean result = false;
@@ -49,8 +49,8 @@ public class OSXInfoPlist {
 	}
 
 	/**
-	 * Update LSUIElement (hide from dock) value
-	 * @param hideFromDock new hide from dock value
+	 * Обновить значение LSUIElement (скрыть из дока)
+	 * @param hideFromDock новое значение скрытия из дока
 	 */
 	public static void setOSXHideFromDock(boolean hideFromDock) {
 		try {

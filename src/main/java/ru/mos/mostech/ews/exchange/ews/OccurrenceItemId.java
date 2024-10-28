@@ -12,9 +12,10 @@ public class OccurrenceItemId extends ItemId {
 	protected final int instanceIndex;
 
 	/**
-	 * Build Item id object from item id and change key.
-	 * @param recurringMasterId recurring master id
-	 * @param instanceIndex occurrence index
+	 * Создать объект идентификатора элемента из идентификатора элемента и ключа
+	 * изменения.
+	 * @param recurringMasterId идентификатор повторяющегося мастера
+	 * @param instanceIndex индекс экземпляра
 	 */
 	public OccurrenceItemId(String recurringMasterId, int instanceIndex) {
 		super("OccurrenceItemId", recurringMasterId);
@@ -22,10 +23,10 @@ public class OccurrenceItemId extends ItemId {
 	}
 
 	/**
-	 * Build Item id object from item id and change key.
-	 * @param recurringMasterId recurring master id
-	 * @param changeKey change key
-	 * @param instanceIndex occurrence index
+	 * Создать объект id элемента из id элемента и ключа изменения.
+	 * @param recurringMasterId id основного элемента
+	 * @param changeKey ключ изменения
+	 * @param instanceIndex индекс вхождения
 	 */
 	public OccurrenceItemId(String recurringMasterId, String changeKey, int instanceIndex) {
 		super("OccurrenceItemId", recurringMasterId, changeKey);
@@ -33,9 +34,9 @@ public class OccurrenceItemId extends ItemId {
 	}
 
 	/**
-	 * Write item id as XML.
-	 * @param writer request writer
-	 * @throws IOException on error
+	 * Записать идентификатор элемента в формате XML.
+	 * @param writer писатель запроса
+	 * @throws IOException в случае ошибки
 	 */
 	public void write(Writer writer) throws IOException {
 		writer.write("<t:");

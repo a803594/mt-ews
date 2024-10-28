@@ -15,25 +15,25 @@ import java.text.DateFormat;
 import java.util.Date;
 
 /**
- * Accept certificate dialog
+ * Диалог подтверждения сертификата
  */
 public class AcceptCertificateDialog extends JDialog {
 
 	protected boolean accepted;
 
 	/**
-	 * Accept status.
-	 * @return true if user accepted certificate
+	 * Статус принятия.
+	 * @return true, если пользователь принял сертификат
 	 */
 	public boolean isAccepted() {
 		return accepted;
 	}
 
 	/**
-	 * Add a new JLabel to panel with <b>label</b>: value text.
-	 * @param panel certificate details panel
-	 * @param label certificate attribute label
-	 * @param value certificate attribute value
+	 * Добавить новую JLabel на панель с <b>label</b>: текст значения.
+	 * @param panel панель деталей сертификата
+	 * @param label ярлык атрибута сертификата
+	 * @param value значение атрибута сертификата
 	 */
 	protected void addFieldValue(JPanel panel, String label, String value) {
 		JPanel fieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -43,8 +43,8 @@ public class AcceptCertificateDialog extends JDialog {
 	}
 
 	/**
-	 * Accept certificate dialog.
-	 * @param certificate certificate sent by server
+	 * Диалог принятия сертификата.
+	 * @param certificate сертификат, отправленный сервером
 	 */
 	public AcceptCertificateDialog(X509Certificate certificate) {
 		setAlwaysOnTop(true);
@@ -118,9 +118,9 @@ public class AcceptCertificateDialog extends JDialog {
 	}
 
 	/**
-	 * Display certificate accept dialog and get user answer.
-	 * @param certificate certificate sent by server
-	 * @return true if user accepted certificate
+	 * Показать диалог принятия сертификата и получить ответ пользователя.
+	 * @param certificate сертификат, отправленный сервером
+	 * @return true, если пользователь принял сертификат
 	 */
 	public static boolean isCertificateTrusted(final X509Certificate certificate) {
 		final boolean[] answer = new boolean[1];

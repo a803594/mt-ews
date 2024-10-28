@@ -6,7 +6,7 @@ package ru.mos.mostech.ews.exchange.ews;
 import ru.mos.mostech.ews.util.StringUtil;
 
 /**
- * Extended MAPI property.
+ * Расширенное свойство MAPI.
  */
 public class ExtendedFieldURI implements FieldURI {
 
@@ -37,9 +37,9 @@ public class ExtendedFieldURI implements FieldURI {
 	protected final PropertyType propertyType;
 
 	/**
-	 * Create extended field uri.
-	 * @param intPropertyTag property tag as int
-	 * @param propertyType property type
+	 * Создать расширенное поле uri.
+	 * @param intPropertyTag тег свойства в виде int
+	 * @param propertyType тип свойства
 	 */
 	public ExtendedFieldURI(int intPropertyTag, PropertyType propertyType) {
 		this.propertyTag = "0x" + Integer.toHexString(intPropertyTag);
@@ -47,10 +47,10 @@ public class ExtendedFieldURI implements FieldURI {
 	}
 
 	/**
-	 * Create extended field uri.
-	 * @param distinguishedPropertySetId distinguished property set id
-	 * @param propertyId property id
-	 * @param propertyType property type
+	 * Создать расширенное поле uri.
+	 * @param distinguishedPropertySetId идентификатор набора свойств
+	 * @param propertyId идентификатор свойства
+	 * @param propertyType тип свойства
 	 */
 	public ExtendedFieldURI(DistinguishedPropertySetType distinguishedPropertySetId, int propertyId,
 			PropertyType propertyType) {
@@ -60,9 +60,9 @@ public class ExtendedFieldURI implements FieldURI {
 	}
 
 	/**
-	 * Create extended field uri.
-	 * @param distinguishedPropertySetId distinguished property set id
-	 * @param propertyName property name
+	 * Создать расширенное поле uri.
+	 * @param distinguishedPropertySetId идентификатор набора свойств
+	 * @param propertyName имя свойства
 	 */
 	public ExtendedFieldURI(DistinguishedPropertySetType distinguishedPropertySetId, String propertyName) {
 		this.distinguishedPropertySetId = distinguishedPropertySetId;
@@ -71,10 +71,10 @@ public class ExtendedFieldURI implements FieldURI {
 	}
 
 	/**
-	 * Create extended field uri.
-	 * @param distinguishedPropertySetId distinguished property set id
-	 * @param propertyName property name
-	 * @param propertyType property type
+	 * Создать расширенное поле uri.
+	 * @param distinguishedPropertySetId идентификатор набора отличительных свойств
+	 * @param propertyName имя свойства
+	 * @param propertyType тип свойства
 	 */
 	public ExtendedFieldURI(DistinguishedPropertySetType distinguishedPropertySetId, String propertyName,
 			PropertyType propertyType) {
@@ -142,8 +142,8 @@ public class ExtendedFieldURI implements FieldURI {
 	}
 
 	/**
-	 * Field name in EWS response.
-	 * @return field name in response
+	 * Имя поля в ответе EWS.
+	 * @return имя поля в ответе
 	 */
 	public String getResponseName() {
 		if (propertyTag != null) {

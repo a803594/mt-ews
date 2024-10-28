@@ -21,7 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 /**
- * DavGateway main class
+ * Основной класс DavGateway
  */
 @Slf4j
 public final class MosTechEws {
@@ -36,8 +36,8 @@ public final class MosTechEws {
 	private static final ArrayList<AbstractServer> SERVER_LIST = new ArrayList<>();
 
 	/**
-	 * Start the gateway, listen on specified smtp and pop3 ports
-	 * @param args command line parameter config file path
+	 * Запустите шлюз, слушайте на указанных портах smtp и pop3
+	 * @param args параметр командной строки путь к файлу конфигурации
 	 */
 	public static void main(String[] args) throws IOException {
 		boolean notray = false;
@@ -135,7 +135,7 @@ public final class MosTechEws {
 	}
 
 	/**
-	 * Start MT-EWS listeners.
+	 * Запустить MT-EWS слушатели.
 	 */
 	public static void start() {
 		SERVER_LIST.clear();
@@ -182,7 +182,7 @@ public final class MosTechEws {
 	}
 
 	/**
-	 * Stop all listeners, shutdown connection pool and clear session cache.
+	 * Остановить все слушатели, завершить пул соединений и очистить кэш сессий.
 	 */
 	public static void stop() {
 		MosTechEws.stopServers();
@@ -193,7 +193,7 @@ public final class MosTechEws {
 	}
 
 	/**
-	 * Stop all listeners and clear session cache.
+	 * Остановить все слушатели и очистить кэш сессии.
 	 */
 	public static void restart() {
 		MosTechEws.stopServers();
@@ -217,8 +217,8 @@ public final class MosTechEws {
 	}
 
 	/**
-	 * Get current MT-EWS version.
-	 * @return current version
+	 * Получить текущую версию MT-EWS.
+	 * @return текущая версия
 	 */
 	public static String getCurrentVersion() {
 		Package mtEwsPackage = MosTechEws.class.getPackage();

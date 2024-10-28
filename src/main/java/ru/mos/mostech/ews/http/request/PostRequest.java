@@ -17,7 +17,7 @@ import java.net.URI;
 import java.util.ArrayList;
 
 /**
- * Http post request with a string response handler.
+ * HTTP POST запрос с обработчиком строкового ответа.
  */
 public class PostRequest extends HttpPost implements ResponseHandler<String>, ResponseWrapper {
 
@@ -88,8 +88,8 @@ public class PostRequest extends HttpPost implements ResponseHandler<String>, Re
 	}
 
 	/**
-	 * Get status code from response.
-	 * @return Http status code
+	 * Получить код состояния из ответа.
+	 * @return Код состояния HTTP
 	 */
 	public int getStatusCode() {
 		checkResponse();
@@ -97,8 +97,8 @@ public class PostRequest extends HttpPost implements ResponseHandler<String>, Re
 	}
 
 	/**
-	 * Get reason phrase from response.
-	 * @return reason phrase
+	 * Получить текст причины из ответа.
+	 * @return текст причины
 	 */
 	public String getReasonPhrase() {
 		checkResponse();
@@ -115,7 +115,7 @@ public class PostRequest extends HttpPost implements ResponseHandler<String>, Re
 	}
 
 	/**
-	 * Check if response is available.
+	 * Проверьте, доступен ли ответ.
 	 */
 	private void checkResponse() {
 		if (response == null) {

@@ -16,7 +16,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
- * Custom Exchange PROPPATCH method. Supports extended property update with type.
+ * Пользовательский метод PROPPATCH. Поддерживает обновление расширенных свойств с
+ * указанием типа.
  */
 
 public class ExchangePropPatchRequest extends ExchangeDavRequest {
@@ -28,9 +29,9 @@ public class ExchangePropPatchRequest extends ExchangeDavRequest {
 	private StatusLine statusLine;
 
 	/**
-	 * Create PROPPATCH method.
-	 * @param path path
-	 * @param propertyValues property values
+	 * Создать метод PROPPATCH.
+	 * @param path путь
+	 * @param propertyValues значения свойств
 	 */
 	public ExchangePropPatchRequest(String path, Set<PropertyValue> propertyValues) {
 		super(path);

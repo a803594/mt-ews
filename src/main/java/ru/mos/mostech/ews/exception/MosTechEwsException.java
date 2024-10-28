@@ -9,24 +9,24 @@ import java.io.IOException;
 import java.util.Locale;
 
 /**
- * I18 IOException subclass.
+ * Подкласс IOException для интернационализации.
  */
 public class MosTechEwsException extends IOException {
 
 	private final BundleMessage message;
 
 	/**
-	 * Create a MT-EWS exception with the given BundleMessage key and arguments.
-	 * @param key message key
-	 * @param arguments message values
+	 * Создать исключение MT-EWS с заданным ключом BundleMessage и аргументами.
+	 * @param key ключ сообщения
+	 * @param arguments значения сообщения
 	 */
 	public MosTechEwsException(String key, Object... arguments) {
 		this.message = new BundleMessage(key, arguments);
 	}
 
 	/**
-	 * Get formatted message
-	 * @return english formatted message
+	 * Получить отформатированное сообщение
+	 * @return отформатированное сообщение на английском
 	 */
 	@Override
 	public String getMessage() {
@@ -34,17 +34,17 @@ public class MosTechEwsException extends IOException {
 	}
 
 	/**
-	 * Get formatted message using locale.
-	 * @param locale locale
-	 * @return localized formatted message
+	 * Получить отформатированное сообщение с учетом локали.
+	 * @param locale локаль
+	 * @return локализованное отформатированное сообщение
 	 */
 	public String getMessage(Locale locale) {
 		return message.format(locale);
 	}
 
 	/**
-	 * Get internal exception BundleMessage.
-	 * @return unformatted message
+	 * Получить внутреннее исключение BundleMessage.
+	 * @return неформатированное сообщение
 	 */
 	public BundleMessage getBundleMessage() {
 		return message;

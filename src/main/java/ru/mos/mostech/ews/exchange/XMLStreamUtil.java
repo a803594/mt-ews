@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * XmlStreamReader utility methods
+ * Утилиты методов XmlStreamReader
  */
 @Slf4j
 public final class XMLStreamUtil {
@@ -26,8 +26,8 @@ public final class XMLStreamUtil {
 	}
 
 	/**
-	 * Build a new XMLInputFactory.
-	 * @return XML input factory
+	 * Создать новый XMLInputFactory.
+	 * @return XML-фаабрики ввода
 	 */
 	public static XMLInputFactory getXmlInputFactory() {
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -43,12 +43,14 @@ public final class XMLStreamUtil {
 	}
 
 	/**
-	 * Convert the XML stream to a map of entries. An entry is also a key/value map
-	 * @param inputStream xml input stream
-	 * @param rowName xml tag name of entries
-	 * @param idName xml tag name of entry attribute used as key in the main map
-	 * @return map of entries
-	 * @throws IOException on error
+	 * Преобразование XML-потока в карту записей. Запись также является картой
+	 * ключ/значение
+	 * @param inputStream xml входной поток
+	 * @param rowName имя тега xml записей
+	 * @param idName имя тега xml атрибута записи, используемого в качестве ключа в
+	 * основной карте
+	 * @return карта записей
+	 * @throws IOException в случае ошибки
 	 */
 	public static Map<String, Map<String, String>> getElementContentsAsMap(InputStream inputStream, String rowName,
 			String idName) throws IOException {
@@ -99,10 +101,10 @@ public final class XMLStreamUtil {
 	}
 
 	/**
-	 * Test if reader is on a start tag named tagLocalName.
-	 * @param reader xml stream reader
-	 * @param tagLocalName tag local name
-	 * @return true if reader is on a start tag named tagLocalName
+	 * Проверяет, находится ли считыватель на начале тега с именем tagLocalName.
+	 * @param reader xml потоковый считыватель
+	 * @param tagLocalName локальное имя тега
+	 * @return true, если считыватель находится на начале тега с именем tagLocalName
 	 */
 	public static boolean isStartTag(XMLStreamReader reader, String tagLocalName) {
 		return (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
@@ -110,19 +112,19 @@ public final class XMLStreamUtil {
 	}
 
 	/**
-	 * Test if reader is on a start tag.
-	 * @param reader xml stream reader
-	 * @return true if reader is on a start tag
+	 * Проверка, находится ли читалка на начальном теге.
+	 * @param reader xml потоковый читатель
+	 * @return true, если читалка находится на начальном теге
 	 */
 	public static boolean isStartTag(XMLStreamReader reader) {
 		return (reader.getEventType() == XMLStreamConstants.START_ELEMENT);
 	}
 
 	/**
-	 * Test if reader is on an end tag named tagLocalName.
-	 * @param reader xml stream reader
-	 * @param tagLocalName tag local name
-	 * @return true if reader is on an end tag named tagLocalName
+	 * Проверяет, находится ли reader на закрывающем теге с именем tagLocalName.
+	 * @param reader xml потоковый чтение
+	 * @param tagLocalName локальное имя тега
+	 * @return true, если reader находится на закрывающем теге с именем tagLocalName
 	 */
 	public static boolean isEndTag(XMLStreamReader reader, String tagLocalName) {
 		return (reader.getEventType() == XMLStreamConstants.END_ELEMENT)
@@ -130,20 +132,20 @@ public final class XMLStreamUtil {
 	}
 
 	/**
-	 * Create XML stream reader for byte array
-	 * @param xmlContent xml content as byte array
-	 * @return XML stream reader
-	 * @throws XMLStreamException on error
+	 * Создает XML потоковый обозреватель для массива байтов
+	 * @param xmlContent XML содержимое в виде массива байтов
+	 * @return XML потоковый обозреватель
+	 * @throws XMLStreamException в случае ошибки
 	 */
 	public static XMLStreamReader createXMLStreamReader(byte[] xmlContent) throws XMLStreamException {
 		return createXMLStreamReader(new ByteArrayInputStream(xmlContent));
 	}
 
 	/**
-	 * Create XML stream reader for string
-	 * @param xmlContent xml content as string
-	 * @return XML stream reader
-	 * @throws XMLStreamException on error
+	 * Создать XML потоковый ридер для строки
+	 * @param xmlContent XML содержимое в виде строки
+	 * @return XML потоковый ридер
+	 * @throws XMLStreamException в случае ошибки
 	 */
 	public static XMLStreamReader createXMLStreamReader(String xmlContent) throws XMLStreamException {
 		XMLInputFactory xmlInputFactory = XMLStreamUtil.getXmlInputFactory();
@@ -151,10 +153,10 @@ public final class XMLStreamUtil {
 	}
 
 	/**
-	 * Create XML stream reader for inputStream
-	 * @param inputStream xml content inputStream
-	 * @return XML stream reader
-	 * @throws XMLStreamException on error
+	 * Создать читатель XML потока для inputStream
+	 * @param inputStream xml содержимое inputStream
+	 * @return читатель XML потока
+	 * @throws XMLStreamException при ошибке
 	 */
 	public static XMLStreamReader createXMLStreamReader(InputStream inputStream) throws XMLStreamException {
 		XMLInputFactory xmlInputFactory = XMLStreamUtil.getXmlInputFactory();
@@ -162,9 +164,9 @@ public final class XMLStreamUtil {
 	}
 
 	/**
-	 * Get element text.
-	 * @param reader stream reader
-	 * @return element text
+	 * Получить текст элемента.
+	 * @param reader потоковый считыватель
+	 * @return текст элемента
 	 */
 	public static String getElementText(XMLStreamReader reader) {
 		String value = null;

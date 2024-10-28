@@ -11,7 +11,8 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
 /**
- * Override native SPNegoSchemeFactory to load MT-EWS specific Kerberos settings.
+ * Переопределите нативный SPNegoSchemeFactory для загрузки специфичных настроек Kerberos
+ * для MT-EWS.
  */
 public class MosTechEwsSPNegoSchemeFactory implements AuthSchemeFactory, AuthSchemeProvider {
 
@@ -20,7 +21,7 @@ public class MosTechEwsSPNegoSchemeFactory implements AuthSchemeFactory, AuthSch
 	private final boolean useCanonicalHostname;
 
 	/**
-	 * @since 4.4
+	 * @с 4.4
 	 */
 	public MosTechEwsSPNegoSchemeFactory(final boolean stripPort, final boolean useCanonicalHostname) {
 		super();

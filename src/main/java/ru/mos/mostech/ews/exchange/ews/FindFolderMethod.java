@@ -6,18 +6,18 @@ package ru.mos.mostech.ews.exchange.ews;
 import java.util.Set;
 
 /**
- * EWS Find Folder.
+ * Найти папку EWS.
  */
 public class FindFolderMethod extends EWSMethod {
 
 	/**
-	 * Find Exchange Folder.
-	 * @param traversal traversal type
-	 * @param baseShape base shape
-	 * @param parentFolderId parent folder id
-	 * @param additionalProperties folder properties
-	 * @param offset start offset
-	 * @param maxCount maximum result count
+	 * Найти папку обмена.
+	 * @param traversal тип обхода
+	 * @param baseShape исходная форма
+	 * @param parentFolderId идентификатор родительской папки
+	 * @param additionalProperties свойства папки
+	 * @param offset начальный смещение
+	 * @param maxCount максимальное количество результатов
 	 */
 	public FindFolderMethod(FolderQueryTraversal traversal, BaseShape baseShape, FolderId parentFolderId,
 			Set<FieldURI> additionalProperties, int offset, int maxCount) {
@@ -31,14 +31,14 @@ public class FindFolderMethod extends EWSMethod {
 	}
 
 	/**
-	 * Find Exchange Folder.
-	 * @param traversal traversal type
-	 * @param baseShape base shape
-	 * @param parentFolderId parent folder id
-	 * @param additionalProperties folder properties
-	 * @param searchExpression search expression
-	 * @param offset start offset
-	 * @param maxCount maximum result count
+	 * Найти папку обмена.
+	 * @param traversal тип обхода
+	 * @param baseShape базовая форма
+	 * @param parentFolderId идентификатор родительской папки
+	 * @param additionalProperties свойства папки
+	 * @param searchExpression выражение поиска
+	 * @param offset начальный смещение
+	 * @param maxCount максимальное количество результатов
 	 */
 	public FindFolderMethod(FolderQueryTraversal traversal, BaseShape baseShape, FolderId parentFolderId,
 			Set<FieldURI> additionalProperties, SearchExpression searchExpression, int offset, int maxCount) {

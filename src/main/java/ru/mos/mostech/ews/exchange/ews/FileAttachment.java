@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * File Attachment.
+ * Вложение файла.
  */
 public class FileAttachment {
 
@@ -22,17 +22,17 @@ public class FileAttachment {
 	protected boolean isContactPhoto;
 
 	/**
-	 * Default constructor
+	 * Конструктор по умолчанию
 	 */
 	public FileAttachment() {
 		// empty constructor
 	}
 
 	/**
-	 * Build file attachment.
-	 * @param name attachment name
-	 * @param contentType content type
-	 * @param content body as string
+	 * Создать вложение файла.
+	 * @param name имя вложения
+	 * @param contentType тип контента
+	 * @param content тело в виде строки
 	 */
 	public FileAttachment(String name, String contentType, String content) {
 		this.name = name;
@@ -41,9 +41,9 @@ public class FileAttachment {
 	}
 
 	/**
-	 * Write XML content to writer.
-	 * @param writer writer
-	 * @throws IOException on error
+	 * Записать содержимое XML в писатель.
+	 * @param writer писатель
+	 * @throws IOException в случае ошибки
 	 */
 	public void write(Writer writer) throws IOException {
 		writer.write("<t:FileAttachment>");
@@ -69,8 +69,8 @@ public class FileAttachment {
 	}
 
 	/**
-	 * Exchange 2010 only: set contact photo flag on attachment.
-	 * @param isContactPhoto contact photo flag
+	 * Exchange 2010 только: установить флаг фотографии контакта на вложении.
+	 * @param isContactPhoto флаг фотографии контакта
 	 */
 	public void setIsContactPhoto(boolean isContactPhoto) {
 		this.isContactPhoto = isContactPhoto;

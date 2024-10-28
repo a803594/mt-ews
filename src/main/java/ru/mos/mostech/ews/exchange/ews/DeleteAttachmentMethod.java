@@ -4,13 +4,13 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Delete attachment method.
+ * Метод удаления вложения.
  */
 public class DeleteAttachmentMethod extends EWSMethod {
 
 	/**
-	 * Delete attachment method.
-	 * @param attachmentId attachment id
+	 * Метод удаления вложения.
+	 * @param attachmentId идентификатор вложения
 	 */
 	public DeleteAttachmentMethod(String attachmentId) {
 		super("Item", "DeleteAttachment");

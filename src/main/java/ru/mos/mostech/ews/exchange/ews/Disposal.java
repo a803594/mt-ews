@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Disposal.
+ * Утилизация.
  */
 @SuppressWarnings({ "UnusedDeclaration" })
 public final class Disposal extends AttributeOption {

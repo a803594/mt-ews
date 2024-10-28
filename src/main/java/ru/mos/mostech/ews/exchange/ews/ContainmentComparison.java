@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Contains comparison mode.
+ * Содержит режим сравнения.
  */
 @SuppressWarnings({ "UnusedDeclaration" })
 public final class ContainmentComparison extends AttributeOption {

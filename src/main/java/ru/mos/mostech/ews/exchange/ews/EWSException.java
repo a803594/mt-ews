@@ -6,13 +6,13 @@ package ru.mos.mostech.ews.exchange.ews;
 import java.io.IOException;
 
 /**
- * EWS Exception
+ * Исключение EWS
  */
 public class EWSException extends IOException {
 
 	/**
-	 * Create EWS Exception with detailed error message
-	 * @param message error message
+	 * Создать исключение EWS с детальным сообщением об ошибке
+	 * @param message сообщение об ошибке
 	 */
 	public EWSException(String message) {
 		super(message);

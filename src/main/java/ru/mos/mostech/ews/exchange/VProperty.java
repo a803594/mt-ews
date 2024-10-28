@@ -6,7 +6,7 @@ package ru.mos.mostech.ews.exchange;
 import java.util.*;
 
 /**
- * VCard property
+ * Свойство VCard
  */
 public class VProperty {
 
@@ -54,9 +54,9 @@ public class VProperty {
 	protected List<String> values;
 
 	/**
-	 * Create VProperty for key and value.
-	 * @param name property name
-	 * @param value property value
+	 * Создать VProperty для ключа и значения.
+	 * @param name имя свойства
+	 * @param value значение свойства
 	 */
 	public VProperty(String name, String value) {
 		setKey(name);
@@ -64,8 +64,8 @@ public class VProperty {
 	}
 
 	/**
-	 * Create VProperty from line.
-	 * @param line card line
+	 * Создать VProperty из строки.
+	 * @param line строка карты
 	 */
 	public VProperty(String line) {
 		if (line != null && !"END:VCARD".equals(line)) {
@@ -167,16 +167,16 @@ public class VProperty {
 	}
 
 	/**
-	 * Property key, without optional parameters (e.g. TEL).
-	 * @return key
+	 * Ключ свойства, без необязательных параметров (например, TEL).
+	 * @return ключ
 	 */
 	public String getKey() {
 		return key;
 	}
 
 	/**
-	 * Property value.
-	 * @return value
+	 * Значение свойства.
+	 * @return значение
 	 */
 	public String getValue() {
 		if (values == null || values.isEmpty()) {
@@ -188,16 +188,17 @@ public class VProperty {
 	}
 
 	/**
-	 * Property values.
-	 * @return values
+	 * Значения свойств.
+	 * @return значения
 	 */
 	public List<String> getValues() {
 		return values;
 	}
 
 	/**
-	 * Return property values as a map. Typical use for RRULE content
-	 * @return values as map
+	 * Возвращает значения свойств в виде карты. Типичное использование для содержимого
+	 * RRULE
+	 * @return значения в виде карты
 	 */
 	public Map<String, String> getValuesAsMap() {
 		HashMap<String, String> valuesMap = new HashMap<>();
@@ -214,10 +215,10 @@ public class VProperty {
 	}
 
 	/**
-	 * Test if the property has a param named paramName with given value.
-	 * @param paramName param name
-	 * @param paramValue param value
-	 * @return true if property has param name and value
+	 * Проверяет, есть ли у свойства параметр с именем paramName и заданным значением.
+	 * @param paramName имя параметра
+	 * @param paramValue значение параметра
+	 * @return true, если у свойства есть имя и значение параметра
 	 */
 	public boolean hasParam(String paramName, String paramValue) {
 		return params != null && getParam(paramName) != null
@@ -225,17 +226,17 @@ public class VProperty {
 	}
 
 	/**
-	 * Test if the property has a param named paramName.
-	 * @param paramName param name
-	 * @return true if property has param name
+	 * Проверяет, имеет ли свойство параметр с именем paramName.
+	 * @param paramName имя параметра
+	 * @return true, если свойство имеет имя параметра
 	 */
 	public boolean hasParam(String paramName) {
 		return params != null && getParam(paramName) != null;
 	}
 
 	/**
-	 * Remove param from property.
-	 * @param paramName param name
+	 * Удалить параметр из свойства.
+	 * @param paramName имя параметра
 	 */
 	public void removeParam(String paramName) {
 		if (params != null) {
@@ -256,10 +257,10 @@ public class VProperty {
 	}
 
 	/**
-	 * Add value to paramValues and return list, create list if null.
-	 * @param paramValues value list
-	 * @param value new value
-	 * @return updated value list
+	 * Добавить значение в paramValues и вернуть список, создать список, если null.
+	 * @param paramValues список значений
+	 * @param value новое значение
+	 * @return обновленный список значений
 	 */
 	protected List<String> addParamValue(List<String> paramValues, String value) {
 		List<String> result = paramValues;
@@ -275,9 +276,9 @@ public class VProperty {
 	}
 
 	/**
-	 * Set param value on property.
-	 * @param paramName param name
-	 * @param paramValue param value
+	 * Установить значение параметра в свойство.
+	 * @param paramName имя параметра
+	 * @param paramValue значение параметра
 	 */
 	public void setParam(String paramName, String paramValue) {
 		Param currentParam = getParam(paramName);
@@ -288,9 +289,9 @@ public class VProperty {
 	}
 
 	/**
-	 * Add param value on property.
-	 * @param paramName param name
-	 * @param paramValue param value
+	 * Добавить значение параметра в свойство.
+	 * @param paramName имя параметра
+	 * @param paramValue значение параметра
 	 */
 	public void addParam(String paramName, String paramValue) {
 		if (paramValue != null) {
@@ -325,9 +326,9 @@ public class VProperty {
 	}
 
 	/**
-	 * Return param value.
-	 * @param paramName param name
-	 * @return value
+	 * Вернуть значение параметра.
+	 * @param paramName имя параметра
+	 * @return значение
 	 */
 	public String getParamValue(String paramName) {
 		Param param = getParam(paramName);
@@ -422,8 +423,8 @@ public class VProperty {
 	}
 
 	/**
-	 * Set property key.
-	 * @param key property key
+	 * Установить ключ свойства.
+	 * @param key ключ свойства
 	 */
 	public void setKey(String key) {
 		int dotIndex = key.indexOf('.');
@@ -489,9 +490,9 @@ public class VProperty {
 	}
 
 	/**
-	 * Append and encode \n to \\n in value.
-	 * @param buffer line buffer
-	 * @param value value
+	 * Добавить и закодировать \n в \\n в значении.
+	 * @param buffer буфер строки
+	 * @param value значение
 	 */
 	protected void appendMultilineEncodedValue(StringBuilder buffer, String value) {
 		for (int i = 0; i < value.length(); i++) {

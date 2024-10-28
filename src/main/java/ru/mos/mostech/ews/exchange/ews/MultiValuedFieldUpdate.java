@@ -9,33 +9,33 @@ import java.io.Writer;
 import java.util.ArrayList;
 
 /**
- * Specific field update class to handle multiple attendee values
+ * Специальный класс обновления поля для обработки нескольких значений участников
  */
 public class MultiValuedFieldUpdate extends FieldUpdate {
 
 	ArrayList<String> values = new ArrayList<>();
 
 	/**
-	 * Create field update with value.
-	 * @param fieldURI target field
+	 * Создать обновление поля с значением.
+	 * @param fieldURI целевое поле
 	 */
 	public MultiValuedFieldUpdate(FieldURI fieldURI) {
 		this.fieldURI = fieldURI;
 	}
 
 	/**
-	 * Add single value
-	 * @param value value
+	 * Добавить одно значение
+	 * @param value значение
 	 */
 	public void addValue(String value) {
 		values.add(value);
 	}
 
 	/**
-	 * Write field to request writer.
-	 * @param itemType item type
-	 * @param writer request writer
-	 * @throws IOException on error
+	 * Записать поле в писатель запроса.
+	 * @param itemType тип элемента
+	 * @param writer писатель запроса
+	 * @throws IOException при ошибке
 	 */
 	@Override
 	public void write(String itemType, Writer writer) throws IOException {

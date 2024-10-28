@@ -21,8 +21,8 @@ import java.security.*;
 import java.util.ArrayList;
 
 /**
- * SSLSocketFactory implementation. Wrapper for DavGatewaySSLProtocolSocketFactory used by
- * HttpClient 4
+ * Реализация SSLSocketFactory. Обертка для DavGatewaySSLProtocolSocketFactory,
+ * используемая HttpClient 4
  */
 @Slf4j
 public class MosTechEwsSSLSocketFactory extends SSLSocketFactory {

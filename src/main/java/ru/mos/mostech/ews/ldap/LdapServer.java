@@ -10,18 +10,18 @@ import ru.mos.mostech.ews.Settings;
 import java.net.Socket;
 
 /**
- * LDAP server, handle LDAP directory requests.
+ * Сервер LDAP, обработка запросов к каталогу LDAP.
  */
 public class LdapServer extends AbstractServer {
 
 	/**
-	 * Default LDAP port
+	 * Порт по умолчанию для LDAP
 	 */
 	public static final int DEFAULT_PORT = 389;
 
 	/**
-	 * Create a ServerSocket to listen for connections. Start the thread.
-	 * @param port pop listen port, 389 if not defined (0)
+	 * Создайте ServerSocket для прослушивания подключений. Запустите поток.
+	 * @param port порт для прослушивания pop, 389, если не определён (0)
 	 */
 	public LdapServer(int port) {
 		super(LdapServer.class.getName(), port, LdapServer.DEFAULT_PORT);

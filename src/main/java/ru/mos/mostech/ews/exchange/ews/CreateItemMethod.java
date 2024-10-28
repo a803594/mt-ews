@@ -7,15 +7,15 @@ import org.apache.http.entity.AbstractHttpEntity;
 import ru.mos.mostech.ews.Settings;
 
 /**
- * Create Item method.
+ * Метод создания элемента.
  */
 public class CreateItemMethod extends EWSMethod {
 
 	/**
-	 * Create exchange item.
-	 * @param messageDisposition save or send option
-	 * @param savedItemFolderId saved item folder id
-	 * @param item item content
+	 * Создать элемент обмена.
+	 * @param messageDisposition опция сохранения или отправки
+	 * @param savedItemFolderId идентификатор папки сохранённых элементов
+	 * @param item содержимое элемента
 	 */
 	public CreateItemMethod(MessageDisposition messageDisposition, FolderId savedItemFolderId, EWSMethod.Item item) {
 		super("Item", "CreateItem");
@@ -27,11 +27,11 @@ public class CreateItemMethod extends EWSMethod {
 	}
 
 	/**
-	 * Create exchange item.
-	 * @param messageDisposition save or send option
-	 * @param sendMeetingInvitations send invitation option
-	 * @param savedItemFolderId saved item folder id
-	 * @param item item content
+	 * Создать элемент обмена.
+	 * @param messageDisposition опция сохранения или отправки
+	 * @param sendMeetingInvitations опция отправки приглашений
+	 * @param savedItemFolderId id папки сохраненных элементов
+	 * @param item содержание элемента
 	 */
 	public CreateItemMethod(MessageDisposition messageDisposition, SendMeetingInvitations sendMeetingInvitations,
 			FolderId savedItemFolderId, EWSMethod.Item item) {

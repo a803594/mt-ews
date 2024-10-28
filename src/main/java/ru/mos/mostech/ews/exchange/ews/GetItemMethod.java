@@ -4,15 +4,15 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Get Item method.
+ * Метод получения элемента.
  */
 public class GetItemMethod extends EWSMethod {
 
 	/**
-	 * Get item method.
-	 * @param baseShape base requested shape
-	 * @param itemId item id
-	 * @param includeMimeContent return mime content
+	 * Метод получения элемента.
+	 * @param baseShape запрашиваемая базовая форма
+	 * @param itemId идентификатор элемента
+	 * @param includeMimeContent возвращать mime содержимое
 	 */
 	public GetItemMethod(BaseShape baseShape, ItemId itemId, boolean includeMimeContent) {
 		super("Item", "GetItem");

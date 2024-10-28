@@ -8,11 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * A BER encoder.
- *
- * @author Jagane Sundar
- * @author Scott Seligman
- * @author Vincent Ryan
+ * Кодировщик BER.
  */
 public final class BerEncoder extends Ber {
 
@@ -28,16 +24,16 @@ public final class BerEncoder extends Ber {
 	private static final int BUF_GROWTH_FACTOR = 8;
 
 	/**
-	 * Creates a BER buffer for encoding.
+	 * Создает BER-буфер для кодирования.
 	 */
 	public BerEncoder() {
 		this(DEFAULT_BUFSIZE);
 	}
 
 	/**
-	 * Creates a BER buffer of a specified size for encoding. Specify the initial bufsize.
-	 * Buffer will be expanded as needed.
-	 * @param bufsize The number of bytes for the buffer.
+	 * Создает BER-буфер заданного размера для кодирования. Укажите начальный размер
+	 * буфера. Буфер будет расширен по мере необходимости.
+	 * @param bufsize Количество байт для буфера.
 	 */
 	public BerEncoder(int bufsize) {
 		buf = new byte[bufsize];
@@ -49,7 +45,8 @@ public final class BerEncoder extends Ber {
 	}
 
 	/**
-	 * Resets encoder to state when newly constructed. Zeros out internal data structures.
+	 * Сбрасывает кодировщик в состояние, когда он был вновь сконструирован. Обнуляет
+	 * внутренние структуры данных.
 	 */
 	public void reset() {
 		while (offset > 0) {
@@ -63,18 +60,19 @@ public final class BerEncoder extends Ber {
 	// ------------------ Accessor methods ------------
 
 	/**
-	 * Gets the number of encoded bytes in this BER buffer.
+	 * Получает количество закодированных байт в этом BER буфере.
 	 */
 	public int getDataLen() {
 		return offset;
 	}
 
 	/**
-	 * Gets the buffer that contains the BER encoding. Throws an exception if unmatched
-	 * beginSeq() and endSeq() pairs were encountered. Not entire buffer contains encoded
-	 * bytes. Use getDataLen() to determine number of encoded bytes. Use getBuffer(true)
-	 * to get rid of excess bytes in array.
-	 * @throws IllegalStateException If buffer contains unbalanced sequence.
+	 * Получает буфер, содержащий кодировку BER. Выбрасывает исключение, если встречены
+	 * несоответствующие пары beginSeq() и endSeq(). Весь буфер не содержит закодированные
+	 * байты. Используйте getDataLen(), чтобы определить количество закодированных байтов.
+	 * Используйте getBuffer(true), чтобы избавиться от лишних байтов в массиве.
+	 * @throws IllegalStateException Если буфер содержит несбалансированную
+	 * последовательность.
 	 */
 	public byte[] getBuf() {
 		if (curSeqIndex != 0) {
@@ -84,8 +82,9 @@ public final class BerEncoder extends Ber {
 	}
 
 	/**
-	 * Gets the buffer that contains the BER encoding, trimming unused bytes.
-	 * @throws IllegalStateException If buffer contains unbalanced sequence.
+	 * Получает буфер, содержащий кодирование BER, обрезая неиспользуемые байты.
+	 * @throws IllegalStateException Если буфер содержит несбалансированную
+	 * последовательность.
 	 */
 	@SuppressWarnings("unused")
 	public byte[] getTrimmedBuf() {
@@ -99,7 +98,7 @@ public final class BerEncoder extends Ber {
 	// -------------- encoding methods -------------
 
 	/**
-	 * Begin encoding a sequence with a tag.
+	 * Начало кодирования последовательности с тегом.
 	 */
 	public void beginSeq(int tag) {
 
@@ -126,7 +125,7 @@ public final class BerEncoder extends Ber {
 	}
 
 	/**
-	 * Terminate a BER sequence.
+	 * Завершить последовательность BER.
 	 */
 	public void endSeq() throws EncodeException {
 		curSeqIndex--;
@@ -164,8 +163,8 @@ public final class BerEncoder extends Ber {
 	}
 
 	/**
-	 * Shifts contents of buf in the range [start,start+len) a specified amount. Positive
-	 * shift value means shift to the right.
+	 * Сдвигает содержимое buf в диапазоне [start,start+len) на заданное значение.
+	 * Положительное значение сдвига означает смещение вправо.
 	 */
 	private void shiftSeqData(int start, int len, int shift) {
 		if (shift > 0) {
@@ -176,7 +175,7 @@ public final class BerEncoder extends Ber {
 	}
 
 	/**
-	 * Encode a single byte.
+	 * Закодировать один байт.
 	 */
 	public void encodeByte(int b) {
 		ensureFreeBytes(1);
@@ -184,20 +183,20 @@ public final class BerEncoder extends Ber {
 	}
 
 	/*
-	 * private void deleteByte() { offset--; }
+	 * private void deleteByte() { offset--; } Удалить байт
 	 */
 
 	/*
-	 * Encodes an int. <blockquote><pre> BER integer ::= 0x02 berlength byte {byte}*
-	 * </pre></blockquote>
+	 * Кодирует целое число. <blockquote><pre> BER целое число ::= 0x02 berlength байт
+	 * {байт}* </pre></blockquote>
 	 */
 	public void encodeInt(int i) {
 		encodeInt(i, 0x02);
 	}
 
 	/**
-	 * Encodes an int and a tag. <blockquote><pre>
-	 * BER integer w tag ::= tag berlength byte {byte}*
+	 * Кодирует целое число и тег. <blockquote><pre>
+	 * Целое число BER с тегом ::= тег длина ber байт {байт}*
 	 *</pre></blockquote>
 	 */
 	public void encodeInt(int i, int tag) {
@@ -239,8 +238,8 @@ public final class BerEncoder extends Ber {
 	}
 
 	/**
-	 * Encodes a boolean. <blockquote><pre>
-	 * BER boolean ::= 0x01 0x01 {0xff|0x00}
+	 * Кодирует булевое значение. <blockquote><pre>
+	 * BER булевое значение ::= 0x01 0x01 {0xff|0x00}
 	 *</pre></blockquote>
 	 */
 	@SuppressWarnings("unused")
@@ -249,8 +248,8 @@ public final class BerEncoder extends Ber {
 	}
 
 	/**
-	 * Encodes a boolean and a tag <blockquote><pre>
-	 * BER boolean w TAG ::= tag 0x01 {0xff|0x00}
+	 * Кодирует булево значение и тег <blockquote><pre>
+	 * BER булево w ТЕГ ::= тег 0x01 {0xff|0x00}
 	 *</pre></blockquote>
 	 */
 	public void encodeBoolean(boolean b, int tag) {
@@ -262,17 +261,17 @@ public final class BerEncoder extends Ber {
 	}
 
 	/**
-	 * Encodes a string. <blockquote><pre>
-	 * BER string ::= 0x04 strlen byte1 byte2...
-	 *</pre></blockquote> The string is converted into bytes using UTF-8 or ISO-Latin-1.
+	 * Кодирует строку. <blockquote><pre>
+	 * BER строка ::= 0x04 длина_строки байт1 байт2...
+	 *</pre></blockquote> Строка переводится в байты, используя UTF-8 или ISO-Latin-1.
 	 */
 	public void encodeString(String str, boolean encodeUTF8) throws EncodeException {
 		encodeString(str, ASN_OCTET_STR, encodeUTF8);
 	}
 
 	/**
-	 * Encodes a string and a tag. <blockquote><pre>
-	 * BER string w TAG ::= tag strlen byte1 byte2...
+	 * Кодирует строку и тег. <blockquote><pre>
+	 * Строка BER с ТЕГОМ ::= тег длина_строки байт1 байт2...
 	 *</pre></blockquote>
 	 */
 	public void encodeString(String str, int tag, boolean encodeUTF8) throws EncodeException {
@@ -309,7 +308,7 @@ public final class BerEncoder extends Ber {
 	}
 
 	/**
-	 * Encodes a portion of an octet string and a tag.
+	 * Кодирует часть октетной строки и тег.
 	 */
 	public void encodeOctetString(byte[] tb, int tag, int tboffset, int length) throws EncodeException {
 
@@ -324,7 +323,7 @@ public final class BerEncoder extends Ber {
 	}
 
 	/**
-	 * Encodes an octet string and a tag.
+	 * Кодирует строку октетов и тег.
 	 */
 	public void encodeOctetString(byte[] tb, int tag) throws EncodeException {
 		encodeOctetString(tb, tag, 0, tb.length);
@@ -357,7 +356,7 @@ public final class BerEncoder extends Ber {
 	}
 
 	/**
-	 * Encodes an array of strings.
+	 * Кодирует массив строк.
 	 */
 	@SuppressWarnings("unused")
 	public void encodeStringArray(String[] strs, boolean encodeUTF8) throws EncodeException {
@@ -367,16 +366,12 @@ public final class BerEncoder extends Ber {
 			encodeString(str, encodeUTF8);
 		}
 	}
-	/*
-	 * private void encodeNull() {
-	 *
-	 * // // NULL ::= 0x05 0x00 // encodeByte(0x05); encodeByte(0x00); }
-	 */
 
 	/**
-	 * Ensures that there are at least "len" unused bytes in "buf". When more space is
-	 * needed "buf" is expanded by a factor of BUF_GROWTH_FACTOR, then "len" bytes are
-	 * added if "buf" still isn't large enough.
+	 * Обеспечивает наличие как минимум "len" неиспользуемых байтов в "buf". Если
+	 * требуется больше места, "buf" увеличивается в размере на коэффициент
+	 * BUF_GROWTH_FACTOR, после чего добавляется "len" байт, если "buf" всё еще не
+	 * достаточно велик.
 	 */
 	private void ensureFreeBytes(int len) {
 		if (bufsize - offset < len) {

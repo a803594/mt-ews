@@ -10,13 +10,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 /**
- * ConvertId implementation to retrieve primary mailbox address
+ * Реализация ConvertId для получения основного адреса почтового ящика
  */
 public class ConvertIdMethod extends EWSMethod {
 
 	/**
-	 * Build Resolve Names method
-	 * @param value search value
+	 * Метод построения разрешения имен
+	 * @param value значение для поиска
 	 */
 	public ConvertIdMethod(String value) {
 		super("SourceIds", "ConvertId", "ResponseMessages");

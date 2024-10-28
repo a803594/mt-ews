@@ -59,7 +59,7 @@ import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 /**
- * Webdav Exchange adapter. Compatible with Exchange 2003 and 2007 with webdav available.
+ * Адаптер Webdav для Exchange. Совместим с Exchange 2003 и 2007 с доступным webdav.
  */
 @SuppressWarnings("rawtypes")
 @Slf4j
@@ -103,12 +103,12 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * HttpClient 4 adapter to replace httpClient
+	 * Адаптер HttpClient 4 для замены httpClient
 	 */
 	private HttpClientAdapter httpClientAdapter;
 
 	/**
-	 * Various standard mail boxes Urls
+	 * Различные стандартные URL почтовых ящиков
 	 */
 	protected String inboxUrl;
 
@@ -149,7 +149,7 @@ public class WebdavExchangeSession extends ExchangeSession {
 	protected static final String USERS = "/users/";
 
 	/**
-	 * HttpClient4 conversion. TODO: move up to ExchangeSession
+	 * Преобразование HttpClient4. TODO: переместить выше в ExchangeSession
 	 */
 	protected void getEmailAndAliasFromOptions() {
 		// get user mail URL from html body
@@ -180,8 +180,8 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Create a separate Http context to protect session cookies.
-	 * @return HttpClientContext instance with cookies
+	 * Создать отдельный Http контекст для защиты куки сессий.
+	 * @return экземпляр HttpClientContext с куками
 	 */
 	private HttpClientContext cloneContext() {
 		// Create a local context to avoid cookie reset on error
@@ -209,9 +209,9 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Convert logical or relative folder path to exchange folder path.
-	 * @param folderPath folder name
-	 * @return folder path
+	 * Преобразовать логический или относительный путь к папке в путь к папке обмена.
+	 * @param folderPath имя папки
+	 * @return путь к папке
 	 */
 	public String getFolderPath(String folderPath) {
 		String exchangeFolderPath;
@@ -297,9 +297,9 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Test if folderPath is inside user mailbox.
-	 * @param folderPath absolute folder path
-	 * @return true if folderPath is a public or shared folder
+	 * Проверяет, находится ли folderPath в почтовом ящике пользователя.
+	 * @param folderPath абсолютный путь к папке
+	 * @return true, если folderPath является публичной или общей папкой
 	 */
 	@Override
 	public boolean isSharedFolder(String folderPath) {
@@ -307,9 +307,9 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Test if folderPath is main calendar.
-	 * @param folderPath absolute folder path
-	 * @return true if folderPath is a public or shared folder
+	 * Проверяет, является ли folderPath основным календарем.
+	 * @param folderPath абсолютный путь к папке
+	 * @return true, если folderPath является публичной или общей папкой
 	 */
 	@Override
 	public boolean isMainCalendar(String folderPath) {
@@ -317,8 +317,8 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Build base path for cmd commands (galfind, gallookup).
-	 * @return cmd base path
+	 * Построить базовый путь для команд cmd (galfind, gallookup).
+	 * @return базовый путь cmd
 	 */
 	public String getCmdBasePath() {
 		if (("Exchange2003".equals(serverVersion) || PUBLIC_ROOT.equals(publicFolderUrl)) && mailPath != null) {
@@ -333,7 +333,7 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * LDAP to Exchange Criteria Map
+	 * Карта критериев LDAP к Exchange
 	 */
 	static final HashMap<String, String> GALFIND_CRITERIA_MAP = new HashMap<>();
 
@@ -364,7 +364,7 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Exchange to LDAP attribute map
+	 * Соответствие атрибутов LDAP
 	 */
 	static final HashMap<String, String> GALFIND_ATTRIBUTE_MAP = new HashMap<>();
 
@@ -521,9 +521,9 @@ public class WebdavExchangeSession extends ExchangeSession {
 	private boolean disableGalLookup;
 
 	/**
-	 * Get extended address book information for person with gallookup. Does not work with
-	 * Exchange 2007
-	 * @param contact galfind contact
+	 * Получить расширенную информацию из адресной книги для человека с gallookup. Не
+	 * работает с Exchange 2007
+	 * @param contact galfind контакт
 	 */
 	public void galLookup(Contact contact) {
 		if (!disableGalLookup) {
@@ -589,9 +589,9 @@ public class WebdavExchangeSession extends ExchangeSession {
 	static final String BASE_HREF = "<base href=\"";
 
 	/**
-	 * Exchange 2003: get mailPath from welcome page
-	 * @param uri current uri
-	 * @return mail path from body
+	 * Exchange 2003: получить mailPath со страницы приветствия
+	 * @param uri текущий uri
+	 * @return mail path из тела
 	 */
 	protected String getMailpathFromWelcomePage(java.net.URI uri) {
 		String welcomePageMailPath = null;
@@ -663,8 +663,8 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Determine user email through various means.
-	 * @param hostName Exchange server host name for last failover
+	 * Определить адрес электронной почты пользователя различными способами.
+	 * @param hostName Имя узла сервера Exchange для последнего переключения после сбоя
 	 */
 	public void buildEmail(String hostName) {
 		String mailBoxPath = getMailboxPath();
@@ -722,8 +722,8 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Get user alias from mailbox display name over Webdav.
-	 * @return user alias
+	 * Получить алиас пользователя из отображаемого имени почтового ящика через Webdav.
+	 * @return алиас пользователя
 	 */
 	public String getAliasFromMailboxDisplayName() {
 		if (mailPath == null) {
@@ -746,8 +746,8 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Get current Exchange alias name from mailbox name
-	 * @return user name
+	 * Получить текущее имя alias Exchange из имени почтового ящика
+	 * @return имя пользователя
 	 */
 	protected String getMailboxPath() {
 		if (mailPath == null) {
@@ -764,9 +764,9 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Get user email from global address list (galfind).
-	 * @param alias user alias
-	 * @return user email
+	 * Получить email пользователя из глобального адресного списка (galfind).
+	 * @param alias алиас пользователя
+	 * @return email пользователя
 	 */
 	public String getEmail(String alias) {
 		String emailResult = null;
@@ -1153,9 +1153,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		}
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public class Message extends ExchangeSession.Message {
 
 		@Override
@@ -1196,16 +1193,13 @@ public class WebdavExchangeSession extends ExchangeSession {
 
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public class Contact extends ExchangeSession.Contact {
 
 		/**
-		 * Build Contact instance from multistatusResponse info
-		 * @param multiStatusResponse response
-		 * @throws IOException on error
-		 * @throws MosTechEwsException on error
+		 * Создает экземпляр Contact из информации multistatusResponse
+		 * @param multiStatusResponse ответ
+		 * @throws IOException в случае ошибки
+		 * @throws MosTechEwsException в случае ошибки
 		 */
 		public Contact(MultiStatusResponse multiStatusResponse) throws IOException, MosTechEwsException {
 			setHref(URIUtil.decode(multiStatusResponse.getHref()));
@@ -1234,7 +1228,7 @@ public class WebdavExchangeSession extends ExchangeSession {
 		}
 
 		/**
-		 * Default constructor for galFind
+		 * Конструктор по умолчанию для galFind
 		 */
 		public Contact() {
 		}
@@ -1271,9 +1265,9 @@ public class WebdavExchangeSession extends ExchangeSession {
 		}
 
 		/**
-		 * Create or update contact
-		 * @return action result
-		 * @throws IOException on error
+		 * Создать или обновить контакт
+		 * @return результат действия
+		 * @throws IOException в случае ошибки
 		 */
 		@Override
 		public ItemResult createOrUpdate() throws IOException {
@@ -1404,17 +1398,14 @@ public class WebdavExchangeSession extends ExchangeSession {
 
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public class Event extends ExchangeSession.Event {
 
 		protected String instancetype;
 
 		/**
-		 * Build Event instance from response info.
-		 * @param multiStatusResponse response
-		 * @throws IOException on error
+		 * Создать экземпляр события из информации ответа.
+		 * @param multiStatusResponse ответ
+		 * @throws IOException при ошибке
 		 */
 		public Event(MultiStatusResponse multiStatusResponse) throws IOException {
 			setHref(URIUtil.decode(multiStatusResponse.getHref()));
@@ -1447,10 +1438,10 @@ public class WebdavExchangeSession extends ExchangeSession {
 		}
 
 		/**
-		 * Load ICS content from Exchange server. User Translate: f header to get MIME
-		 * event content and get ICS attachment from it
-		 * @return ICS (iCalendar) event
-		 * @throws IOException on error
+		 * Загружает контент ICS с сервера Exchange. Пользователь переводит: f заголовок,
+		 * чтобы получить MIME контент события и получить ICS вложение из него
+		 * @return ICS (iCalendar) событие
+		 * @throws IOException при ошибке
 		 */
 		@Override
 		public byte[] getEventContent() throws IOException {
@@ -1488,9 +1479,9 @@ public class WebdavExchangeSession extends ExchangeSession {
 			}
 			// debug code
 			/*
-			 * if (new String(result).indexOf("VTODO") < 0) { log.debug("Original body: "
+			 * if (new String(result).indexOf("VTODO") < 0) { log.debug("Исходное тело: "
 			 * + new String(result)); result = getICSFromItemProperties();
-			 * log.debug("Rebuilt body: " + new String(result)); }
+			 * log.debug("Перестроенное тело: " + new String(result)); }
 			 */
 
 			return result;
@@ -1712,9 +1703,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 			}
 		}
 
-		/**
-		 * @inheritDoc
-		 */
 		@Override
 		public ItemResult createOrUpdate() throws IOException {
 			ItemResult itemResult = new ItemResult();
@@ -1953,9 +1941,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		}
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	protected Folder internalGetFolder(String folderPath) throws IOException {
 		MultiStatus multiStatus = httpClientAdapter.executeDavRequest(
@@ -1970,9 +1955,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		return folder;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public List<Folder> getSubFolders(String folderPath, Condition condition, boolean recursive) throws IOException {
 		boolean isPublic = folderPath.startsWith("/public");
@@ -1992,9 +1974,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		return folders;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public int createFolder(String folderPath, String folderClass, Map<String, String> properties) throws IOException {
 		Set<PropertyValue> propertyValues = new HashSet<>();
@@ -2032,9 +2011,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		return status;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public int updateFolder(String folderPath, Map<String, String> properties) throws IOException {
 		Set<PropertyValue> propertyValues = new HashSet<>();
@@ -2062,9 +2038,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		}
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void deleteFolder(String folderPath) throws IOException {
 		HttpDelete httpDelete = new HttpDelete(URIUtil.encodePath(getFolderPath(folderPath)));
@@ -2076,9 +2049,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		}
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void moveFolder(String folderPath, String targetPath) throws IOException {
 		HttpMove httpMove = new HttpMove(URIUtil.encodePath(getFolderPath(folderPath)),
@@ -2098,9 +2068,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		}
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void moveItem(String sourcePath, String targetPath) throws IOException {
 		HttpMove httpMove = new HttpMove(URIUtil.encodePath(getFolderPath(sourcePath)),
@@ -2264,9 +2231,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		return messages;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public List<ExchangeSession.Contact> searchContacts(String folderPath, Set<String> attributes, Condition condition,
 			int maxCount) throws IOException {
@@ -2282,7 +2246,7 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Common item properties
+	 * Общие свойства элемента
 	 */
 	protected static final Set<String> ITEM_PROPERTIES = new HashSet<>();
 
@@ -2301,9 +2265,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		return ITEM_PROPERTIES;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public List<ExchangeSession.Event> getEventMessages(String folderPath) throws IOException {
 		return searchEvents(folderPath, ITEM_PROPERTIES,
@@ -2601,7 +2562,7 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * create a fake event to get VTIMEZONE body
+	 * создать фиктивное событие для получения тела VTIMEZONE
 	 */
 	@Override
 	protected void loadVtimezone() {
@@ -2777,13 +2738,13 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Create message in specified folder. Will overwrite an existing message with same
-	 * messageName in the same folder
-	 * @param folderPath Exchange folder path
-	 * @param messageName message name
-	 * @param properties message properties (flags)
-	 * @param mimeMessage MIME message
-	 * @throws IOException when unable to create message
+	 * Создает сообщение в указанной папке. Перезапишет существующее сообщение с тем же
+	 * именем сообщения в той же папке
+	 * @param folderPath Путь к папке Exchange
+	 * @param messageName Имя сообщения
+	 * @param properties Свойства сообщения (флаги)
+	 * @param mimeMessage MIME-сообщение
+	 * @throws IOException если невозможно создать сообщение
 	 */
 	@Override
 	public Message createMessage(String folderPath, String messageName, Map<String, String> properties,
@@ -2933,9 +2894,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		return null;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void updateMessage(ExchangeSession.Message message, Map<String, String> properties) throws IOException {
 		HttpProppatch patchMethod = new HttpProppatch(encodeAndFixUrl(message.permanentUrl),
@@ -2954,9 +2912,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		}
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void deleteMessage(ExchangeSession.Message message) throws IOException {
 		log.debug("Delete " + message.permanentUrl + " (" + message.messageUrl + ')');
@@ -2970,9 +2925,9 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Send message.
-	 * @param messageBody MIME message body
-	 * @throws IOException on error
+	 * Отправить сообщение.
+	 * @param messageBody MIME тело сообщения
+	 * @throws IOException в случае ошибки
 	 */
 	public void sendMessage(byte[] messageBody) throws IOException {
 		try {
@@ -3029,9 +2984,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 	// wrong hostname fix flag
 	protected boolean restoreHostName;
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	protected byte[] getContent(ExchangeSession.Message message) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -3151,11 +3103,11 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * sometimes permanenturis inside items are wrong after an Exchange version migration
-	 * need to restore base uri to actual public Exchange uri
-	 * @param url input uri
-	 * @return fixed uri
-	 * @throws IOException on error
+	 * иногда permanenturis внутри элементов неверны после миграции версии Exchange нужно
+	 * восстановить базовый uri до текущего публичного uri Exchange
+	 * @param url входной uri
+	 * @return исправленный uri
+	 * @throws IOException при ошибке
 	 */
 	protected String encodeAndFixUrl(String url) throws IOException {
 		String fixedurl = URIUtil.encodePath(url);
@@ -3227,9 +3179,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		return inputStream;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void moveMessage(ExchangeSession.Message message, String targetFolder) throws IOException {
 		try {
@@ -3260,9 +3209,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 		}
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void copyMessage(ExchangeSession.Message message, String targetFolder) throws IOException {
 		try {
@@ -3389,9 +3335,9 @@ public class WebdavExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Format date to exchange search format.
-	 * @param date date object
-	 * @return formatted search date
+	 * Форматировать дату в формат поиска для обмена.
+	 * @param date объект даты
+	 * @return отформатированная дата для поиска
 	 */
 	@Override
 	public String formatSearchDate(Date date) {

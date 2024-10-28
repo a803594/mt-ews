@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Item or folder base shape.
+ * Основная форма элемента или папки.
  */
 @SuppressWarnings({ "UnusedDeclaration" })
 public final class BaseShape extends ElementOption {
@@ -14,17 +14,17 @@ public final class BaseShape extends ElementOption {
 	}
 
 	/**
-	 * Return id only.
+	 * Возврат только id.
 	 */
 	public static final BaseShape ID_ONLY = new BaseShape("IdOnly");
 
 	/**
-	 * Return default properties.
+	 * Возврат свойств по умолчанию.
 	 */
 	public static final BaseShape DEFAULT = new BaseShape("Default");
 
 	/**
-	 * Return all properties, except MAPI extended properties.
+	 * Вернуть все свойства, за исключением расширенных свойств MAPI.
 	 */
 	public static final BaseShape ALL_PROPERTIES = new BaseShape("AllProperties");
 

@@ -24,8 +24,8 @@ public class O365ManualAuthenticatorDialog extends JDialog {
 	protected String code;
 
 	/**
-	 * Get Oauth authentication code.
-	 * @return authentication code
+	 * Получить код аутентификации Oauth.
+	 * @return код аутентификации
 	 */
 	public String getCode() {
 		if (code != null && code.contains("code=") && code.contains("&session_state=")) {
@@ -35,8 +35,8 @@ public class O365ManualAuthenticatorDialog extends JDialog {
 	}
 
 	/**
-	 * Get credentials.
-	 * @param initUrl Kerberos prompt from callback handler
+	 * Получить учетные данные.
+	 * @param initUrl Подсказка Kerberos от обработчика обратного вызова
 	 */
 	public O365ManualAuthenticatorDialog(String initUrl) {
 		setAlwaysOnTop(true);

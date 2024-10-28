@@ -7,13 +7,13 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 
 /**
- * HttpResponseException with 500 internal server error status.
+ * Исключение HttpResponse с статусом 500 внутренней ошибки сервера.
  */
 public class HttpServerErrorException extends HttpResponseException {
 
 	/**
-	 * HttpResponseException with 500 internal server error status.
-	 * @param message exception message
+	 * Исключение HttpResponseException с кодом состояния 500 - внутренняя ошибка сервера.
+	 * @param message сообщение исключения
 	 */
 	public HttpServerErrorException(String message) {
 		super(HttpStatus.SC_INTERNAL_SERVER_ERROR, message);

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Field update
+ * Обновление поля
  */
 public class FieldUpdate {
 
@@ -16,9 +16,9 @@ public class FieldUpdate {
 	String value;
 
 	/**
-	 * Create field update with value.
-	 * @param fieldURI target field
-	 * @param value field value
+	 * Создать обновление поля с заданным значением.
+	 * @param fieldURI целевое поле
+	 * @param value значение поля
 	 */
 	public FieldUpdate(FieldURI fieldURI, String value) {
 		this.fieldURI = fieldURI;
@@ -30,10 +30,10 @@ public class FieldUpdate {
 	}
 
 	/**
-	 * Write field to request writer.
-	 * @param itemType item type
-	 * @param writer request writer
-	 * @throws IOException on error
+	 * Записать поле в писатель запроса.
+	 * @param itemType тип элемента
+	 * @param writer писатель запроса
+	 * @throws IOException при ошибке
 	 */
 	public void write(String itemType, Writer writer) throws IOException {
 		String action;

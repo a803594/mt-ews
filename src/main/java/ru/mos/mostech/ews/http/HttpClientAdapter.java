@@ -98,9 +98,9 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * Test if the response is gzip encoded
-	 * @param response http response
-	 * @return true if response is gzip encoded
+	 * Проверка, закодирован ли ответ в формате gzip
+	 * @param response http ответ
+	 * @return true, если ответ закодирован в формате gzip
 	 */
 	public static boolean isGzipEncoded(HttpResponse response) {
 		Header header = response.getFirstHeader("Content-Encoding");
@@ -242,24 +242,24 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * Get current uri host
-	 * @return current host
+	 * Получить текущий хост uri
+	 * @return текущий хост
 	 */
 	public String getHost() {
 		return uri.getHost();
 	}
 
 	/**
-	 * Force current uri.
-	 * @param uri new uri
+	 * Принудительно установить текущий URI.
+	 * @param uri новый URI
 	 */
 	public void setUri(URI uri) {
 		this.uri = uri;
 	}
 
 	/**
-	 * Current uri.
-	 * @return current uri
+	 * Текущий URI.
+	 * @return текущий URI
 	 */
 	public URI getUri() {
 		return uri;
@@ -322,9 +322,9 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * Retrieve Proxy Selector
-	 * @param uri target uri
-	 * @return proxy selector
+	 * Получить селектор прокси
+	 * @param uri целевой uri
+	 * @return селектор прокси
 	 */
 	private static List<Proxy> getProxyForURI(java.net.URI uri) {
 		log.debug("get Default proxy selector");
@@ -371,23 +371,23 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * Execute request, do not follow redirects. if request is an instance of
-	 * ResponseHandler, process and close response
-	 * @param request Http request
-	 * @return Http response
-	 * @throws IOException on error
+	 * Выполнить запрос, не следуя за редиректами. Если запрос является экземпляром
+	 * ResponseHandler, обработать и закрыть ответ
+	 * @param request HTTP запрос
+	 * @return HTTP ответ
+	 * @throws IOException в случае ошибки
 	 */
 	public CloseableHttpResponse execute(HttpRequestBase request) throws IOException {
 		return execute(request, null);
 	}
 
 	/**
-	 * Execute request, do not follow redirects. if request is an instance of
-	 * ResponseHandler, process and close response
-	 * @param request Http request
-	 * @param context Http request context
-	 * @return Http response
-	 * @throws IOException on error
+	 * Выполните запрос, не следуя перенаправлениям. Если запрос является экземпляром
+	 * ResponseHandler, обработайте и закройте ответ
+	 * @param request HTTP-запрос
+	 * @param context Контекст HTTP-запроса
+	 * @return HTTP-ответ
+	 * @throws IOException в случае ошибки
 	 */
 	public CloseableHttpResponse execute(HttpRequestBase request, HttpClientContext context) throws IOException {
 		// make sure request path is absolute
@@ -397,8 +397,8 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * fix relative uri and update current uri.
-	 * @param request http request
+	 * исправить относительный URI и обновить текущий URI.
+	 * @param request http запрос
 	 */
 	private void handleURI(HttpRequestBase request) {
 		URI requestURI = request.getURI();
@@ -452,10 +452,10 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * Execute get request and return response body as string.
-	 * @param getRequest get request
-	 * @return response body
-	 * @throws IOException on error
+	 * Выполните GET-запрос и верните тело ответа в виде строки.
+	 * @param getRequest GET-запрос
+	 * @return тело ответа
+	 * @throws IOException в случае ошибки
 	 */
 	public String executeGetRequest(GetRequest getRequest) throws IOException {
 		handleURI(getRequest);
@@ -467,10 +467,10 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * Execute post request and return response body as string.
-	 * @param postRequest post request
-	 * @return response body
-	 * @throws IOException on error
+	 * Выполнить POST-запрос и вернуть тело ответа в виде строки.
+	 * @param postRequest POST-запрос
+	 * @return тело ответа
+	 * @throws IOException при ошибке
 	 */
 	public String executePostRequest(PostRequest postRequest) throws IOException {
 		handleURI(postRequest);
@@ -491,10 +491,10 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * Execute WebDav request
-	 * @param request WebDav request
-	 * @return multistatus response
-	 * @throws IOException on error
+	 * Выполнить запрос WebDav
+	 * @param request Запрос WebDav
+	 * @return ответ multistatus
+	 * @throws IOException в случае ошибки
 	 */
 	public MultiStatus executeDavRequest(BaseDavRequest request) throws IOException {
 		handleURI(request);
@@ -513,10 +513,10 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * Execute Exchange WebDav request
-	 * @param request WebDav request
-	 * @return multistatus response
-	 * @throws IOException on error
+	 * Выполнить запрос WebDav Exchange
+	 * @param request Запрос WebDav
+	 * @return Ответ multistatus
+	 * @throws IOException в случае ошибки
 	 */
 	public MultiStatusResponse[] executeDavRequest(ExchangeDavRequest request) throws IOException {
 		handleURI(request);
@@ -531,12 +531,12 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * Execute webdav search method.
-	 * @param path <i>encoded</i> searched folder path
-	 * @param searchStatement (SQL like) search statement
-	 * @param maxCount max item count
-	 * @return Responses enumeration
-	 * @throws IOException on error
+	 * Выполнить метод поиска webdav.
+	 * @param path <i>закодированный</i> путь к искомой папке
+	 * @param searchStatement (по типу SQL) поисковый запрос
+	 * @param maxCount максимальное количество элементов
+	 * @return Перечисление ответов
+	 * @throws IOException в случае ошибки
 	 */
 	public MultiStatusResponse[] executeSearchRequest(String path, String searchStatement, int maxCount)
 			throws IOException {
@@ -552,9 +552,9 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * Check if status is a redirect (various 30x values).
-	 * @param status Http status
-	 * @return true if status is a redirect
+	 * Проверьте, является ли статус перенаправлением (различные значения 30x).
+	 * @param status HTTP статус
+	 * @return true, если статус является перенаправлением
 	 */
 	public static boolean isRedirect(int status) {
 		return status == HttpStatus.SC_MOVED_PERMANENTLY || status == HttpStatus.SC_MOVED_TEMPORARILY
@@ -562,9 +562,9 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * Get redirect location from header.
-	 * @param response Http response
-	 * @return URI target location
+	 * Получить адрес перенаправления из заголовка.
+	 * @param response HTTP-ответ
+	 * @return URI целевое местоположение
 	 */
 	public static URI getRedirectLocation(HttpResponse response) {
 		Header location = response.getFirstHeader("Location");
@@ -601,9 +601,9 @@ public class HttpClientAdapter implements Closeable {
 	}
 
 	/**
-	 * Build Http Exception from method status
-	 * @param method Http Method
-	 * @return Http Exception
+	 * Построить Http Исключение на основе статуса метода
+	 * @param method Http Метод
+	 * @return Http Исключение
 	 */
 	public static HttpResponseException buildHttpResponseException(HttpRequestBase method, StatusLine statusLine) {
 		int status = statusLine.getStatusCode();

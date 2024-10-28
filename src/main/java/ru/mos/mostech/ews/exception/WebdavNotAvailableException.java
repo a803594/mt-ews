@@ -4,14 +4,14 @@ DIT
 package ru.mos.mostech.ews.exception;
 
 /**
- * Exchange 2007 with Webdav disabled will trigger this exception.
+ * Exchange 2007 с отключенным Webdav вызовет это исключение.
  */
 public class WebdavNotAvailableException extends MosTechEwsException {
 
 	/**
-	 * Create a MT-EWS exception with the given BundleMessage key and arguments.
-	 * @param key message key
-	 * @param arguments message values
+	 * Создайте исключение MT-EWS с заданным ключом BundleMessage и аргументами.
+	 * @param key ключ сообщения
+	 * @param arguments значения сообщения
 	 */
 	public WebdavNotAvailableException(String key, Object... arguments) {
 		super(key, arguments);

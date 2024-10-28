@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * Various string handling methods
+ * Различные методы обработки строк
  */
 public final class StringUtil {
 
@@ -25,11 +25,11 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Return the sub string between startDelimiter and endDelimiter or null.
-	 * @param value String value
-	 * @param startDelimiter start delimiter
-	 * @param endDelimiter end delimiter
-	 * @return token value
+	 * Возвращает подстроку между startDelimiter и endDelimiter или null.
+	 * @param value Строковое значение
+	 * @param startDelimiter начальный разделитель
+	 * @param endDelimiter конечный разделитель
+	 * @return значение токена
 	 */
 	public static String getToken(String value, String startDelimiter, String endDelimiter) {
 		String token = null;
@@ -47,12 +47,12 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Return the sub string between startDelimiter and endDelimiter or null, look for
-	 * last token in string.
-	 * @param value String value
-	 * @param startDelimiter start delimiter
-	 * @param endDelimiter end delimiter
-	 * @return token value
+	 * Вернуть подстроку между стартовым и конечным разделителем или null, искать
+	 * последний токен в строке.
+	 * @param value строковое значение
+	 * @param startDelimiter стартовый разделитель
+	 * @param endDelimiter конечный разделитель
+	 * @return значение токена
 	 */
 	public static String getLastToken(String value, String startDelimiter, String endDelimiter) {
 		String token = null;
@@ -70,12 +70,13 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Return the sub string between startDelimiter and endDelimiter with newToken.
-	 * @param value String value
-	 * @param startDelimiter start delimiter
-	 * @param endDelimiter end delimiter
-	 * @param newToken new token value
-	 * @return token value
+	 * Вернуть подстроку между начальным разделителем и конечным разделителем с новым
+	 * токеном.
+	 * @param value Строковое значение
+	 * @param startDelimiter начальный разделитель
+	 * @param endDelimiter конечный разделитель
+	 * @param newToken новое значение токена
+	 * @return значение токена
 	 */
 	public static String replaceToken(String value, String startDelimiter, String endDelimiter, String newToken) {
 		String result = null;
@@ -93,10 +94,10 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Join values with given separator.
-	 * @param values value set
-	 * @param separator separator
-	 * @return joined values
+	 * Объединить значения с указанным разделителем.
+	 * @param values набор значений
+	 * @param separator разделитель
+	 * @return объединенные значения
 	 */
 	public static String join(Set<String> values, String separator) {
 		if (values != null && !values.isEmpty()) {
@@ -231,9 +232,9 @@ public final class StringUtil {
 	private static final Pattern APOS_PATTERN = Pattern.compile("'");
 
 	/**
-	 * Xml encode content.
-	 * @param name decoded name
-	 * @return name encoded name
+	 * Кодирует содержимое в XML.
+	 * @param name декодированное имя
+	 * @return name закодированное имя
 	 */
 	public static String xmlEncode(String name) {
 		String result = name;
@@ -246,9 +247,9 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Xml encode inside attribute.
-	 * @param name decoded name
-	 * @return name encoded name
+	 * Кодирование Xml внутри атрибута.
+	 * @param name раскодированное имя
+	 * @return name закодированное имя
 	 */
 	public static String xmlEncodeAttribute(String name) {
 		String result = xmlEncode(name);
@@ -267,9 +268,9 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Need to decode xml for iCal
-	 * @param name encoded name
-	 * @return name decoded name
+	 * Необходимо декодировать XML для iCal
+	 * @param name закодированное имя
+	 * @return name декодированное имя
 	 */
 	public static String xmlDecode(String name) {
 		String result = name;
@@ -282,9 +283,9 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Convert base64 value to hex.
-	 * @param value base64 value
-	 * @return hex value
+	 * Преобразовать значение base64 в шестнадцатеричное.
+	 * @param value значение base64
+	 * @return шестнадцатеричное значение
 	 */
 	@SuppressWarnings("unused")
 	public static String base64ToHex(String value) {
@@ -296,10 +297,10 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Convert hex value to base64.
-	 * @param value hex value
-	 * @return base64 value
-	 * @throws DecoderException on error
+	 * Преобразовать шестнадцатеричное значение в base64.
+	 * @param value шестнадцатеричное значение
+	 * @return значение в base64
+	 * @throws DecoderException в случае ошибки
 	 */
 	@SuppressWarnings("unused")
 	public static String hexToBase64(String value) throws DecoderException {
@@ -311,9 +312,10 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Encode item name to get actual value stored in urlcompname MAPI property.
-	 * @param value decoded value
-	 * @return urlcompname encoded value
+	 * Кодирует имя элемента для получения фактического значения, хранящегося в свойстве
+	 * urlcompname MAPI.
+	 * @param value декодированное значение
+	 * @return urlcompname закодированное значение
 	 */
 	public static String encodeUrlcompname(String value) {
 		String result = value;
@@ -326,9 +328,9 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Decode urlcompname to get item name.
-	 * @param urlcompname encoded value
-	 * @return decoded value
+	 * Декодировать urlcompname для получения имени элемента.
+	 * @param urlcompname закодированное значение
+	 * @return декодированное значение
 	 */
 	public static String decodeUrlcompname(String urlcompname) {
 		String result = urlcompname;
@@ -341,10 +343,10 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Urlencode plus sign in encoded href. '+' is decoded as ' ' by URIUtil.decode, the
-	 * workaround is to force urlencoding to '%2B' first
-	 * @param value encoded href
-	 * @return encoded href
+	 * Кодирует знак плюс в закодированном href. '+' декодируется как ' ' с помощью
+	 * URIUtil.decode, обходное решение - сначала принудительно закодировать в '%2B'
+	 * @param value закодированный href
+	 * @return закодированный href
 	 */
 	public static String encodePlusSign(String value) {
 		String result = value;
@@ -355,9 +357,9 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Encode EWS base64 itemId to url compatible value.
-	 * @param value base64 value
-	 * @return url compatible value
+	 * Кодирует базовое значение itemId EWS в совместимое с URL значение.
+	 * @param value базовое значение в формате base64
+	 * @return совместимое с URL значение
 	 */
 	public static String base64ToUrl(String value) {
 		String result = value;
@@ -373,9 +375,9 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Encode EWS url compatible itemId back to base64 value.
-	 * @param value url compatible value
-	 * @return base64 value
+	 * Кодирует совместимый с EWS itemId обратно в значение base64.
+	 * @param value совместимое с URL значение
+	 * @return значение base64
 	 */
 	public static String urlToBase64(String value) {
 		String result = value;
@@ -389,9 +391,9 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Encode quotes in Dav search parameter.
-	 * @param value search parameter
-	 * @return escaped value
+	 * Кодирует кавычки в параметре поиска Dav.
+	 * @param value параметр поиска
+	 * @return экранированное значение
 	 */
 	public static String davSearchEncode(String value) {
 		String result = value;
@@ -402,9 +404,9 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Get allday date value from zulu timestamp.
-	 * @param value zulu datetime
-	 * @return yyyyMMdd allday date value
+	 * Получить значение даты на весь день из зулус-метки времени.
+	 * @param value зулус-дата и время
+	 * @return значение даты на весь день в формате yyyyMMdd
 	 */
 	public static String convertZuluDateTimeToAllDay(String value) {
 		String result = value;
@@ -426,9 +428,9 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Remove quotes if present on value.
-	 * @param value input value
-	 * @return unquoted string
+	 * Удалить кавычки, если они есть в значении.
+	 * @param value входное значение
+	 * @return строка без кавычек
 	 */
 	public static String removeQuotes(String value) {
 		String result = value;

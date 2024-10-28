@@ -6,17 +6,17 @@ package ru.mos.mostech.ews.exchange.ews;
 import java.util.List;
 
 /**
- * Update Item method.
+ * Метод обновления элемента.
  */
 public class UpdateItemMethod extends EWSMethod {
 
 	/**
-	 * Update exchange item.
-	 * @param messageDisposition save or send option
-	 * @param conflictResolution overwrite option
-	 * @param sendMeetingInvitationsOrCancellations send invitations option
-	 * @param itemId item id with change key
-	 * @param updates field updates
+	 * Обновить элемент обмена.
+	 * @param messageDisposition опция сохранения или отправки
+	 * @param conflictResolution опция перезаписи
+	 * @param sendMeetingInvitationsOrCancellations опция отправки приглашений
+	 * @param itemId идентификатор элемента с ключом изменения
+	 * @param updates обновления полей
 	 */
 	public UpdateItemMethod(MessageDisposition messageDisposition, ConflictResolution conflictResolution,
 			SendMeetingInvitationsOrCancellations sendMeetingInvitationsOrCancellations, ItemId itemId,

@@ -8,7 +8,7 @@ import ru.mos.mostech.ews.util.StringUtil;
 import java.util.List;
 
 /**
- * Unindexed Field URI
+ * Неиндексированное поле URI
  */
 public class UnindexedFieldURI implements FieldURI {
 
@@ -17,8 +17,8 @@ public class UnindexedFieldURI implements FieldURI {
 	protected final String fieldName;
 
 	/**
-	 * Create unindexed field URI.
-	 * @param fieldURI field name
+	 * Создать неиндексируемое поле URI.
+	 * @param fieldURI имя поля
 	 */
 	public UnindexedFieldURI(String fieldURI) {
 		this.fieldURI = fieldURI;

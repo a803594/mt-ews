@@ -28,7 +28,7 @@ public class GetUserPhotoMethod extends EWSMethod {
 	protected String pictureData = null;
 
 	/**
-	 * Get User Configuration method.
+	 * Метод получения конфигурации пользователя.
 	 */
 	public GetUserPhotoMethod(String email, SizeRequested sizeRequested) {
 		super("GetUserPhoto", "GetUserPhoto");

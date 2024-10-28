@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * Dav Gateway pop connection implementation
+ * Реализация подключения к Dav Gateway
  */
 @Slf4j
 public class PopConnection extends AbstractConnection {
@@ -34,8 +34,8 @@ public class PopConnection extends AbstractConnection {
 	private List<ExchangeSession.Message> messages;
 
 	/**
-	 * Initialize the streams and start the thread.
-	 * @param clientSocket POP client socket
+	 * Инициализировать потоки и запустить поток.
+	 * @param clientSocket Сокет клиента POP
 	 */
 	public PopConnection(Socket clientSocket) {
 		super(PopConnection.class.getSimpleName(), clientSocket, null);
@@ -317,7 +317,8 @@ public class PopConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Filter to limit output lines to max body lines after header
+	 * Фильтр для ограничения количества строк вывода до максимального количества строк
+	 * тела после заголовка
 	 */
 	private static final class TopOutputStream extends FilterOutputStream {
 

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Distinguished Folder Id.
+ * Отличительный идентификатор папки.
  */
 public final class DistinguishedFolderId extends FolderId {
 
@@ -20,7 +20,7 @@ public final class DistinguishedFolderId extends FolderId {
 	}
 
 	/**
-	 * DistinguishedFolderId names
+	 * Имена DistinguishedFolderId
 	 */
 	@SuppressWarnings({ "UnusedDeclaration" })
 	public enum Name {
@@ -39,10 +39,10 @@ public final class DistinguishedFolderId extends FolderId {
 	}
 
 	/**
-	 * Get DistinguishedFolderId object for mailbox and name.
-	 * @param mailbox mailbox name
-	 * @param name folder id name
-	 * @return DistinguishedFolderId object
+	 * Получить объект DistinguishedFolderId для почтового ящика и имени.
+	 * @param mailbox имя почтового ящика
+	 * @param name имя идентификатора папки
+	 * @return объект DistinguishedFolderId
 	 */
 	public static DistinguishedFolderId getInstance(String mailbox, Name name) {
 		if (mailbox == null) {

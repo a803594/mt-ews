@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * ResolveNames search scope.
+ * Область поиска ResolveNames.
  */
 @SuppressWarnings({ "UnusedDeclaration" })
 public final class SearchScope extends AttributeOption {

@@ -24,20 +24,19 @@ import java.util.Arrays;
 import java.util.Locale;
 
 /**
- * Provides an implementation for NTLMv1, NTLMv2, and NTLM2 Session forms of the NTLM
- * authentication protocol. Duplicate code from NTLMEngineImpl to implement channel
- * binding
+ * Предоставляет реализацию форм NTLMv1, NTLMv2 и NTLM2 Session протокола аутентификации
+ * NTLM. Дублирует код из NTLMEngineImpl для реализации связывания канала
  */
 @Slf4j
 final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 
 	/**
-	 * Unicode encoding
+	 * Кодировка Unicode
 	 */
 	private static final Charset UNICODE_LITTLE_UNMARKED = StandardCharsets.UTF_16LE;
 
 	/**
-	 * Character encoding
+	 * Кодировка символов
 	 */
 	private static final Charset DEFAULT_CHARSET = Consts.ASCII;
 
@@ -133,7 +132,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * The signature string as bytes in the default encoding
+	 * Строка подписи в байтах в кодировке по умолчанию
 	 */
 	private static final byte[] SIGNATURE = getNullTerminatedAsciiString("NTLMSSP");
 
@@ -156,20 +155,20 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Store connection certificate for channel binding implementation.
-	 * @param peerServerCertificate certificate
+	 * Храните сертификат соединения для реализации привязки канала.
+	 * @param peerServerCertificate сертификат
 	 */
 	public void setPeerServerCertificate(Certificate peerServerCertificate) {
 		this.peerServerCertificate = peerServerCertificate;
 	}
 
 	/**
-	 * Creates the first message (type 1 message) in the NTLM authentication sequence.
-	 * This message includes the user name, domain and host for the authentication
-	 * session.
-	 * @param host the computer name of the host requesting authentication.
-	 * @param domain The domain to authenticate with.
-	 * @return String the message to add to the HTTP request header.
+	 * Создает первое сообщение (сообщение типа 1) в последовательности аутентификации
+	 * NTLM. Это сообщение включает в себя имя пользователя, домен и хост для сессии
+	 * аутентификации.
+	 * @param host имя компьютера хоста, запрашивающего аутентификацию.
+	 * @param domain Домен, с которым нужно пройти аутентификацию.
+	 * @return String сообщение для добавления в заголовок HTTP-запроса.
 	 */
 	static String getType1Message(final String host, final String domain) {
 		// For compatibility reason do not include domain and host in type 1 message
@@ -178,18 +177,18 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Creates the type 3 message using the given server nonce. The type 3 message
-	 * includes all the information for authentication, host, domain, username and the
-	 * result of encrypting the nonce sent by the server using the user's password as the
-	 * key.
-	 * @param user The user name. This should not include the domain name.
-	 * @param password The password.
-	 * @param host The host that is originating the authentication request.
-	 * @param domain The domain to authenticate within.
-	 * @param nonce the 8 byte array the server sent.
-	 * @return The type 3 message.
-	 * @throws NTLMEngineException If {link #Type3Message(String, String, String, String,
-	 * byte[], int, String, byte[])} fails.
+	 * Создает сообщение типа 3, используя данный серверный нонс. Сообщение типа 3
+	 * включает всю информацию для аутентификации, хоста, домена, имени пользователя и
+	 * результат шифрования нонса, отправленного сервером, с использованием пароля
+	 * пользователя в качестве ключа.
+	 * @param user Имя пользователя. Не должно включать имя домена.
+	 * @param password Пароль.
+	 * @param host Хост, инициирующий запрос на аутентификацию.
+	 * @param domain Домен для аутентификации.
+	 * @param nonce массив из 8 байт, который отправил сервер.
+	 * @return Сообщение типа 3.
+	 * @throws NTLMEngineException Если {link #Type3Message(String, String, String,
+	 * String, byte[], int, String, byte[])} завершилось неудачей.
 	 */
 	static String getType3Message(final String user, final String password, final String host, final String domain,
 			final byte[] nonce, final int type2Flags, final String target, final byte[] targetInformation)
@@ -200,18 +199,19 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Creates the type 3 message using the given server nonce. The type 3 message
-	 * includes all the information for authentication, host, domain, username and the
-	 * result of encrypting the nonce sent by the server using the user's password as the
-	 * key.
-	 * @param user The user name. This should not include the domain name.
-	 * @param password The password.
-	 * @param host The host that is originating the authentication request.
-	 * @param domain The domain to authenticate within.
-	 * @param nonce the 8 byte array the server sent.
-	 * @return The type 3 message.
-	 * @throws NTLMEngineException If {link #Type3Message(String, String, String, String,
-	 * byte[], int, String, byte[], Certificate, byte[], byte[])} fails.
+	 * Создает сообщение типа 3, используя данный серверный nonce. Сообщение типа 3
+	 * включает всю информацию для аутентификации, хост, домен, имя пользователя и
+	 * результат шифрования nonce, отправленного сервером, с использованием пароля
+	 * пользователя в качестве ключа.
+	 * @param user Имя пользователя. Не должно включать имя домена.
+	 * @param password Пароль.
+	 * @param host Хост, инициирующий запрос аутентификации.
+	 * @param domain Домен для аутентификации.
+	 * @param nonce 8-байтовый массив, отправленный сервером.
+	 * @return Сообщение типа 3.
+	 * @throws NTLMEngineException Если {link #Type3Message(String, String, String,
+	 * String, byte[], int, String, byte[], Certificate, byte[], byte[])} завершается
+	 * неудачей.
 	 */
 	static String getType3Message(final String user, final String password, final String host, final String domain,
 			final byte[] nonce, final int type2Flags, final String target, final byte[] targetInformation,
@@ -249,7 +249,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Calculate a challenge block
+	 * Рассчитать блок задачи
 	 */
 	private static byte[] makeRandomChallenge() {
 		final byte[] rval = new byte[8];
@@ -258,7 +258,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Calculate a 16-byte secondary key
+	 * Вычислить 16-байтный вторичный ключ
 	 */
 	private static byte[] makeSecondaryKey() {
 		final byte[] rval = new byte[16];
@@ -348,7 +348,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate and return client challenge
+		 * Рассчитать и вернуть клиентский вызов
 		 */
 		public byte[] getClientChallenge() {
 			if (clientChallenge == null) {
@@ -358,7 +358,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate and return second client challenge
+		 * Рассчитать и вернуть второй вызов клиента
 		 */
 		public byte[] getClientChallenge2() {
 			if (clientChallenge2 == null) {
@@ -368,7 +368,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate and return random secondary key
+		 * Вычислить и вернуть случайный вспомогательный ключ
 		 */
 		public byte[] getSecondaryKey() {
 			if (secondaryKey == null) {
@@ -378,7 +378,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate and return the LMHash
+		 * Вычислить и вернуть LMHash
 		 */
 		public byte[] getLMHash() throws NTLMEngineException {
 			if (lmHash == null) {
@@ -388,7 +388,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate and return the LMResponse
+		 * Рассчитать и вернуть LMResponse
 		 */
 		public byte[] getLMResponse() throws NTLMEngineException {
 			if (lmResponse == null) {
@@ -398,7 +398,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate and return the NTLMHash
+		 * Вычислить и вернуть NTLMHash
 		 */
 		public byte[] getNTLMHash() {
 			if (ntlmHash == null) {
@@ -408,7 +408,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate and return the NTLMResponse
+		 * Вычисляет и возвращает NTLMResponse
 		 */
 		public byte[] getNTLMResponse() throws NTLMEngineException {
 			if (ntlmResponse == null) {
@@ -418,7 +418,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate the LMv2 hash
+		 * Вычислить хэш LMv2
 		 */
 		public byte[] getLMv2Hash() throws NTLMEngineException {
 			if (lmv2Hash == null) {
@@ -428,7 +428,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate the NTLMv2 hash
+		 * Вычислить хеш NTLMv2
 		 */
 		public byte[] getNTLMv2Hash() throws NTLMEngineException {
 			if (ntlmv2Hash == null) {
@@ -438,7 +438,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate a timestamp
+		 * Вычислить временную метку
 		 */
 		public byte[] getTimestamp() {
 			if (timestamp == null) {
@@ -456,7 +456,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate the NTLMv2Blob
+		 * Рассчитать NTLMv2Blob
 		 */
 		public byte[] getNTLMv2Blob() {
 			if (ntlmv2Blob == null) {
@@ -466,7 +466,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate the NTLMv2Response
+		 * Вычислить NTLMv2Response
 		 */
 		public byte[] getNTLMv2Response() throws NTLMEngineException {
 			if (ntlmv2Response == null) {
@@ -476,7 +476,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate the LMv2Response
+		 * Вычислить LMv2Response
 		 */
 		public byte[] getLMv2Response() throws NTLMEngineException {
 			if (lmv2Response == null) {
@@ -486,7 +486,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Get NTLM2SessionResponse
+		 * Получить NTLM2SessionResponse
 		 */
 		public byte[] getNTLM2SessionResponse() throws NTLMEngineException {
 			if (ntlm2SessionResponse == null) {
@@ -496,7 +496,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Calculate and return LM2 session response
+		 * Вычислить и возвратить ответ сессии LM2
 		 */
 		public byte[] getLM2SessionResponse() {
 			if (lm2SessionResponse == null) {
@@ -509,7 +509,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Get LMUserSessionKey
+		 * Получить LMUserSessionKey
 		 */
 		public byte[] getLMUserSessionKey() throws NTLMEngineException {
 			if (lmUserSessionKey == null) {
@@ -521,7 +521,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Get NTLMUserSessionKey
+		 * Получить NTLMUserSessionKey
 		 */
 		public byte[] getNTLMUserSessionKey() throws NTLMEngineException {
 			if (ntlmUserSessionKey == null) {
@@ -533,7 +533,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * GetNTLMv2UserSessionKey
+		 * ПолучитьNTLMv2ПользовательскийСессионныйКлюч
 		 */
 		public byte[] getNTLMv2UserSessionKey() throws NTLMEngineException {
 			if (ntlmv2UserSessionKey == null) {
@@ -546,7 +546,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Get NTLM2SessionResponseUserSessionKey
+		 * Получить NTLM2SessionResponseUserSessionKey
 		 */
 		public byte[] getNTLM2SessionResponseUserSessionKey() throws NTLMEngineException {
 			if (ntlm2SessionResponseUserSessionKey == null) {
@@ -561,7 +561,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Get LAN Manager session key
+		 * Получить ключ сессии LAN Manager
 		 */
 		public byte[] getLanManagerSessionKey() throws NTLMEngineException {
 			if (lanManagerSessionKey == null) {
@@ -593,7 +593,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Calculates HMAC-MD5
+	 * Вычисляет HMAC-MD5
 	 */
 	static byte[] hmacMD5(final byte[] value, final byte[] key) {
 		final MosTechEwsNTLMEngineImpl.HMACMD5 hmacMD5 = new MosTechEwsNTLMEngineImpl.HMACMD5(key);
@@ -602,7 +602,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Calculates RC4
+	 * Вычисляет RC4
 	 */
 	static byte[] RC4(final byte[] value, final byte[] key) throws NTLMEngineException {
 		try {
@@ -616,11 +616,10 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Calculates the NTLM2 Session Response for the given challenge, using the specified
-	 * password and client challenge.
-	 * @return The NTLM2 Session Response. This is placed in the NTLM response field of
-	 * the Type 3 message; the LM response field contains the client challenge,
-	 * null-padded to 24 bytes.
+	 * Вычисляет ответ сеанса NTLM2 для заданного вызова, используя указанное пароль и
+	 * вызов клиента.
+	 * @return Ответ сеанса NTLM2. Он помещается в поле ответа NTLM сообщения типа 3; поле
+	 * ответа LM содержит вызов клиента, дополненный нулями до 24 байт.
 	 */
 	static byte[] ntlm2SessionResponse(final byte[] ntlmHash, final byte[] challenge, final byte[] clientChallenge)
 			throws NTLMEngineException {
@@ -643,10 +642,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Creates the LM Hash of the user's password.
-	 * @param password The password.
-	 * @return The LM Hash of the given password, used in the calculation of the LM
-	 * Response.
+	 * Создает LM-хэш пароля пользователя.
+	 * @param password Пароль.
+	 * @return LM-хэш данного пароля, используемый в расчете LM ответа.
 	 */
 	private static byte[] lmHash(final String password) throws NTLMEngineException {
 		try {
@@ -673,10 +671,10 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Creates the NTLM Hash of the user's password.
-	 * @param password The password.
-	 * @return The NTLM Hash of the given password, used in the calculation of the NTLM
-	 * Response and the NTLMv2 and LMv2 Hashes.
+	 * Создает NTLM-хеш пароля пользователя.
+	 * @param password Пароль.
+	 * @return NTLM-хеш заданного пароля, используемый для вычисления NTLM ответа и NTLMv2
+	 * и LMv2 хешей.
 	 */
 	private static byte[] ntlmHash(final String password) {
 		final byte[] unicodePassword = password.getBytes(UNICODE_LITTLE_UNMARKED);
@@ -686,8 +684,8 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Creates the LMv2 Hash of the user's password.
-	 * @return The LMv2 Hash, used in the calculation of the NTLMv2 and LMv2 Responses.
+	 * Создает хэш LMv2 пароля пользователя.
+	 * @return Хэш LMv2, используемый в расчете ответов NTLMv2 и LMv2.
 	 */
 	private static byte[] lmv2Hash(final String domain, final String user, final byte[] ntlmHash)
 			throws NTLMEngineException {
@@ -701,8 +699,8 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Creates the NTLMv2 Hash of the user's password.
-	 * @return The NTLMv2 Hash, used in the calculation of the NTLMv2 and LMv2 Responses.
+	 * Создает хэш NTLMv2 пароля пользователя.
+	 * @return Хэш NTLMv2, используемый в вычислении ответов NTLMv2 и LMv2.
 	 */
 	private static byte[] ntlmv2Hash(final String domain, final String user, final byte[] ntlmHash) {
 		final MosTechEwsNTLMEngineImpl.HMACMD5 hmacMD5 = new MosTechEwsNTLMEngineImpl.HMACMD5(ntlmHash);
@@ -715,10 +713,10 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Creates the LM Response from the given hash and Type 2 challenge.
-	 * @param hash The LM or NTLM Hash.
-	 * @param challenge The server challenge from the Type 2 message.
-	 * @return The response (either LM or NTLM, depending on the provided hash).
+	 * Создает ответ LM на основе данного хеша и вызова типа 2.
+	 * @param hash Хеш LM или NTLM.
+	 * @param challenge Вызов сервера из сообщения типа 2.
+	 * @return Ответ (либо LM, либо NTLM, в зависимости от предоставленного хеша).
 	 */
 	private static byte[] lmResponse(final byte[] hash, final byte[] challenge) throws NTLMEngineException {
 		try {
@@ -746,11 +744,11 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Creates the LMv2 Response from the given hash, client data, and Type 2 challenge.
-	 * @param hash The NTLMv2 Hash.
-	 * @param clientData The client data (blob or client challenge).
-	 * @param challenge The server challenge from the Type 2 message.
-	 * @return The response (either NTLMv2 or LMv2, depending on the client data).
+	 * Создает ответ LMv2 из заданного хеша, клиентских данных и вызова типа 2.
+	 * @param hash NTLMv2 хеш.
+	 * @param clientData Клиентские данные (объект или клиентский вызов).
+	 * @param challenge Вызов сервера из сообщения типа 2.
+	 * @return Ответ (либо NTLMv2, либо LMv2, в зависимости от клиентских данных).
 	 */
 	private static byte[] lmv2Response(final byte[] hash, final byte[] challenge, final byte[] clientData) {
 		final MosTechEwsNTLMEngineImpl.HMACMD5 hmacMD5 = new MosTechEwsNTLMEngineImpl.HMACMD5(hash);
@@ -777,11 +775,10 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Creates the NTLMv2 blob from the given target information block and client
-	 * challenge.
-	 * @param targetInformation The target information block from the Type 2 message.
-	 * @param clientChallenge The random 8-byte client challenge.
-	 * @return The blob, used in the calculation of the NTLMv2 Response.
+	 * Создает NTLMv2 блоб из данного блока информации о цели и клиентского вызова.
+	 * @param targetInformation Блок информации о цели из сообщения типа 2.
+	 * @param clientChallenge Случайный 8-байтовый клиентский вызов.
+	 * @return Блоб, используемый в расчете NTLMv2 Ответа.
 	 */
 	private static byte[] createBlob(final byte[] clientChallenge, final byte[] targetInformation,
 			final byte[] timestamp) {
@@ -810,12 +807,12 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Creates a DES encryption key from the given key material.
-	 * @param bytes A byte array containing the DES key material.
-	 * @param offset The offset in the given byte array at which the 7-byte key material
-	 * starts.
-	 * @return A DES encryption key created from the key material starting at the
-	 * specified offset in the given byte array.
+	 * Создает ключ шифрования DES из заданного ключевого материала.
+	 * @param bytes Массив байтов, содержащий ключевой материал DES.
+	 * @param offset Смещение в указанном массиве байтов, с которого начинается 7-байтовый
+	 * ключевой материал.
+	 * @return Ключ шифрования DES, созданный из ключевого материала, начиная с указанного
+	 * смещения в заданном массиве байтов.
 	 */
 	private static Key createDESKey(final byte[] bytes, final int offset) {
 		final byte[] keyBytes = new byte[7];
@@ -834,8 +831,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Applies odd parity to the given byte array.
-	 * @param bytes The data whose parity bits are to be adjusted for odd parity.
+	 * Применяет нечетную четность к заданному массиву байтов.
+	 * @param bytes Данные, для которых необходимо скорректировать биты четности для
+	 * нечетной четности.
 	 */
 	private static void oddParity(final byte[] bytes) {
 		for (int i = 0; i < bytes.length; i++) {
@@ -852,9 +850,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Find the character set based on the flags.
-	 * @param flags is the flags.
-	 * @return the character set.
+	 * Найти набор символов на основе флагов.
+	 * @param flags это флаги.
+	 * @return набор символов.
 	 */
 	private static Charset getCharset(final int flags) {
 		if ((flags & FLAG_REQUEST_UNICODE_ENCODING) == 0) {
@@ -864,7 +862,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Strip dot suffix from a name
+	 * Удалить точечный суффикс из имени
 	 */
 	private static String stripDotSuffix(final String value) {
 		if (value == null) {
@@ -878,49 +876,49 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Convert host to standard form
+	 * Преобразовать хост в стандартную форму
 	 */
 	private static String convertHost(final String host) {
 		return stripDotSuffix(host);
 	}
 
 	/**
-	 * Convert domain to standard form
+	 * Преобразовать домен в стандартную форму
 	 */
 	private static String convertDomain(final String domain) {
 		return stripDotSuffix(domain);
 	}
 
 	/**
-	 * NTLM message generation, base class
+	 * Генерация сообщений NTLM, базовый класс
 	 */
 	static class NTLMMessage {
 
 		/**
-		 * The current response
+		 * Текущий ответ
 		 */
 		protected byte[] messageContents = null;
 
 		/**
-		 * The current output position
+		 * Текущая позиция вывода
 		 */
 		protected int currentOutputPosition = 0;
 
 		/**
-		 * Constructor to use when message contents are not yet known
+		 * Конструктор, который используется, когда содержимое сообщения еще неизвестно
 		 */
 		NTLMMessage() {
 		}
 
 		/**
-		 * Constructor taking a string
+		 * Конструктор, принимающий строку
 		 */
 		NTLMMessage(final String messageBody, final int expectedType) throws NTLMEngineException {
 			this(Base64.decodeBase64(messageBody.getBytes(DEFAULT_CHARSET)), expectedType);
 		}
 
 		/**
-		 * Constructor to use when message bytes are known
+		 * Конструктор, который используется, когда известны байты сообщения
 		 */
 		NTLMMessage(final byte[] message, final int expectedType) throws NTLMEngineException {
 			messageContents = message;
@@ -947,22 +945,22 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Get the length of the signature and flags, so calculations can adjust offsets
-		 * accordingly.
+		 * Получить длину подписи и флагов, чтобы расчеты могли соответствующим образом
+		 * корректировать смещения
 		 */
 		protected int getPreambleLength() {
 			return SIGNATURE.length + 4;
 		}
 
 		/**
-		 * Get the message length
+		 * Получить длину сообщения
 		 */
 		protected int getMessageLength() {
 			return currentOutputPosition;
 		}
 
 		/**
-		 * Read a byte from a position within the message buffer
+		 * Прочитать байт из позиции в буфере сообщения
 		 */
 		protected byte readByte(final int position) throws NTLMEngineException {
 			if (messageContents.length < position + 1) {
@@ -972,7 +970,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Read a bunch of bytes from a position in the message buffer
+		 * Прочитать множество байтов из позиции в буфере сообщения
 		 */
 		protected void readBytes(final byte[] buffer, final int position) throws NTLMEngineException {
 			if (messageContents.length < position + buffer.length) {
@@ -982,30 +980,30 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Read a ushort from a position within the message buffer
+		 * Прочитать ushort из заданной позиции в буфере сообщений
 		 */
 		protected int readUShort(final int position) {
 			return MosTechEwsNTLMEngineImpl.readUShort(messageContents, position);
 		}
 
 		/**
-		 * Read a ulong from a position within the message buffer
+		 * Прочитать ulong из позиции в буфере сообщения
 		 */
 		protected int readULong(final int position) {
 			return MosTechEwsNTLMEngineImpl.readULong(messageContents, position);
 		}
 
 		/**
-		 * Read a security buffer from a position within the message buffer
+		 * Прочитать буфер безопасности из позиции внутри буфера сообщения
 		 */
 		protected byte[] readSecurityBuffer(final int position) {
 			return MosTechEwsNTLMEngineImpl.readSecurityBuffer(messageContents, position);
 		}
 
 		/**
-		 * Prepares the object to create a response of the given length.
-		 * @param maxlength the maximum length of the response to prepare, including the
-		 * type and the signature (which this method adds).
+		 * Подготавливает объект для создания ответа заданной длины.
+		 * @param maxlength максимальная длина ответа для подготовки, включая тип и
+		 * подпись (которые добавляет этот метод).
 		 */
 		protected void prepareResponse(final int maxlength, final int messageType) {
 			messageContents = new byte[maxlength];
@@ -1015,8 +1013,8 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Adds the given byte to the response.
-		 * @param b the byte to add.
+		 * Добавляет данный байт к ответу.
+		 * @param b байт для добавления.
 		 */
 		protected void addByte(final byte b) {
 			messageContents[currentOutputPosition] = b;
@@ -1024,8 +1022,8 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Adds the given bytes to the response.
-		 * @param bytes the bytes to add.
+		 * Добавляет указанные байты в ответ.
+		 * @param bytes байты для добавления.
 		 */
 		protected void addBytes(final byte[] bytes) {
 			if (bytes == null) {
@@ -1038,7 +1036,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Adds a USHORT to the response
+		 * Добавляет USHORT в ответ
 		 */
 		protected void addUShort(final int value) {
 			addByte((byte) (value & 0xff));
@@ -1046,7 +1044,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Adds a ULong to the response
+		 * Добавляет ULong в ответ
 		 */
 		protected void addULong(final int value) {
 			addByte((byte) (value & 0xff));
@@ -1056,9 +1054,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Returns the response that has been generated after shrinking the array if
-		 * required and base64 encodes the response.
-		 * @return The response as above.
+		 * Возвращает ответ, который был сгенерирован после уменьшения массива, если это
+		 * требуется, и кодирует ответ в base64.
+		 * @return Ответ, как указано выше.
 		 */
 		public String getResponse() {
 			return new String(Base64.encodeBase64(getBytes()), Consts.ASCII);
@@ -1084,7 +1082,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Type 1 message assembly class
+	 * Класс сборки сообщения типа 1
 	 */
 	static class Type1Message extends MosTechEwsNTLMEngineImpl.NTLMMessage {
 
@@ -1146,7 +1144,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Getting the response involves building the message before returning it
+		 * Получение ответа включает в себя создание сообщения перед его возвращением
 		 */
 		@Override
 		protected void buildMessage() {
@@ -1204,7 +1202,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Type 2 message class
+	 * Класс сообщения типа 2
 	 */
 	static class Type2Message extends NTLMMessage {
 
@@ -1269,28 +1267,28 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Retrieve the challenge
+		 * Получить вызов
 		 */
 		byte[] getChallenge() {
 			return challenge;
 		}
 
 		/**
-		 * Retrieve the target
+		 * Получить цель
 		 */
 		String getTarget() {
 			return target;
 		}
 
 		/**
-		 * Retrieve the target info
+		 * Получить информацию о цели
 		 */
 		byte[] getTargetInfo() {
 			return targetInfo;
 		}
 
 		/**
-		 * Retrieve the response flags
+		 * Получить флаги ответа
 		 */
 		int getFlags() {
 			return flags;
@@ -1299,7 +1297,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Type 3 message assembly class
+	 * Класс сборки сообщения типа 3
 	 */
 	static class Type3Message extends MosTechEwsNTLMEngineImpl.NTLMMessage {
 
@@ -1328,7 +1326,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		protected final boolean computeMic;
 
 		/**
-		 * More primitive constructor: don't include cert or previous messages.
+		 * Более примитивный конструктор: не включает сертификат или предыдущие сообщения.
 		 */
 		Type3Message(final String domain, final String host, final String user, final String password,
 				final byte[] nonce, final int type2Flags, final String target, final byte[] targetInformation)
@@ -1337,7 +1335,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * More primitive constructor: don't include cert or previous messages.
+		 * Более примитивный конструктор: не включает сертификат или предыдущие сообщения.
 		 */
 		Type3Message(final long currentTime, final String domain, final String host, final String user,
 				final String password, final byte[] nonce, final int type2Flags, final String target,
@@ -1347,7 +1345,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Constructor. Pass the arguments we will need
+		 * Конструктор. Передаем аргументы, которые нам понадобятся
 		 */
 		Type3Message(final String domain, final String host, final String user, final String password,
 				final byte[] nonce, final int type2Flags, final String target, final byte[] targetInformation,
@@ -1358,7 +1356,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Constructor. Pass the arguments we will need
+		 * Конструктор. Передаем аргументы, которые нам понадобятся
 		 */
 		Type3Message(final long currentTime, final String domain, final String host, final String user,
 				final String password, final byte[] nonce, final int type2Flags, final String target,
@@ -1477,7 +1475,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Assemble the response
+		 * Собрать ответ
 		 */
 		@Override
 		protected void buildMessage() {
@@ -1551,29 +1549,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 			addULong(sessionKeyOffset);
 
 			// Flags.
-			addULong(
-					/*
-					 * //FLAG_WORKSTATION_PRESENT | //FLAG_DOMAIN_PRESENT |
-					 *
-					 * // Required flags (type2Flags & FLAG_REQUEST_LAN_MANAGER_KEY) |
-					 * (type2Flags & FLAG_REQUEST_NTLMv1) | (type2Flags &
-					 * FLAG_REQUEST_NTLM2_SESSION) |
-					 *
-					 * // Protocol version request FLAG_REQUEST_VERSION |
-					 *
-					 * // Recommended privacy settings (type2Flags &
-					 * FLAG_REQUEST_ALWAYS_SIGN) | (type2Flags & FLAG_REQUEST_SEAL) |
-					 * (type2Flags & FLAG_REQUEST_SIGN) |
-					 *
-					 * // These must be set according to documentation, based on use of
-					 * SEAL above (type2Flags & FLAG_REQUEST_128BIT_KEY_EXCH) |
-					 * (type2Flags & FLAG_REQUEST_56BIT_ENCRYPTION) | (type2Flags &
-					 * FLAG_REQUEST_EXPLICIT_KEY_EXCH) |
-					 *
-					 * (type2Flags & FLAG_TARGETINFO_PRESENT) | (type2Flags &
-					 * FLAG_REQUEST_UNICODE_ENCODING) | (type2Flags & FLAG_REQUEST_TARGET)
-					 */
-					type2Flags);
+			addULong(type2Flags);
 
 			// Version
 			addUShort(0x0105);
@@ -1613,8 +1589,9 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Add GSS channel binding hash and MIC flag to the targetInfo. Looks like this is
-		 * needed if we want to use exported session key for GSS wrapping.
+		 * Добавить хэш привязки канала GSS и флаг MIC в targetInfo. Похоже, это
+		 * необходимо, если мы хотим использовать экспортированный сеансовый ключ для
+		 * упаковки GSS.
 		 */
 		private byte[] addGssMicAvsToTargetInfo(final byte[] originalTargetInfo,
 				final Certificate peerServerCertificate) throws NTLMEngineException {
@@ -1693,11 +1670,11 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Cryptography support - MD4. The following class was based loosely on the RFC and on
-	 * code found at http://www.cs.umd.edu/~harry/jotp/src/md.java. Code correctness was
-	 * verified by looking at MD4.java from the jcifs library (http://jcifs.samba.org). It
-	 * was massaged extensively to the final form found here by Karl Wright
-	 * (kwright@metacarta.com).
+	 * Поддержка криптографии - MD4. Следующий класс был основан на RFC и на коде,
+	 * найденном по адресу http://www.cs.umd.edu/~harry/jotp/src/md.java. Правильность
+	 * кода была проверена путем изучения MD4.java из библиотеки jcifs
+	 * (http://jcifs.samba.org). Он был тщательно переработан до окончательной формы,
+	 * представленной здесь, Карлом Урайтом (kwright@metacarta.com).
 	 */
 	static class MD4 {
 
@@ -1864,8 +1841,8 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	}
 
 	/**
-	 * Cryptography support - HMACMD5 - algorithmically based on various web resources by
-	 * Karl Wright
+	 * Поддержка криптографии - HMACMD5 - алгоритмически основано на различных
+	 * веб-ресурсах от Карла Райта
 	 */
 	static class HMACMD5 {
 
@@ -1909,7 +1886,7 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Grab the current digest. This is the "answer".
+		 * Получить текущий дайджест. Это "ответ".
 		 */
 		byte[] getOutput() {
 			final byte[] digest = md5.digest();
@@ -1918,14 +1895,14 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 		}
 
 		/**
-		 * Update by adding a complete array
+		 * Обновить, добавив полный массив
 		 */
 		void update(final byte[] input) {
 			md5.update(input);
 		}
 
 		/**
-		 * Update the algorithm
+		 * Обновить алгоритм
 		 */
 		void update(final byte[] input, final int offset, final int length) {
 			md5.update(input, offset, length);

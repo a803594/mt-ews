@@ -6,7 +6,7 @@ package ru.mos.mostech.ews.exchange.ews;
 import ru.mos.mostech.ews.util.StringUtil;
 
 /**
- * Indexed FieldURI
+ * Индексированный FieldURI
  */
 public class IndexedFieldURI implements FieldURI {
 
@@ -19,11 +19,11 @@ public class IndexedFieldURI implements FieldURI {
 	protected final String collectionName;
 
 	/**
-	 * Create indexed field uri.
-	 * @param fieldURI base field uri
-	 * @param fieldIndex field name
-	 * @param fieldItemType field item type
-	 * @param collectionName collection name
+	 * Создать индексированное поле uri.
+	 * @param fieldURI базовое поле uri
+	 * @param fieldIndex имя поля
+	 * @param fieldItemType тип элемента поля
+	 * @param collectionName имя коллекции
 	 */
 	public IndexedFieldURI(String fieldURI, String fieldIndex, String fieldItemType, String collectionName) {
 		this.fieldURI = fieldURI;

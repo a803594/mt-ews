@@ -10,18 +10,18 @@ import ru.mos.mostech.ews.Settings;
 import java.net.Socket;
 
 /**
- * Pop3 server
+ * POP3 сервер
  */
 public class PopServer extends AbstractServer {
 
 	/**
-	 * Default POP port
+	 * Порт по умолчанию для POP
 	 */
 	public static final int DEFAULT_PORT = 110;
 
 	/**
-	 * Create a ServerSocket to listen for connections. Start the thread.
-	 * @param port pop listen port, 110 if not defined (0)
+	 * Создайте ServerSocket для прослушивания соединений. Запустите поток.
+	 * @param port порт прослушивания pop, 110 если не определен (0)
 	 */
 	public PopServer(int port) {
 		super(PopServer.class.getName(), port, PopServer.DEFAULT_PORT);

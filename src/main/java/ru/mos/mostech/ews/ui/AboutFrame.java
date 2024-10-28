@@ -20,14 +20,14 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
- * About frame
+ * О фрейме
  */
 public class AboutFrame extends JFrame {
 
 	private final JEditorPane jEditorPane;
 
 	/**
-	 * About frame.
+	 * О рамке.
 	 */
 	public AboutFrame() {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -117,7 +117,7 @@ public class AboutFrame extends JFrame {
 	}
 
 	/**
-	 * Update about frame content with current released version.
+	 * Обновить содержимое фрейма информации с текущей выпущенной версией.
 	 */
 	public void update() {
 		jEditorPane.setText(getContent(""));

@@ -10,30 +10,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Base class for VCalendar, VTimezone, VEvent.
+ * Базовый класс для VCalendar, VTimezone, VEvent.
  */
 public class VObject {
 
 	/**
-	 * VObject properties
+	 * Свойства VObject
 	 */
 	ArrayList<VProperty> properties;
 
 	/**
-	 * Inner VObjects (e.g. VEVENT, VALARM, ...)
+	 * Внутренние VObjects (например, VEVENT, VALARM, ...)
 	 */
 	ArrayList<VObject> vObjects;
 
 	/**
-	 * Object base name (VCALENDAR, VEVENT, VCARD...).
+	 * Базовое имя объекта (VCALENDAR, VEVENT, VCARD...).
 	 */
 	public String type;
 
 	/**
-	 * Create VObject with given type
-	 * @param beginProperty first line property
-	 * @param reader stream reader just after the BEGIN:TYPE line
-	 * @throws IOException on error
+	 * Создает VObject с заданным типом
+	 * @param beginProperty первая строка свойства
+	 * @param reader потоковый считыватель сразу после строки BEGIN:TYPE
+	 * @throws IOException в случае ошибки
 	 */
 	public VObject(VProperty beginProperty, BufferedReader reader) throws IOException {
 		if (!"BEGIN".equals(beginProperty.getKey())) {
@@ -54,25 +54,25 @@ public class VObject {
 	}
 
 	/**
-	 * Create VObject from reader.
-	 * @param reader stream reader just after the BEGIN:TYPE line
-	 * @throws IOException on error
+	 * Создать VObject из ридера.
+	 * @param reader потоковый ридер сразу после строки BEGIN:TYPE
+	 * @throws IOException в случае ошибки
 	 */
 	public VObject(BufferedReader reader) throws IOException {
 		this(new VProperty(reader.readLine()), reader);
 	}
 
 	/**
-	 * Create VCalendar object from string;
-	 * @param itemBody item body
-	 * @throws IOException on error
+	 * Создать объект VCalendar из строки;
+	 * @param itemBody тело элемента
+	 * @throws IOException в случае ошибки
 	 */
 	public VObject(String itemBody) throws IOException {
 		this(new ICSBufferedReader(new StringReader(itemBody)));
 	}
 
 	/**
-	 * Create empty VCalendar object;
+	 * Создать пустой объект VCalendar;
 	 */
 	public VObject() {
 	}
@@ -104,8 +104,8 @@ public class VObject {
 	}
 
 	/**
-	 * Add vObject.
-	 * @param vObject inner object
+	 * Добавить vObject.
+	 * @param vObject внутренний объект
 	 */
 	public void addVObject(VObject vObject) {
 		if (vObjects == null) {
@@ -115,7 +115,7 @@ public class VObject {
 	}
 
 	/**
-	 * Add vProperty.
+	 * Добавить vProperty.
 	 * @param property vProperty
 	 */
 	public void addProperty(VProperty property) {
@@ -128,8 +128,8 @@ public class VObject {
 	}
 
 	/**
-	 * Write VObject to writer.
-	 * @param writer buffered writer
+	 * Записать VObject в писатель.
+	 * @param writer буферизованный писатель
 	 */
 	public void writeTo(ICSBufferedWriter writer) {
 		writer.write("BEGIN:");
@@ -155,17 +155,17 @@ public class VObject {
 	}
 
 	/**
-	 * Get VObject properties
-	 * @return properties
+	 * Получить свойства VObject
+	 * @return свойства
 	 */
 	public List<VProperty> getProperties() {
 		return properties;
 	}
 
 	/**
-	 * Get vProperty by name.
-	 * @param name property name
-	 * @return property object
+	 * Получить vProperty по имени.
+	 * @param name имя свойства
+	 * @return объект свойства
 	 */
 	public VProperty getProperty(String name) {
 		if (properties != null) {
@@ -180,9 +180,9 @@ public class VObject {
 	}
 
 	/**
-	 * Get multivalued vProperty by name.
-	 * @param name property name
-	 * @return property list
+	 * Получить многозначное свойство vProperty по имени.
+	 * @param name имя свойства
+	 * @return список свойств
 	 */
 	public List<VProperty> getProperties(String name) {
 		List<VProperty> result = null;
@@ -201,9 +201,9 @@ public class VObject {
 	}
 
 	/**
-	 * Get vProperty value by name.
-	 * @param name property name
-	 * @return property value
+	 * Получить значение vProperty по имени.
+	 * @param name имя свойства
+	 * @return значение свойства
 	 */
 	public String getPropertyValue(String name) {
 		VProperty property = getProperty(name);
@@ -216,9 +216,10 @@ public class VObject {
 	}
 
 	/**
-	 * Set vProperty value on vObject, remove property if value is null.
-	 * @param name property name
-	 * @param value property value
+	 * Установить значение vProperty на vObject, удалить свойство, если значение равно
+	 * null.
+	 * @param name имя свойства
+	 * @param value значение свойства
 	 */
 	public void setPropertyValue(String name, String value) {
 		if (value == null) {
@@ -237,9 +238,9 @@ public class VObject {
 	}
 
 	/**
-	 * Add vProperty value on vObject.
-	 * @param name property name
-	 * @param value property value
+	 * Добавить значение vProperty на vObject.
+	 * @param name имя свойства
+	 * @param value значение свойства
 	 */
 	public void addPropertyValue(String name, String value) {
 		if (value != null) {
@@ -249,8 +250,8 @@ public class VObject {
 	}
 
 	/**
-	 * Remove vProperty from vObject.
-	 * @param name property name
+	 * Удалить vProperty из vObject.
+	 * @param name имя свойства
 	 */
 	public void removeProperty(String name) {
 		if (properties != null) {
@@ -262,8 +263,8 @@ public class VObject {
 	}
 
 	/**
-	 * Remove vProperty object from vObject.
-	 * @param property object
+	 * Удалить объект vProperty из vObject.
+	 * @param property объект
 	 */
 	public void removeProperty(VProperty property) {
 		if (properties != null) {

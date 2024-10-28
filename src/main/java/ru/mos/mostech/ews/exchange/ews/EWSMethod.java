@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 /**
- * EWS SOAP method.
+ * Метод EWS SOAP.
  */
 @Slf4j
 public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSMethod> {
@@ -108,19 +108,19 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 	private HttpResponse response;
 
 	/**
-	 * Build EWS method
-	 * @param itemType item type
-	 * @param methodName method name
+	 * Построить метод EWS
+	 * @param itemType тип элемента
+	 * @param methodName имя метода
 	 */
 	public EWSMethod(String itemType, String methodName) {
 		this(itemType, methodName, itemType + 's');
 	}
 
 	/**
-	 * Build EWS method
-	 * @param itemType item type
-	 * @param methodName method name
-	 * @param responseCollectionName item response collection name
+	 * Построить метод EWS
+	 * @param itemType тип элемента
+	 * @param methodName имя метода
+	 * @param responseCollectionName имя коллекции ответов элемента
 	 */
 	protected EWSMethod(String itemType, String methodName, String responseCollectionName) {
 		super(URI.create("/ews/exchange.asmx"));
@@ -488,80 +488,80 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 	}
 
 	/**
-	 * Get Exchange server version, Exchange2013, Exchange2010 or Exchange2007_SP1
-	 * @return server version
+	 * Получить версию сервера Exchange, Exchange2013, Exchange2010 или Exchange2007_SP1
+	 * @return версия сервера
 	 */
 	public String getServerVersion() {
 		return serverVersion;
 	}
 
 	/**
-	 * Set Exchange server version, Exchange2010 or Exchange2007_SP1
-	 * @param serverVersion server version
+	 * Установите версию сервера Exchange, Exchange2010 или Exchange2007_SP1
+	 * @param serverVersion версия сервера
 	 */
 	public void setServerVersion(String serverVersion) {
 		this.serverVersion = serverVersion;
 	}
 
 	/**
-	 * Set Exchange timezone context
-	 * @param timezoneContext user timezone context
+	 * Установить контекст часового пояса обмена
+	 * @param timezoneContext контекст часового пояса пользователя
 	 */
 	public void setTimezoneContext(String timezoneContext) {
 		this.timezoneContext = timezoneContext;
 	}
 
 	/**
-	 * Meeting attendee object
+	 * Объект участника встречи
 	 */
 	public static class Attendee {
 
 		/**
-		 * attendee role
+		 * роль участника
 		 */
 		public String role;
 
 		/**
-		 * attendee email address
+		 * адрес электронной почты участника
 		 */
 		public String email;
 
 		/**
-		 * attendee participation status
+		 * статус участия участника
 		 */
 		public String partstat;
 
 		/**
-		 * attendee fullname
+		 * полное имя участника
 		 */
 		public String name;
 
 	}
 
 	/**
-	 * Recurring event occurrence
+	 * Повторяющееся событие
 	 */
 	public static class Occurrence {
 
 		/**
-		 * Original occurence start date
+		 * Дата начала оригинального события
 		 */
 		public String originalStart;
 
 		/**
-		 * Occurence itemid
+		 * Идентификатор элемента
 		 */
 		public ItemId itemId;
 
 	}
 
 	/**
-	 * Item
+	 * Элемент
 	 */
 	public static class Item extends HashMap<String, String> {
 
 		/**
-		 * Item type.
+		 * Тип элемента.
 		 */
 		public String type;
 
@@ -600,9 +600,9 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 		}
 
 		/**
-		 * Write XML content to writer.
-		 * @param writer writer
-		 * @throws IOException on error
+		 * Записать XML-содержимое в писатель.
+		 * @param writer писатель
+		 * @throws IOException при ошибке
 		 */
 		public void write(Writer writer) throws IOException {
 			writer.write("<t:");
@@ -656,17 +656,17 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 		}
 
 		/**
-		 * Field updates.
-		 * @param fieldUpdates field updates
+		 * Обновления полей.
+		 * @param fieldUpdates обновления полей
 		 */
 		public void setFieldUpdates(List<FieldUpdate> fieldUpdates) {
 			this.fieldUpdates = fieldUpdates;
 		}
 
 		/**
-		 * Get property value as int
-		 * @param key property response name
-		 * @return property value
+		 * Получить значение свойства как int
+		 * @param key имя свойства в ответе
+		 * @return значение свойства
 		 */
 		public int getInt(String key) {
 			int result = 0;
@@ -678,9 +678,9 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 		}
 
 		/**
-		 * Get property value as long
-		 * @param key property response name
-		 * @return property value
+		 * Получить значение свойства как long
+		 * @param ключ название свойства в ответе
+		 * @return значение свойства
 		 */
 		public long getLong(String key) {
 			long result = 0;
@@ -692,9 +692,9 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 		}
 
 		/**
-		 * Get property value as boolean
-		 * @param key property response name
-		 * @return property value
+		 * Получить значение свойства как булевое
+		 * @param key имя свойства в ответе
+		 * @return значение свойства
 		 */
 		public boolean getBoolean(String key) {
 			boolean result = false;
@@ -706,9 +706,9 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 		}
 
 		/**
-		 * Get file attachment by file name
-		 * @param attachmentName attachment name
-		 * @return attachment
+		 * Получить файл по имени вложения
+		 * @param attachmentName имя вложения
+		 * @return вложение
 		 */
 		public FileAttachment getAttachmentByName(String attachmentName) {
 			FileAttachment result = null;
@@ -724,16 +724,16 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 		}
 
 		/**
-		 * Get all attendees.
-		 * @return all attendees
+		 * Получить всех участников.
+		 * @return всех участников
 		 */
 		public List<Attendee> getAttendees() {
 			return attendees;
 		}
 
 		/**
-		 * Add attendee.
-		 * @param attendee attendee object
+		 * Добавить участника.
+		 * @param attendee объект участника
 		 */
 		public void addAttendee(Attendee attendee) {
 			if (attendees == null) {
@@ -743,8 +743,8 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 		}
 
 		/**
-		 * Add occurrence.
-		 * @param occurrence event occurence
+		 * Добавить событие.
+		 * @param occurrence событие
 		 */
 		public void addOccurrence(Occurrence occurrence) {
 			if (occurrences == null) {
@@ -754,16 +754,16 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 		}
 
 		/**
-		 * Get occurences.
-		 * @return event occurences
+		 * ПолучитьOccurrences.
+		 * @return событие поведения
 		 */
 		public List<Occurrence> getOccurrences() {
 			return occurrences;
 		}
 
 		/**
-		 * Add member.
-		 * @param member list member
+		 * Добавить участника.
+		 * @param member элемент списка участника
 		 */
 		public void addMember(String member) {
 			if (members == null) {
@@ -773,8 +773,8 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 		}
 
 		/**
-		 * Get members.
-		 * @return event members
+		 * Получить участников.
+		 * @return участники события
 		 */
 		public List<String> getMembers() {
 			return members;
@@ -783,8 +783,8 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 	}
 
 	/**
-	 * Check method success.
-	 * @throws EWSException on error
+	 * Проверка успешности метода.
+	 * @throws EWSException при ошибке
 	 */
 	public void checkSuccess() throws EWSException {
 		if ("The server cannot service this request right now. Try again later.".equals(errorDetail)) {
@@ -816,9 +816,9 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 	}
 
 	/**
-	 * Get response items.
-	 * @return response items
-	 * @throws EWSException on error
+	 * Получить элементы ответа.
+	 * @return элементы ответа
+	 * @throws EWSException при ошибке
 	 */
 	public List<Item> getResponseItems() throws EWSException {
 		checkSuccess();
@@ -831,9 +831,9 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 	}
 
 	/**
-	 * Get single response item.
-	 * @return response item
-	 * @throws EWSException on error
+	 * Получить единичный элемент ответа.
+	 * @return элемент ответа
+	 * @throws EWSException в случае ошибки
 	 */
 	public Item getResponseItem() throws EWSException {
 		checkSuccess();
@@ -846,9 +846,9 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 	}
 
 	/**
-	 * Get response mime content.
-	 * @return mime content
-	 * @throws EWSException on error
+	 * Получить MIME-содержимое ответа.
+	 * @return MIME-содержимое
+	 * @throws EWSException в случае ошибки
 	 */
 	public byte[] getMimeContent() throws EWSException {
 		checkSuccess();
@@ -1053,9 +1053,9 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 	}
 
 	/**
-	 * Convert response type to partstat value
-	 * @param responseType response type
-	 * @return partstat value
+	 * Преобразовать тип ответа в значение partstat
+	 * @param responseType тип ответа
+	 * @return значение partstat
 	 */
 	public static String responseTypeToPartstat(String responseType) {
 		if ("Accept".equals(responseType) || "Organizer".equals(responseType)) {
@@ -1248,7 +1248,7 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 						lastLogCount = totalCount;
 					}
 					/*
-					 * if (count > 0 && log.isDebugEnabled()) { log.debug(new
+					 * если (count > 0 && log.isDebugEnabled()) { log.debug(new
 					 * String(buffer, offset, count, "UTF-8")); }
 					 */
 					return count;

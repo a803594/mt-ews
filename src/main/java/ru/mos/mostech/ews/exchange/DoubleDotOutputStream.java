@@ -8,9 +8,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * RFC 1939: 3 Basic Operations [...] If any line begins with the termination octet, the
- * line is "byte-stuffed" by pre-pending the termination octet to that line of the
- * response.
+ * RFC 1939: 3 Основные операции [...] Если любая строка начинается с октета завершения,
+ * то строка "байт-упакована", добавляя октет завершения перед этой строкой ответа.
  */
 public class DoubleDotOutputStream extends FilterOutputStream {
 
@@ -34,11 +33,11 @@ public class DoubleDotOutputStream extends FilterOutputStream {
 	}
 
 	/**
-	 * RFC 1939: 3 Basic Operations [...] Hence a multi-line response is terminated with
-	 * the five octets "CRLF.CRLF"
+	 * RFC 1939: 3 Основные операции [...] Таким образом, многострочный ответ завершается
+	 * пятью октетами "CRLF.CRLF"
 	 * <p/>
-	 * Do not close actual outputstream
-	 * @throws IOException on error
+	 * Не закрывайте фактический выходной поток
+	 * @throws IOException в случае ошибки
 	 */
 	@Override
 	public void close() throws IOException {

@@ -11,12 +11,12 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Get User Configuration method.
+ * Метод получения конфигурации пользователя.
  */
 public class GetUserConfigurationMethod extends EWSMethod {
 
 	/**
-	 * Get User Configuration method.
+	 * Метод получения конфигурации пользователя.
 	 */
 	public GetUserConfigurationMethod() {
 		super("UserConfiguration", "GetUserConfiguration");

@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 import static org.apache.http.util.TextUtils.isEmpty;
 
 /**
- * Settings facade. MT-EWS settings are stored in the .mt-ews.properties file in current
- * user home directory or in the file specified on the command line.
+ * Фасад настроек. Настройки MT-EWS хранятся в файле .mt-ews.properties в домашнем
+ * каталоге текущего пользователя или в файле, указанном в командной строке.
  */
 @Slf4j
 public final class Settings {
@@ -91,32 +91,32 @@ public final class Settings {
 	};
 
 	/**
-	 * Set config file path (from command line parameter).
-	 * @param path mt-ews properties file path
+	 * Установить путь к конфигурационному файлу (из параметра командной строки).
+	 * @param path путь к файлу свойств mt-ews
 	 */
 	public static synchronized void setConfigFilePath(String path) {
 		configFilePath = path;
 	}
 
 	/**
-	 * Detect first launch (properties file does not exist).
-	 * @return true if this is the first start with the current file path
+	 * Обнаружить первый запуск (файл свойств не существует).
+	 * @return true, если это первый старт с текущим путем файла
 	 */
 	public static synchronized boolean isFirstStart() {
 		return isFirstStart;
 	}
 
 	/**
-	 * Load properties from provided stream (used in webapp mode).
-	 * @param inputStream properties stream
-	 * @throws IOException on error
+	 * Загрузить свойства из предоставленного потока (используется в веб-приложении).
+	 * @param inputStream поток свойств
+	 * @throws IOException в случае ошибки
 	 */
 	public static synchronized void load(InputStream inputStream) throws IOException {
 		SETTINGS_PROPERTIES.load(inputStream);
 	}
 
 	/**
-	 * Load properties from current file path (command line or default).
+	 * Загрузить свойства из текущего пути к файлу (командная строка или по умолчанию).
 	 */
 	public static synchronized void load() {
 		try {
@@ -144,7 +144,7 @@ public final class Settings {
 	}
 
 	/**
-	 * Set all settings to default values. Ports above 1024 for unix/linux
+	 * Установить все настройки на значения по умолчанию. Порты выше 1024 для unix/linux
 	 */
 	public static void setDefaultSettings() {
 		SETTINGS_PROPERTIES.put("mt.ews.mode", "EWS");
@@ -220,8 +220,8 @@ public final class Settings {
 	}
 
 	/**
-	 * Return MT-EWS log file path
-	 * @return full log file path
+	 * Вернуть путь к файлу журнала MT-EWS
+	 * @return полный путь к файлу журнала
 	 */
 	public static String getLogFilePath() {
 		String logFilePath = Settings.getProperty("mt.ews.logFilePath");
@@ -249,8 +249,8 @@ public final class Settings {
 	}
 
 	/**
-	 * Return MT-EWS log file directory
-	 * @return full log file directory
+	 * Вернуть директорию файла журнала MT-EWS
+	 * @return полная директория файла журнала
 	 */
 	public static String getLogFileDirectory() {
 		String logFilePath = getLogFilePath();
@@ -270,7 +270,7 @@ public final class Settings {
 	}
 
 	/**
-	 * Save settings in current file path (command line or default).
+	 * Сохранить настройки в текущем пути файла (командная строка или по умолчанию).
 	 */
 	public static synchronized void save() {
 		// configFilePath is null in some test cases
@@ -336,11 +336,11 @@ public final class Settings {
 	}
 
 	/**
-	 * Convert input property line to new line with value from properties. Preserve
-	 * comments
-	 * @param line input line
-	 * @param properties new property values
-	 * @return new line
+	 * Преобразует входную строку свойства в новую строку с значением из свойств.
+	 * Сохраняет комментарии
+	 * @param line входная строка
+	 * @param properties новые значения свойств
+	 * @return новая строка
 	 */
 	private static String convertLine(String line, Properties properties) {
 		int hashIndex = line.indexOf('#');
@@ -361,9 +361,9 @@ public final class Settings {
 	}
 
 	/**
-	 * Escape backslash in value.
-	 * @param value value
-	 * @return escaped value
+	 * Экранировать обратный слэш в значении.
+	 * @param value значение
+	 * @return экранированное значение
 	 */
 	private static String escapeValue(String value) {
 		StringBuilder buffer = new StringBuilder();
@@ -377,9 +377,9 @@ public final class Settings {
 	}
 
 	/**
-	 * Get a property value as String.
-	 * @param property property name
-	 * @return property value
+	 * Получить значение свойства в виде строки.
+	 * @param property название свойства
+	 * @return значение свойства
 	 */
 	public static synchronized String getProperty(String property) {
 		String value = SETTINGS_PROPERTIES.getProperty(property);
@@ -391,10 +391,10 @@ public final class Settings {
 	}
 
 	/**
-	 * Get property value or default.
-	 * @param property property name
-	 * @param defaultValue default property value
-	 * @return property value
+	 * Получить значение свойства или значение по умолчанию.
+	 * @param property имя свойства
+	 * @param defaultValue значение свойства по умолчанию
+	 * @return значение свойства
 	 */
 	public static synchronized String getProperty(String property, String defaultValue) {
 		String value = getProperty(property);
@@ -405,9 +405,9 @@ public final class Settings {
 	}
 
 	/**
-	 * Get a property value as char[].
-	 * @param property property name
-	 * @return property value
+	 * Получить значение свойства как char[].
+	 * @param property имя свойства
+	 * @return значение свойства
 	 */
 	public static synchronized char[] getCharArrayProperty(String property) {
 		String propertyValue = Settings.getProperty(property);
@@ -419,28 +419,28 @@ public final class Settings {
 	}
 
 	/**
-	 * Set a property value.
-	 * @param property property name
-	 * @param value property value
+	 * Установить значение свойства.
+	 * @param property имя свойства
+	 * @param value значение свойства
 	 */
 	public static synchronized void setProperty(String property, String value) {
 		SETTINGS_PROPERTIES.setProperty(property, Objects.requireNonNullElse(value, ""));
 	}
 
 	/**
-	 * Get a property value as int.
-	 * @param property property name
-	 * @return property value
+	 * Получить значение свойства как int.
+	 * @param property имя свойства
+	 * @return значение свойства
 	 */
 	public static synchronized int getIntProperty(String property) {
 		return getIntProperty(property, 0);
 	}
 
 	/**
-	 * Get a property value as int, return default value if null.
-	 * @param property property name
-	 * @param defaultValue default property value
-	 * @return property value
+	 * Получить значение свойства как int, вернуть значение по умолчанию, если null.
+	 * @param property имя свойства
+	 * @param defaultValue значение свойства по умолчанию
+	 * @return значение свойства
 	 */
 	public static synchronized int getIntProperty(String property, int defaultValue) {
 		int value = defaultValue;
@@ -457,9 +457,9 @@ public final class Settings {
 	}
 
 	/**
-	 * Get a property value as boolean.
-	 * @param property property name
-	 * @return property value
+	 * Получить значение свойства в виде булевого типа.
+	 * @param property имя свойства
+	 * @return значение свойства
 	 */
 	public static synchronized boolean getBooleanProperty(String property) {
 		String propertyValue = SETTINGS_PROPERTIES.getProperty(property);
@@ -467,10 +467,10 @@ public final class Settings {
 	}
 
 	/**
-	 * Get a property value as boolean.
-	 * @param property property name
-	 * @param defaultValue default property value
-	 * @return property value
+	 * Получить значение свойства как булево.
+	 * @param property имя свойства
+	 * @param defaultValue значение свойства по умолчанию
+	 * @return значение свойства
 	 */
 	public static synchronized boolean getBooleanProperty(String property, boolean defaultValue) {
 		boolean value = defaultValue;
@@ -503,10 +503,10 @@ public final class Settings {
 	}
 
 	/**
-	 * Persist token in mt-ews.oauth.tokenFilePath.
-	 * @param tokenFilePath token file path
-	 * @param username username
-	 * @param refreshToken Oauth refresh token
+	 * Сохранить токен в mt-ews.oauth.tokenFilePath.
+	 * @param tokenFilePath путь к файлу токена
+	 * @param username имя пользователя
+	 * @param refreshToken Oauth токен обновления
 	 */
 	private static void savetokentoFile(String tokenFilePath, String username, String refreshToken) {
 		try {
@@ -526,10 +526,10 @@ public final class Settings {
 	}
 
 	/**
-	 * Load token from mt-ews.oauth.tokenFilePath.
-	 * @param tokenFilePath token file path
-	 * @param username username
-	 * @return encrypted token value
+	 * Загружает токен из mt-ews.oauth.tokenFilePath.
+	 * @param tokenFilePath путь к файлу токена
+	 * @param username имя пользователя
+	 * @return зашифрованное значение токена
 	 */
 	private static String loadtokenFromFile(String tokenFilePath, String username) {
 		try {
@@ -559,19 +559,19 @@ public final class Settings {
 	}
 
 	/**
-	 * Return Log4J logging level for the category.
-	 * @param category logging category
-	 * @return logging level
+	 * Вернуть уровень ведения журнала Log4J для категории.
+	 * @param category категория ведения журнала
+	 * @return уровень ведения журнала
 	 */
 	public static synchronized Level getLoggingLevel(String category) {
 		return Level.DEBUG;
 	}
 
 	/**
-	 * Get all properties that are in the specified scope, that is, that start with
+	 * Получить все свойства, которые находятся в указанной области, то есть начинаются с
 	 * '&lt;scope&gt;.'.
-	 * @param scope start of property name
-	 * @return properties
+	 * @param scope начало имени свойства
+	 * @return свойства
 	 */
 	public static synchronized Properties getSubProperties(String scope) {
 		final String keyStart;
@@ -596,18 +596,18 @@ public final class Settings {
 	}
 
 	/**
-	 * Set Log4J logging level for the category
-	 * @param category logging category
-	 * @param level logging level
+	 * Установить уровень логирования Log4J для категории
+	 * @param category категория логирования
+	 * @param level уровень логирования
 	 */
 	public static synchronized void setLoggingLevel(String category, Level level) {
 
 	}
 
 	/**
-	 * Change and save a single property.
-	 * @param property property name
-	 * @param value property value
+	 * Изменить и сохранить одно свойство.
+	 * @param property имя свойства
+	 * @param value значение свойства
 	 */
 	public static synchronized void saveProperty(String property, String value) {
 		Settings.load();
@@ -616,16 +616,16 @@ public final class Settings {
 	}
 
 	/**
-	 * Test if running on Windows
-	 * @return true on Windows
+	 * Проверка, работает ли на Windows
+	 * @return true на Windows
 	 */
 	public static boolean isWindows() {
 		return System.getProperty(OS_NAME).toLowerCase().startsWith("windows");
 	}
 
 	/**
-	 * Test if running on Linux
-	 * @return true on Linux
+	 * Проверка на наличие Linux
+	 * @return true на Linux
 	 */
 	public static boolean isLinux() {
 		return System.getProperty(OS_NAME).toLowerCase().startsWith("linux");

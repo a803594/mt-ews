@@ -16,7 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * MT-EWS settings frame
+ * Настройки фрейма MT-EWS
  */
 public class SettingsFrame extends JFrame {
 
@@ -656,7 +656,7 @@ public class SettingsFrame extends JFrame {
 	}
 
 	/**
-	 * Reload settings from properties.
+	 * Перезагрузить настройки из свойств.
 	 */
 	public void reload() {
 		// reload settings in form
@@ -762,7 +762,7 @@ public class SettingsFrame extends JFrame {
 	}
 
 	/**
-	 * MT-EWS settings frame.
+	 * Настройки MT-EWS.
 	 */
 	@SuppressWarnings("java:S3776")
 	public SettingsFrame() {

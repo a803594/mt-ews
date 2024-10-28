@@ -6,14 +6,14 @@ package ru.mos.mostech.ews.exchange.ews;
 import java.util.List;
 
 /**
- * Copy item to another folder.
+ * Скопировать элемент в другую папку.
  */
 public class CopyItemMethod extends EWSMethod {
 
 	/**
-	 * Copy item method.
-	 * @param itemId item id
-	 * @param toFolderId target folder id
+	 * Метод копирования элемента.
+	 * @param itemId идентификатор элемента
+	 * @param toFolderId идентификатор целевой папки
 	 */
 	public CopyItemMethod(ItemId itemId, FolderId toFolderId) {
 		super("Item", "CopyItem");
@@ -22,9 +22,9 @@ public class CopyItemMethod extends EWSMethod {
 	}
 
 	/**
-	 * Copy items to target folder.
-	 * @param itemIds item id list
-	 * @param toFolderId target folder id
+	 * Копировать элементы в целевую папку.
+	 * @param itemIds список идентификаторов элементов
+	 * @param toFolderId идентификатор целевой папки
 	 */
 	public CopyItemMethod(List<ItemId> itemIds, FolderId toFolderId) {
 		super("Item", "CopyItem");

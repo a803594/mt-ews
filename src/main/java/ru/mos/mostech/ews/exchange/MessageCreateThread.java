@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 /**
- * Create message in a separate thread.
+ * Создать сообщение в отдельном потоке.
  */
 @Slf4j
 public class MessageCreateThread extends Thread {
@@ -56,16 +56,16 @@ public class MessageCreateThread extends Thread {
 	}
 
 	/**
-	 * Create message in a separate thread.
-	 * @param session Exchange session
-	 * @param folderPath folder path
-	 * @param messageName message name
-	 * @param properties message properties
-	 * @param mimeMessage message content
-	 * @param outputStream output stream
-	 * @param capabilities IMAP capabilities
-	 * @throws InterruptedException on error
-	 * @throws IOException on error
+	 * Создать сообщение в отдельном потоке.
+	 * @param session Сессия обмена
+	 * @param folderPath Путь к папке
+	 * @param messageName Имя сообщения
+	 * @param properties Свойства сообщения
+	 * @param mimeMessage Содержимое сообщения
+	 * @param outputStream Выходной поток
+	 * @param capabilities Возможности IMAP
+	 * @throws InterruptedException в случае ошибки
+	 * @throws IOException в случае ошибки
 	 */
 	public static ExchangeSession.Message createMessage(ExchangeSession session, String folderPath, String messageName,
 			HashMap<String, String> properties, MimeMessage mimeMessage, OutputStream outputStream, String capabilities)

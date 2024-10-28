@@ -33,7 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Dav Gateway IMAP connection implementation.
+ * Реализация соединения IMAP для Dav Gateway.
  */
 @Slf4j
 public class ImapConnection extends AbstractConnection {
@@ -43,8 +43,8 @@ public class ImapConnection extends AbstractConnection {
 	ExchangeSession.Folder currentFolder;
 
 	/**
-	 * Initialize the streams and start the thread.
-	 * @param clientSocket IMAP client socket
+	 * Инициализировать потоки и запустить поток.
+	 * @param clientSocket Сокет IMAP клиента
 	 */
 	public ImapConnection(Socket clientSocket) {
 		super(ImapConnection.class.getSimpleName(), clientSocket, "UTF-8");
@@ -864,7 +864,7 @@ public class ImapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Detect shared mailbox access. see
+	 * Обнаружение доступа к общей почтовой ящике. см.
 	 * http://msexchangeteam.com/archive/2004/03/31/105275.aspx
 	 */
 	protected void splitUserName() {
@@ -906,10 +906,10 @@ public class ImapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send expunge untagged response for removed IMAP message uids.
-	 * @param previousImapFlagMap uid map before refresh
-	 * @param imapFlagMap uid map after refresh
-	 * @throws IOException on error
+	 * Отправить ответ expunge без метки для удаленных uid сообщений IMAP.
+	 * @param previousImapFlagMap карта uid перед обновлением
+	 * @param imapFlagMap карта uid после обновления
+	 * @throws IOException при ошибке
 	 */
 	private void handleRefresh(TreeMap<Long, String> previousImapFlagMap, TreeMap<Long, String> imapFlagMap)
 			throws IOException {
@@ -953,7 +953,7 @@ public class ImapConnection extends AbstractConnection {
 		}
 
 		/**
-		 * Monitor full message download
+		 * Мониторинг загрузки полного сообщения
 		 */
 		protected void loadMessage() throws IOException, MessagingException {
 			if (!message.isLoaded()) {
@@ -1196,9 +1196,9 @@ public class ImapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Handle flags macro in fetch requests
-	 * @param parameters input fetch flags
-	 * @return transformed fetch flags
+	 * Обработать макрос флагов в запросах fetch
+	 * @param parameters входные флаги fetch
+	 * @return преобразованные флаги fetch
 	 */
 	private String handleFetchMacro(String parameters) {
 		if ("ALL".equals(parameters)) {
@@ -1321,10 +1321,10 @@ public class ImapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Check NOT UID condition.
-	 * @param notUidRange excluded uid range
-	 * @param imapUid current message imap uid
-	 * @return true if not excluded
+	 * Проверить условие NOT UID.
+	 * @param notUidRange исключенный диапазон uid
+	 * @param imapUid текущий имап uid сообщения
+	 * @return true, если не исключен
 	 */
 	private boolean isNotExcluded(String notUidRange, long imapUid) {
 		if (notUidRange == null) {
@@ -1606,9 +1606,9 @@ public class ImapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Compute body part size with failover.
-	 * @param bodyPart MIME body part
-	 * @return body part size or 0 on error
+	 * Вычислить размер части тела с резервированием.
+	 * @param bodyPart MIME часть тела
+	 * @return размер части тела или 0 в случае ошибки
 	 */
 	private int getBodyPartSize(MimePart bodyPart) {
 		int bodySize = 0;
@@ -1672,7 +1672,7 @@ public class ImapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * client side search conditions
+	 * условия поиска на стороне клиента
 	 */
 	static final class SearchConditions {
 
@@ -2096,9 +2096,9 @@ public class ImapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Decode IMAP credentials
-	 * @param tokens tokens
-	 * @throws IOException on error
+	 * Декодировать учетные данные IMAP
+	 * @param tokens токены
+	 * @throws IOException в случае ошибки
 	 */
 	protected void parseCredentials(ImapTokenizer tokens) throws IOException {
 		if (tokens.hasMoreTokens()) {
@@ -2121,7 +2121,7 @@ public class ImapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Filter to output only headers, also count full size
+	 * Фильтр для вывода только заголовков, также подсчет полного размера
 	 */
 	private static final class PartOutputStream extends FilterOutputStream {
 
@@ -2196,7 +2196,7 @@ public class ImapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Partial output stream, start at startIndex and write maxSize bytes.
+	 * Частичный выходной поток, начиная с startIndex и записывая maxSize байт.
 	 */
 	private static final class PartialOutputStream extends FilterOutputStream {
 

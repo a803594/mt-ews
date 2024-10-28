@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Custom Exchange PROPFIND method. Does not load full DOM in memory.
+ * Пользовательский метод PROPFIND. Не загружает полный DOM в память.
  */
 public class ExchangePropFindRequest extends ExchangeDavRequest {
 

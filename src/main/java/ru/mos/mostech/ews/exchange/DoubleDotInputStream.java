@@ -8,8 +8,8 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 
 /**
- * Replace double dot lines with single dot in input stream. A line with a single dot
- * means end of stream
+ * Замените двойные точки на одиночные в входном потоке. Строка с одной точкой означает
+ * конец потока
  */
 public class DoubleDotInputStream extends PushbackInputStream {
 
@@ -22,9 +22,9 @@ public class DoubleDotInputStream extends PushbackInputStream {
 	}
 
 	/**
-	 * Push current byte to buffer and read next byte.
-	 * @return next byte
-	 * @throws IOException on error
+	 * Поместить текущий байт в буфер и считать следующий байт.
+	 * @return следующий байт
+	 * @throws IOException в случае ошибки
 	 */
 	protected int readNextByte() throws IOException {
 		int b = super.read();

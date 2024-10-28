@@ -19,8 +19,9 @@ import java.security.PrivilegedAction;
 import java.security.Security;
 
 /**
- * Override native SPNegoScheme to handle Kerberos. Try to get Kerberos ticket from
- * session, if this fails use callbacks to get credentials from user.
+ * Переопределите нативную SPNegoScheme для обработки Kerberos. Попытайтесь получить билет
+ * Kerberos из сеанса, если это не удалось, используйте обратные вызовы для получения
+ * учетных данных от пользователя.
  */
 @Slf4j
 public class MosTechEwsSPNegoScheme extends SPNegoScheme {

@@ -4,14 +4,14 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Create Folder method.
+ * Метод создания папки.
  */
 public class MoveFolderMethod extends EWSMethod {
 
 	/**
-	 * Move folder to target folder.
-	 * @param folderId folder id
-	 * @param toFolderId target folder id
+	 * Переместить папку в целевую папку.
+	 * @param folderId идентификатор папки
+	 * @param toFolderId идентификатор целевой папки
 	 */
 	public MoveFolderMethod(FolderId folderId, FolderId toFolderId) {
 		super("Folder", "MoveFolder");

@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.net.SocketException;
 
 /**
- * Message load thread. Used to avoid timeouts over POP and IMAP
+ * Поток загрузки сообщений. Используется для предотвращения тайм-аутов по POP и IMAP
  */
 @Slf4j
 public class MessageLoadThread extends Thread {
@@ -44,12 +44,12 @@ public class MessageLoadThread extends Thread {
 	}
 
 	/**
-	 * Load mime message in a separate thread if over 1MB. Send a space character every
-	 * ten seconds to avoid client timeouts
-	 * @param message message
-	 * @param outputStream output stream
-	 * @throws IOException on error
-	 * @throws MessagingException on error
+	 * Загружает MIME-сообщение в отдельном потоке, если объем превышает 1 МБ. Отправляет
+	 * символ пробела каждые десять секунд, чтобы избежать таймаутов клиента
+	 * @param message сообщение
+	 * @param outputStream выходной поток
+	 * @throws IOException при ошибке
+	 * @throws MessagingException при ошибке
 	 */
 	public static void loadMimeMessage(ExchangeSession.Message message, OutputStream outputStream)
 			throws IOException, MessagingException {

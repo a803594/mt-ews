@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 /**
- * Edit Caldav scheduling notifications.
+ * Редактировать уведомления о планировании Caldav.
  */
 public class NotificationDialog extends JDialog {
 
@@ -45,21 +45,22 @@ public class NotificationDialog extends JDialog {
 	}
 
 	/**
-	 * Notification dialog to let user edit message body or cancel notification. Called
-	 * from EWS => no recipients information
-	 * @param subject notification subject
-	 * @param description notification description
+	 * Диалог уведомления, позволяющий пользователю редактировать текст сообщения или
+	 * отменить уведомление. Вызывается из EWS => нет информации о получателях
+	 * @param subject тема уведомления
+	 * @param description описание уведомления
 	 */
 	public NotificationDialog(String subject, String description) {
 		this(null, null, subject, description);
 	}
 
 	/**
-	 * Notification dialog to let user edit message body or cancel notification.
-	 * @param to main recipients
-	 * @param cc copy recipients
-	 * @param subject notification subject
-	 * @param description notification description
+	 * Диалог уведомления, чтобы дать пользователю возможность редактировать текст
+	 * сообщения или отменить уведомление.
+	 * @param to главные получатели
+	 * @param cc получатели копии
+	 * @param subject тема уведомления
+	 * @param description описание уведомления
 	 */
 	public NotificationDialog(String to, String cc, String subject, String description) {
 		hasRecipients = to != null || cc != null;
@@ -166,40 +167,40 @@ public class NotificationDialog extends JDialog {
 	}
 
 	/**
-	 * Cancel notification flag.
-	 * @return false if user chose to cancel notification
+	 * Флаг отмены уведомления.
+	 * @return false, если пользователь решил отменить уведомление
 	 */
 	public boolean getSendNotification() {
 		return sendNotification;
 	}
 
 	/**
-	 * Get edited recipients.
-	 * @return recipients string
+	 * Получить отредактированных получателей.
+	 * @return строка с получателями
 	 */
 	public String getTo() {
 		return toField.getText();
 	}
 
 	/**
-	 * Get edited copy recipients.
-	 * @return copy recipients string
+	 * Получить получателей редактируемой копии.
+	 * @return строка получателей копии
 	 */
 	public String getCc() {
 		return ccField.getText();
 	}
 
 	/**
-	 * Get edited subject.
-	 * @return subject
+	 * Получить отредактированный предмет.
+	 * @return предмет
 	 */
 	public String getSubject() {
 		return subjectField.getText();
 	}
 
 	/**
-	 * Get edited body.
-	 * @return edited notification body
+	 * Получить измененный текст.
+	 * @return измененный текст уведомления
 	 */
 	public String getBody() {
 		return bodyField.getText();

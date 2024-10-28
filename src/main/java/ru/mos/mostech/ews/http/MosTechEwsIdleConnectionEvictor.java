@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Single thread for all connection managers. close idle connections
+ * Один поток для всех менеджеров соединений. закрыть неактивные соединения
  */
 @Slf4j
 public class MosTechEwsIdleConnectionEvictor {
@@ -68,8 +68,8 @@ public class MosTechEwsIdleConnectionEvictor {
 	}
 
 	/**
-	 * Add connection manager to evictor thread.
-	 * @param connectionManager connection manager
+	 * Добавить менеджер соединений в поток выброса.
+	 * @param connectionManager менеджер соединений
 	 */
 	public static void addConnectionManager(HttpClientConnectionManager connectionManager) {
 		synchronized (connectionManagers) {
@@ -79,8 +79,8 @@ public class MosTechEwsIdleConnectionEvictor {
 	}
 
 	/**
-	 * Remove connection manager from evictor thread.
-	 * @param connectionManager connection manager
+	 * Удалить менеджер соединений из потока эвиктора.
+	 * @param connectionManager менеджер соединений
 	 */
 	public static void removeConnectionManager(HttpClientConnectionManager connectionManager) {
 		synchronized (connectionManagers) {

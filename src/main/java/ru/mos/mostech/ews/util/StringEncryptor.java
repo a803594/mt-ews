@@ -17,7 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 /**
- * Encrypt string with user password. Simple implementation based on AES
+ * Защищает строку с помощью пароля пользователя. Простая реализация на основе AES
  */
 public class StringEncryptor {
 

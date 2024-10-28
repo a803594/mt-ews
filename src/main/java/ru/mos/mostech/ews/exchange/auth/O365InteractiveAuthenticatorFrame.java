@@ -36,8 +36,8 @@ import java.net.URLStreamHandler;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Interactive authenticator UI based on OpenJFX. Need access to internal urlhandler on
- * recent JDK versions with: --add-exports
+ * Интерактивный пользовательский интерфейс аутентификатора на основе OpenJFX. Необходим
+ * доступ к внутреннему urlhandler в недавних версиях JDK с помощью: --add-exports
  * java.base/sun.net.www.protocol.https=ALL-UNNAMED
  */
 @Slf4j

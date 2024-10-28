@@ -63,8 +63,8 @@ public class O365ManualAuthenticator implements ExchangeAuthenticator {
 	}
 
 	/**
-	 * Return a pool enabled HttpClientAdapter instance to access O365
-	 * @return HttpClientAdapter instance
+	 * Вернуть экземпляр HttpClientAdapter с включенным пулом для доступа к O365
+	 * @return HttpClientAdapter экземпляр
 	 */
 	@Override
 	public HttpClientAdapter getHttpClientAdapter() {

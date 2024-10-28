@@ -79,7 +79,7 @@ public class HttpAutoDiscoverClient {
 		}
 		catch (InterruptedException e) {
 			log.error("Соединение было прервано во время autoDiscovery: ", e);
-			/* Clean up whatever needs to be handled before interrupting */
+			/* Уборка всего, что нужно обработать перед прерыванием */
 			Thread.currentThread().interrupt();
 		}
 		catch (Exception e) {

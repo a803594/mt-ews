@@ -9,7 +9,7 @@ import ru.mos.mostech.ews.ui.PasswordPromptDialog;
 import java.awt.*;
 
 /**
- * Ask user one time password.
+ * Попросите пользователя один раз ввести пароль.
  */
 public final class MosTechEwsOTPPrompt {
 
@@ -17,8 +17,8 @@ public final class MosTechEwsOTPPrompt {
 	}
 
 	/**
-	 * Ask user token password
-	 * @return user provided one time password
+	 * Запросить у пользователя пароль токена
+	 * @return одноразовый пароль, предоставленный пользователем
 	 */
 	public static String getOneTimePassword() {
 		PasswordPromptDialog passwordPromptDialog = new PasswordPromptDialog(
@@ -27,9 +27,9 @@ public final class MosTechEwsOTPPrompt {
 	}
 
 	/**
-	 * Ask user captcha value
-	 * @param captchaImage captcha image
-	 * @return user provided one time password
+	 * Запросите у пользователя значение капчи
+	 * @param captchaImage изображение капчи
+	 * @return одноразовый пароль, предоставленный пользователем
 	 */
 	public static String getCaptchaValue(Image captchaImage) {
 		PasswordPromptDialog passwordPromptDialog = new PasswordPromptDialog(BundleMessage.format("UI_CAPTCHA_PROMPT"),

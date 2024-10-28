@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * Dav Gateway smtp connection implementation
+ * Реализация соединения SMTP для Dav Gateway
  */
 public class SmtpConnection extends AbstractConnection {
 
@@ -35,8 +35,8 @@ public class SmtpConnection extends AbstractConnection {
 	public static final String UNRECOGNIZED_COMMAND = "500 Unrecognized command";
 
 	/**
-	 * Initialize the streams and start the thread.
-	 * @param clientSocket SMTP client socket
+	 * Инициализировать потоки и запустить поток.
+	 * @param clientSocket SMTP сокет клиента
 	 */
 	public SmtpConnection(Socket clientSocket) {
 		super(SmtpConnection.class.getSimpleName(), clientSocket, null);
@@ -242,8 +242,8 @@ public class SmtpConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Create authenticated session with Exchange server
-	 * @throws IOException on error
+	 * Создать аутентифицированную сессию с сервером Exchange
+	 * @throws IOException при ошибке
 	 */
 	protected void authenticate() throws IOException {
 		try {
@@ -267,9 +267,9 @@ public class SmtpConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Decode SMTP credentials
-	 * @param encodedCredentials smtp encoded credentials
-	 * @throws IOException if invalid credentials
+	 * Декодировать учетные данные SMTP
+	 * @param encodedCredentials закодированные учетные данные SMTP
+	 * @throws IOException если учетные данные неверны
 	 */
 	protected void decodeCredentials(String encodedCredentials) throws IOException {
 		String decodedCredentials = IOUtil.decodeBase64AsString(encodedCredentials);

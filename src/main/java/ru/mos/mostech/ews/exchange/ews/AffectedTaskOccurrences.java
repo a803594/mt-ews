@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Item delete option.
+ * Опция удаления элемента.
  */
 @SuppressWarnings({ "UnusedDeclaration" })
 public final class AffectedTaskOccurrences extends AttributeOption {

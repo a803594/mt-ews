@@ -9,7 +9,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 /**
- * Resolve Names method.
+ * Метод разрешения имен.
  */
 public class ResolveNamesMethod extends EWSMethod {
 
@@ -17,8 +17,8 @@ public class ResolveNamesMethod extends EWSMethod {
 			"true");
 
 	/**
-	 * Build Resolve Names method
-	 * @param value search value
+	 * Метод построения разрешения имен
+	 * @param value значение поиска
 	 */
 	public ResolveNamesMethod(String value) {
 		super("Contact", "ResolveNames", "ResolutionSet");

@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 /**
- * Generic Rest request.
+ * Обобщенный Rest-запрос.
  */
 @Slf4j
 public class RestRequest extends HttpPost implements ResponseHandler<JSONObject> {

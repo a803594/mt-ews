@@ -28,7 +28,7 @@ import java.net.URI;
 import java.util.*;
 
 /**
- * Implement ExchangeSession based on Microsoft Graph
+ * Реализовать ExchangeSession на основе Microsoft Graph
  */
 @Slf4j
 public class GraphExchangeSession extends ExchangeSession {
@@ -82,7 +82,7 @@ public class GraphExchangeSession extends ExchangeSession {
 	O365Token token;
 
 	/**
-	 * Default folder properties list
+	 * Список свойств по умолчанию для папки
 	 */
 	protected static final HashSet<FieldURI> FOLDER_PROPERTIES = new HashSet<>();
 
@@ -414,9 +414,9 @@ public class GraphExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Compute folderId from folderName
-	 * @param folderPath folder name (path)
-	 * @return folder id
+	 * Вычисляет folderId из folderName
+	 * @param folderPath имя папки (путь)
+	 * @return идентификатор папки
 	 */
 	private FolderId getFolderId(String folderPath) throws IOException {
 		FolderId folderId = getFolderIdIfExists(folderPath);
@@ -534,11 +534,11 @@ public class GraphExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Search subfolder by name, return null when no folders found
-	 * @param currentFolderId parent folder id
-	 * @param folderName child folder name
-	 * @return child folder id if exists
-	 * @throws IOException on error
+	 * Поиск подпапки по имени, возвращает null, если папки не найдены
+	 * @param currentFolderId id родительской папки
+	 * @param folderName имя дочерней папки
+	 * @return id дочерней папки, если существует
+	 * @throws IOException в случае ошибки
 	 */
 	protected FolderId getSubFolderByName(FolderId currentFolderId, String folderName) throws IOException {
 		// TODO rename davSearchEncode

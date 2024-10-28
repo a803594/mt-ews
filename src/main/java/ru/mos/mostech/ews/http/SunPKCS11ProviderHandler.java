@@ -13,7 +13,7 @@ import java.security.Provider;
 import java.security.Security;
 
 /**
- * Add the SunPKCS11 Provider.
+ * Добавьте провайдер SunPKCS11.
  */
 public final class SunPKCS11ProviderHandler {
 
@@ -21,8 +21,8 @@ public final class SunPKCS11ProviderHandler {
 	}
 
 	/**
-	 * Register PKCS11 provider.
-	 * @param pkcs11Config PKCS11 config string
+	 * Регистрация провайдера PKCS11.
+	 * @param pkcs11Config Строка конфигурации PKCS11
 	 */
 	public static void registerProvider(String pkcs11Config) {
 		Provider p;

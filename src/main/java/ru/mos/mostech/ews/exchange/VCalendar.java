@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * VCalendar object.
+ * Объект VCalendar.
  */
 @Slf4j
 public class VCalendar extends VObject {
@@ -26,11 +26,11 @@ public class VCalendar extends VObject {
 	protected String email;
 
 	/**
-	 * Create VCalendar object from reader;
-	 * @param reader stream reader
-	 * @param email current user email
-	 * @param vTimezone user OWA timezone
-	 * @throws IOException on error
+	 * Создать объект VCalendar из ридера;
+	 * @param reader потоковый ридер
+	 * @param email электронная почта текущего пользователя
+	 * @param vTimezone часовой пояс пользователя OWA
+	 * @throws IOException в случае ошибки
 	 */
 	public VCalendar(BufferedReader reader, String email, VObject vTimezone) throws IOException {
 		super(reader);
@@ -45,22 +45,22 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Create VCalendar object from string;
-	 * @param vCalendarBody item body
-	 * @param email current user email
-	 * @param vTimezone user OWA timezone
-	 * @throws IOException on error
+	 * Создание объекта VCalendar из строки;
+	 * @param vCalendarBody тело элемента
+	 * @param email электронная почта текущего пользователя
+	 * @param vTimezone часовой пояс пользователя OWA
+	 * @throws IOException в случае ошибки
 	 */
 	public VCalendar(String vCalendarBody, String email, VObject vTimezone) throws IOException {
 		this(new ICSBufferedReader(new StringReader(vCalendarBody)), email, vTimezone);
 	}
 
 	/**
-	 * Create VCalendar object from string;
-	 * @param vCalendarContent item content
-	 * @param email current user email
-	 * @param vTimezone user OWA timezone
-	 * @throws IOException on error
+	 * Создать объект VCalendar из строки;
+	 * @param vCalendarContent содержимое элемента
+	 * @param email электронная почта текущего пользователя
+	 * @param vTimezone часовой пояс пользователя OWA
+	 * @throws IOException при ошибке
 	 */
 	public VCalendar(byte[] vCalendarContent, String email, VObject vTimezone) throws IOException {
 		this(new ICSBufferedReader(
@@ -69,15 +69,15 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Empty constructor
+	 * Пустой конструктор
 	 */
 	public VCalendar() {
 		type = "VCALENDAR";
 	}
 
 	/**
-	 * Set timezone on vObject
-	 * @param vTimezone timezone object
+	 * Установить часовой пояс в vObject
+	 * @param vTimezone объект часового пояса
 	 */
 	public void setTimezone(VObject vTimezone) {
 		if (vObjects == null) {
@@ -118,17 +118,18 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Check if vCalendar is CDO allday.
-	 * @return true if vCalendar has X-MICROSOFT-CDO-ALLDAYEVENT property set to TRUE
+	 * Проверить, является ли vCalendar событием на весь день CDO.
+	 * @return true, если у vCalendar установлен свойство X-MICROSOFT-CDO-ALLDAYEVENT в
+	 * TRUE
 	 */
 	public boolean isCdoAllDay() {
 		return firstVevent != null && isCdoAllDay(firstVevent);
 	}
 
 	/**
-	 * Get email from property value.
-	 * @param property property
-	 * @return email value
+	 * Получить email из значения свойства.
+	 * @param property свойство
+	 * @return значение email
 	 */
 	public String getEmailValue(VProperty property) {
 		if (property == null) {
@@ -533,9 +534,9 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Replace iCal4 (Snow Leopard) principal paths with mailto expression
-	 * @param value attendee value or ics line
-	 * @return fixed value
+	 * Заменить пути главного пользователя iCal4 (Snow Leopard) на выражение mailto
+	 * @param value значение участника или строка ics
+	 * @return исправленное значение
 	 */
 	protected String replaceIcal4Principal(String value) {
 		if (value.contains("/principals/__uuids__/")) {
@@ -576,7 +577,7 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Return VTimezone object
+	 * Возвращает объект VTimezone
 	 * @return VTimezone
 	 */
 	public VObject getVTimezone() {
@@ -584,10 +585,10 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Convert X-CALENDARSERVER-ACCESS to CLASS. see
+	 * Преобразовать X-CALENDARSERVER-ACCESS в CLASS. см.
 	 * http://svn.calendarserver.org/repository/calendarserver/CalendarServer/trunk/doc/Extensions/caldav-privateevents.txt
-	 * @param calendarServerAccess X-CALENDARSERVER-ACCESS value
-	 * @return CLASS value
+	 * @param calendarServerAccess значение X-CALENDARSERVER-ACCESS
+	 * @return значение CLASS
 	 */
 	protected String getEventClass(String calendarServerAccess) {
 		if ("PRIVATE".equalsIgnoreCase(calendarServerAccess)) {
@@ -603,10 +604,10 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Convert CLASS to X-CALENDARSERVER-ACCESS. see
+	 * Конвертировать CLASS в X-CALENDARSERVER-ACCESS. смотрите
 	 * http://svn.calendarserver.org/repository/calendarserver/CalendarServer/trunk/doc/Extensions/caldav-privateevents.txt
 	 * *
-	 * @return X-CALENDARSERVER-ACCESS value
+	 * @return значение X-CALENDARSERVER-ACCESS
 	 */
 	protected String getCalendarServerAccess() {
 		String eventClass = getFirstVeventPropertyValue("CLASS");
@@ -622,9 +623,9 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Get property value from first VEVENT in VCALENDAR.
-	 * @param name property name
-	 * @return property value
+	 * Получить значение свойства из первого VEVENT в VCALENDAR.
+	 * @param name имя свойства
+	 * @return значение свойства
 	 */
 	public String getFirstVeventPropertyValue(String name) {
 		if (firstVevent == null) {
@@ -645,9 +646,9 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Get properties by name from first VEVENT.
-	 * @param name property name
-	 * @return properties
+	 * Получить свойства по имени из первого VEVENT.
+	 * @param name имя свойства
+	 * @return свойства
 	 */
 	public List<VProperty> getFirstVeventProperties(String name) {
 		if (firstVevent == null) {
@@ -659,7 +660,7 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Remove VAlarm from VCalendar.
+	 * Удалить VAlarm из VCalendar.
 	 */
 	public void removeVAlarm() {
 		if (vObjects != null) {
@@ -675,8 +676,8 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Check if VCalendar has a VALARM item.
-	 * @return true if VCalendar has a VALARM
+	 * Проверить, имеет ли VCalendar элемент VALARM.
+	 * @return true, если VCalendar имеет VALARM
 	 */
 	public boolean hasVAlarm() {
 		if (vObjects != null) {
@@ -724,73 +725,73 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Check if this VCalendar is a meeting.
-	 * @return true if this VCalendar has attendees
+	 * Проверьте, является ли этот VCalendar встречей.
+	 * @return true, если у этого VCalendar есть участники
 	 */
 	public boolean isMeeting() {
 		return getFirstVeventProperty("ATTENDEE") != null;
 	}
 
 	/**
-	 * Check if current user is meeting organizer.
-	 * @return true it user email matched organizer email
+	 * Проверьте, является ли текущий пользователь организатором встречи.
+	 * @return true, если Email пользователя совпадает с Email организатора
 	 */
 	public boolean isMeetingOrganizer() {
 		return email.equalsIgnoreCase(getEmailValue(getFirstVeventProperty("ORGANIZER")));
 	}
 
 	/**
-	 * Set property value on first VEVENT.
-	 * @param propertyName property name
-	 * @param propertyValue property value
+	 * Установить значение свойства для первого VEVENT.
+	 * @param propertyName имя свойства
+	 * @param propertyValue значение свойства
 	 */
 	public void setFirstVeventPropertyValue(String propertyName, String propertyValue) {
 		firstVevent.setPropertyValue(propertyName, propertyValue);
 	}
 
 	/**
-	 * Add property on first VEVENT.
-	 * @param vProperty property object
+	 * Добавить свойство в первый VEVENT.
+	 * @param vProperty объект свойства
 	 */
 	public void addFirstVeventProperty(VProperty vProperty) {
 		firstVevent.addProperty(vProperty);
 	}
 
 	/**
-	 * Check if this item is a VTODO item
-	 * @return true with VTODO items
+	 * Проверьте, является ли этот элемент элементом VTODO
+	 * @return true для элементов VTODO
 	 */
 	public boolean isTodo() {
 		return firstVevent != null && "VTODO".equals(firstVevent.type);
 	}
 
 	/**
-	 * VCalendar recipients for notifications
+	 * VCalendar получатели уведомлений
 	 */
 	public static class Recipients {
 
 		/**
-		 * attendee list
+		 * список участников
 		 */
 		public String attendees;
 
 		/**
-		 * optional attendee list
+		 * список опциональных участников
 		 */
 		public String optionalAttendees;
 
 		/**
-		 * vCalendar organizer
+		 * организатор vCalendar
 		 */
 		public String organizer;
 
 	}
 
 	/**
-	 * Build recipients value for VCalendar.
-	 * @param isNotification if true, filter recipients that should receive meeting
-	 * notifications
-	 * @return notification/event recipients
+	 * Построить значение получателей для VCalendar.
+	 * @param isNotification если true, отфильтровать получателей, которые должны получать
+	 * уведомления о встречах
+	 * @return получателей уведомлений/мероприятий
 	 */
 	public Recipients getRecipients(boolean isNotification) {
 
@@ -850,16 +851,16 @@ public class VCalendar extends VObject {
 	}
 
 	/**
-	 * Get first VEvent
-	 * @return first VEvent
+	 * Получить первый VEvent
+	 * @return первый VEvent
 	 */
 	public VObject getFirstVevent() {
 		return firstVevent;
 	}
 
 	/**
-	 * Get recurring VCalendar occurence exceptions.
-	 * @return event occurences
+	 * Получить исключения повторяющихся событий VCalendar.
+	 * @return события повторений
 	 */
 	public List<VObject> getModifiedOccurrences() {
 		boolean first = true;

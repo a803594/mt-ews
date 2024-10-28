@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Locale;
 
 /**
- * Handle calendar item recurrence update
+ * Обработка обновления повторения элемента календаря
  */
 @Slf4j
 public class RecurrenceFieldUpdate extends FieldUpdate {
@@ -75,7 +75,7 @@ public class RecurrenceFieldUpdate extends FieldUpdate {
 	int recurrenceInterval = 1;
 
 	/**
-	 * Create recurrence field update.
+	 * Создание обновления поля повторения.
 	 */
 	public RecurrenceFieldUpdate() {
 	}
@@ -104,10 +104,10 @@ public class RecurrenceFieldUpdate extends FieldUpdate {
 	}
 
 	/**
-	 * Write field to request writer.
-	 * @param itemType item type
-	 * @param writer request writer
-	 * @throws IOException on error
+	 * Записать поле в писатель запроса.
+	 * @param itemType тип элемента
+	 * @param writer писатель запроса
+	 * @throws IOException при ошибке
 	 */
 	public void write(String itemType, Writer writer) throws IOException {
 		if (itemType != null) {

@@ -14,18 +14,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 /**
- * Input output functions.
+ * Функции ввода-вывода.
  */
 public final class IOUtil {
     private IOUtil() {
     }
 
     /**
-     * Write all inputstream content to outputstream.
+     * Записать все содержимое входного потока в выходной поток.
      *
-     * @param inputStream  input stream
-     * @param outputStream output stream
-     * @throws IOException on error
+     * @param inputStream  входной поток
+     * @param outputStream выходной поток
+     * @throws IOException в случае ошибки
      */
     public static void write(InputStream inputStream, OutputStream outputStream) throws IOException {
         byte[] bytes = new byte[8192];
@@ -37,72 +37,72 @@ public final class IOUtil {
 
 
     /**
-     * Decode base64 input string, return byte array.
+     * Раскодировать строку ввода в формате base64, вернуть массив байтов.
      *
-     * @param encoded Base64 encoded string
-     * @return decoded content as byte array
+     * @param encoded Строка, закодированная в формате Base64
+     * @return раскодированное содержимое в виде массива байтов
      */
     public static byte[] decodeBase64(String encoded) {
         return Base64.decodeBase64(encoded.getBytes(StandardCharsets.US_ASCII));
     }
 
     /**
-     * Decode base64 input string, return content as UTF-8 String.
+     * Декодировать строку ввода в формате base64, вернуть содержимое в формате UTF-8.
      *
-     * @param encoded Base64 encoded string
-     * @return decoded content as byte array
+     * @param encoded Строка в формате Base64
+     * @return декодированное содержимое в виде массива байтов
      */
     public static String decodeBase64AsString(String encoded) {
         return new String(decodeBase64(encoded), StandardCharsets.UTF_8);
     }
 
     /**
-     * Base64 encode value.
+     * Кодирование значения в Base64.
      *
-     * @param value input value
-     * @return base64  value
+     * @param value входное значение
+     * @return значение в base64
      */
     public static String encodeBase64AsString(String value) {
         return new String(Base64.encodeBase64(value.getBytes(StandardCharsets.UTF_8)), StandardCharsets.US_ASCII);
     }
 
     /**
-     * Base64 encode value.
+     * Кодирование значения в Base64.
      *
-     * @param value input value
-     * @return base64  value
+     * @param value входное значение
+     * @return значение в base64
      */
     public static String encodeBase64AsString(byte[] value) {
         return new String(Base64.encodeBase64(value), StandardCharsets.US_ASCII);
     }
 
     /**
-     * Base64 encode value.
+     * Кодирование значения в Base64.
      *
-     * @param value input value
-     * @return base64  value
+     * @param value входное значение
+     * @return значение в base64
      */
     public static byte[] encodeBase64(String value) {
         return Base64.encodeBase64(value.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
-     * Base64 encode value.
+     * Кодирование значения в Base64.
      *
-     * @param value input value
-     * @return base64  value
+     * @param value входное значение
+     * @return значение в base64
      */
     public static byte[] encodeBase64(byte[] value) {
         return Base64.encodeBase64(value);
     }
 
     /**
-     * Resize image bytes to a max width or height image size.
+     * Изменяет размер байтов изображения до максимальной ширины или высоты.
      *
-     * @param inputBytes input image bytes
-     * @param max        max size
-     * @return scaled image bytes
-     * @throws IOException on error
+     * @param inputBytes байты входного изображения
+     * @param max        максимальный размер
+     * @return масштабированные байты изображения
+     * @throws IOException в случае ошибки
      */
     public static byte[] resizeImage(byte[] inputBytes, int max) throws IOException {
         BufferedImage inputImage = ImageIO.read(new ByteArrayInputStream(inputBytes));
@@ -116,11 +116,11 @@ public final class IOUtil {
     }
 
     /**
-     * Resize image to a max width or height image size.
+     * Изменяет размер изображения до максимальной ширины или высоты.
      *
-     * @param inputImage input image
-     * @param max        max size
-     * @return scaled image
+     * @param inputImage входное изображение
+     * @param max        максимальный размер
+     * @return масштабированное изображение
      */
     public static BufferedImage resizeImage(BufferedImage inputImage, int max) {
         int width = inputImage.getWidth();
@@ -143,11 +143,11 @@ public final class IOUtil {
     }
 
     /**
-     * Read all inputStream content to a byte array.
+     * Прочитать всё содержимое inputStream в массив байтов.
      *
-     * @param inputStream input stream
-     * @return content as byte array
-     * @throws IOException on error
+     * @param inputStream входной поток
+     * @return содержимое в виде массива байтов
+     * @throws IOException в случае ошибки
      */
     public static byte[] readFully(InputStream inputStream) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

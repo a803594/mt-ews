@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * Experimental: load Oauth2 token from settings
+ * Экспериментально: загружаем токен Oauth2 из настроек
  */
 @SuppressWarnings("unused")
 @Slf4j
@@ -37,8 +37,8 @@ public class O365StoredTokenAuthenticator implements ExchangeAuthenticator {
 	}
 
 	/**
-	 * Return a pool enabled HttpClientAdapter instance to access O365
-	 * @return HttpClientAdapter instance
+	 * Вернуть экземпляр HttpClientAdapter с поддержкой пула для доступа к O365
+	 * @return Экземпляр HttpClientAdapter
 	 */
 	@Override
 	public HttpClientAdapter getHttpClientAdapter() {

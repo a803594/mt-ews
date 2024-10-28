@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.dav;
 
 /**
- * MAPI property types.
+ * Типы свойств MAPI.
  */
 public enum PropertyType {
 

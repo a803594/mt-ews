@@ -6,22 +6,22 @@ package ru.mos.mostech.ews.exchange;
 import ru.mos.mostech.ews.exception.MosTechEwsException;
 
 /**
- * Custom exception to mark network down case.
+ * Пользовательское исключение для обозначения случая неисправности сети.
  */
 public class NetworkDownException extends MosTechEwsException {
 
 	/**
-	 * Build a network down exception with the provided BundleMessage key.
-	 * @param key message key
+	 * Создайте исключение сети с указанным ключом BundleMessage.
+	 * @param key ключ сообщения
 	 */
 	public NetworkDownException(String key) {
 		super(key);
 	}
 
 	/**
-	 * Build a network down exception with the provided BundleMessage key.
-	 * @param key message key
-	 * @param message detailed message
+	 * Создает исключение сети с предоставленным ключом BundleMessage.
+	 * @param key ключ сообщения
+	 * @param message подробное сообщение
 	 */
 	public NetworkDownException(String key, Object message) {
 		super(key, message);

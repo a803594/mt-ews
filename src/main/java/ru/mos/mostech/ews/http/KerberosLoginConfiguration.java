@@ -10,7 +10,7 @@ import javax.security.auth.login.Configuration;
 import java.util.HashMap;
 
 /**
- * Custom JAAS login configuration. Equivalent to the following configuration:
+ * Пользовательская конфигурация входа JAAS. Эквивалентно следующей конфигурации:
  * spnego-client { com.sun.security.auth.module.Krb5LoginModule required
  * useTicketCache=true renewTGT=true; }; spnego-server {
  * com.sun.security.auth.module.Krb5LoginModule required isInitiator=false useKeyTab=false

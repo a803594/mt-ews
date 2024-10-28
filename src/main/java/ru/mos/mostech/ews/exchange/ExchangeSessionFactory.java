@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Create ExchangeSession instances.
+ * Создайте экземпляры ExchangeSession.
  */
 @Slf4j
 public final class ExchangeSessionFactory {
@@ -73,11 +73,11 @@ public final class ExchangeSessionFactory {
 	}
 
 	/**
-	 * Create authenticated Exchange session
-	 * @param userName user login
-	 * @param password user password
-	 * @return authenticated session
-	 * @throws IOException on error
+	 * Создает аутентифицированную сессию Exchange
+	 * @param userName логин пользователя
+	 * @param password пароль пользователя
+	 * @return аутентифицированная сессия
+	 * @throws IOException при ошибке
 	 */
 	public static ExchangeSession getInstance(String userName, String password) throws IOException {
 		String baseUrl = Settings.getProperty("mt.ews.url");
@@ -104,12 +104,12 @@ public final class ExchangeSessionFactory {
 	}
 
 	/**
-	 * Create authenticated Exchange session
-	 * @param baseUrl OWA base URL
-	 * @param userName user login
-	 * @param password user password
-	 * @return authenticated session
-	 * @throws IOException on error
+	 * Создать аутентифицированную сессию Exchange
+	 * @param baseUrl Базовый URL OWA
+	 * @param userName Логин пользователя
+	 * @param password Пароль пользователя
+	 * @return аутентифицированная сессия
+	 * @throws IOException в случае ошибки
 	 */
 	public static ExchangeSession getInstance(String baseUrl, String userName, String password) throws IOException {
 		ExchangeSession session = null;
@@ -242,9 +242,10 @@ public final class ExchangeSessionFactory {
 	}
 
 	/**
-	 * Check if whitelist is empty or email is allowed. userWhiteList is a comma separated
-	 * list of values. \@company.com means all domain users are allowed
-	 * @param email user email
+	 * Проверьте, пуст ли список белых адресов, или разрешён ли адрес электронной почты.
+	 * userWhiteList — это список значений, разделённых запятыми. \@company.com означает,
+	 * что разрешены все пользователи домена
+	 * @param email адрес электронной почты пользователя
 	 */
 	private static void checkWhiteList(String email) throws MosTechEwsAuthenticationException {
 		String whiteListString = Settings.getProperty("mt.ews.userWhiteList");
@@ -263,13 +264,13 @@ public final class ExchangeSessionFactory {
 	}
 
 	/**
-	 * Get a non expired session. If the current session is not expired, return current
-	 * session, else try to create a new session
-	 * @param currentSession current session
-	 * @param userName user login
-	 * @param password user password
-	 * @return authenticated session
-	 * @throws IOException on error
+	 * Получить не истекшую сессию. Если текущая сессия не истекла, вернуть текущую
+	 * сессию, в противном случае попытаться создать новую сессию
+	 * @param текущаяСессия текущая сессия
+	 * @param имяПользователя имя пользователя
+	 * @param пароль пароль пользователя
+	 * @return аутентифицированная сессия
+	 * @throws IOException при ошибке
 	 */
 	public static ExchangeSession getInstance(ExchangeSession currentSession, String userName, String password)
 			throws IOException {
@@ -299,8 +300,8 @@ public final class ExchangeSessionFactory {
 	}
 
 	/**
-	 * Send a request to Exchange server to check current settings.
-	 * @throws IOException if unable to access Exchange server
+	 * Отправить запрос на сервер Exchange для проверки текущих настроек.
+	 * @throws IOException если невозможно получить доступ к серверу Exchange
 	 */
 	public static void checkConfig() throws IOException {
 		String url = Settings.getProperty("mt.ews.url");
@@ -353,9 +354,9 @@ public final class ExchangeSessionFactory {
 	}
 
 	/**
-	 * Get user password from session pool for SASL authentication
-	 * @param userName Exchange user name
-	 * @return user password
+	 * Получить пароль пользователя из пула сеансов для SASL-аутентификации
+	 * @param userName Имя пользователя Exchange
+	 * @return пароль пользователя
 	 */
 	public static String getUserPassword(String userName) {
 		String fullUserName = convertUserName(userName);
@@ -368,8 +369,8 @@ public final class ExchangeSessionFactory {
 	}
 
 	/**
-	 * Check if at least one network interface is up and active (i.e. has an address)
-	 * @return true if network available
+	 * Проверить, активен ли хотя бы один сетевой интерфейс (т.е. имеет адрес)
+	 * @return true, если сеть доступна
 	 */
 	static boolean checkNetwork() {
 		boolean up = false;
@@ -395,7 +396,7 @@ public final class ExchangeSessionFactory {
 	}
 
 	/**
-	 * Reset config check status and clear session pool.
+	 * Сбросить статус проверки конфигурации и очистить пул сеансов.
 	 */
 	public static void shutdown() {
 		configChecked = false;

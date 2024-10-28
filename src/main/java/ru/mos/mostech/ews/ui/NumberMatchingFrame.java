@@ -11,13 +11,13 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Display number matching value during O365 MFA process.
+ * Отобразить номер, соответствующий значению, во время процесса MFA O365.
  */
 public class NumberMatchingFrame extends JFrame {
 
 	/**
-	 * Number matching dialog.
-	 * @param entropy number matching value from Azure AD
+	 * Диалог соответствия чисел.
+	 * @param entropy значение соответствия чисел от Azure AD
 	 */
 	public NumberMatchingFrame(String entropy) {
 		setAlwaysOnTop(true);

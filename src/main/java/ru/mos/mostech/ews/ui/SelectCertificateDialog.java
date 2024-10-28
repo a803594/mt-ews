@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Let user select a client certificate
+ * Позволить пользователю выбрать клиентский сертификат
  */
 public class SelectCertificateDialog extends JDialog {
 
@@ -21,16 +21,16 @@ public class SelectCertificateDialog extends JDialog {
 	protected String selectedAlias;
 
 	/**
-	 * Gets user selected alias.
-	 * @return user selected alias
+	 * Получает выбранный пользователем псевдоним.
+	 * @return выбранный пользователем псевдоним
 	 */
 	public String getSelectedAlias() {
 		return this.selectedAlias;
 	}
 
 	/**
-	 * Select a client certificate
-	 * @param aliases An array of certificate aliases for the user to pick from
+	 * Выбор клиентского сертификата
+	 * @param aliases Массив алиасов сертификатов для выбора пользователем
 	 */
 	public SelectCertificateDialog(String[] aliases, String[] descriptions) {
 		setAlwaysOnTop(true);

@@ -6,15 +6,15 @@ package ru.mos.mostech.ews.exchange.ews;
 import java.util.Set;
 
 /**
- * EWS GetFolder method.
+ * Метод EWS GetFolder.
  */
 public class GetFolderMethod extends EWSMethod {
 
 	/**
-	 * Get folder method.
-	 * @param baseShape base requested shape
-	 * @param folderId folder id
-	 * @param additionalProperties additional requested properties
+	 * Получить метод папки.
+	 * @param baseShape запрашиваемая базовая форма
+	 * @param folderId id папки
+	 * @param additionalProperties дополнительные запрашиваемые свойства
 	 */
 	public GetFolderMethod(BaseShape baseShape, FolderId folderId, Set<FieldURI> additionalProperties) {
 		super("Folder", "GetFolder");

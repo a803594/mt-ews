@@ -4,33 +4,33 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Field URI.
+ * URI поля.
  */
 public interface FieldURI {
 
 	/**
-	 * Append field to buffer
-	 * @param buffer current buffer
+	 * Добавить поле в буфер
+	 * @param buffer текущий буфер
 	 */
 	void appendTo(StringBuilder buffer);
 
 	/**
-	 * Append updated field value to buffer
-	 * @param buffer current buffer
-	 * @param itemType item type
-	 * @param value field value
+	 * Добавить обновленное значение поля в буфер
+	 * @param buffer текущий буфер
+	 * @param itemType тип элемента
+	 * @param value значение поля
 	 */
 	void appendValue(StringBuilder buffer, String itemType, String value);
 
 	/**
-	 * Property name in EWS response.
-	 * @return property name
+	 * Имя свойства в ответе EWS.
+	 * @return имя свойства
 	 */
 	String getResponseName();
 
 	/**
-	 * Get field id for graph requests
-	 * @return field id
+	 * Получить идентификатор поля для графических запросов
+	 * @return идентификатор поля
 	 */
 	String getGraphId();
 

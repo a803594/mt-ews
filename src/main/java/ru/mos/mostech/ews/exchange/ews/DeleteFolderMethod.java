@@ -4,13 +4,13 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Delete Folder method.
+ * Метод удаления папки.
  */
 public class DeleteFolderMethod extends EWSMethod {
 
 	/**
-	 * Delete folder method.
-	 * @param folderId folder id
+	 * Метод удаления папки.
+	 * @param folderId идентификатор папки
 	 */
 	public DeleteFolderMethod(FolderId folderId) {
 		super("Folder", "DeleteFolder");

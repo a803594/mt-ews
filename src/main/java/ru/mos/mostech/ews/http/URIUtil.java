@@ -12,13 +12,14 @@ import java.io.IOException;
 import java.util.BitSet;
 
 /**
- * Implement encode/decode logic to replace HttpClient 3 URIUtil
+ * Реализуйте логику кодирования/декодирования для замены HttpClient 3 URIUtil
  */
 public class URIUtil {
 
 	/**
-	 * The percent "%" character always has the reserved purpose of being the escape
-	 * indicator, it must be escaped as "%25" in order to be used as data within a URI.
+	 * Символ процента "%" всегда имеет зарезервированное назначение индикатора
+	 * экранирования, он должен быть экранирован как "%25", чтобы использоваться как
+	 * данные в URI.
 	 */
 	protected static final BitSet percent = new BitSet(256);
 
@@ -28,10 +29,10 @@ public class URIUtil {
 	}
 
 	/**
-	 * BitSet for digit.
+	 * Битовый набор для цифры.
 	 * <p>
 	 * <blockquote><pre>
-	 * digit    = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" |
+	 * цифра    = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" |
 	 *            "8" | "9"
 	 * </pre></blockquote>
 	 * <p>
@@ -46,7 +47,7 @@ public class URIUtil {
 	}
 
 	/**
-	 * BitSet for alpha.
+	 * Битовый набор для альфа.
 	 * <p>
 	 * <blockquote><pre>
 	 * alpha         = lowalpha | upalpha
@@ -66,7 +67,7 @@ public class URIUtil {
 	}
 
 	/**
-	 * BitSet for alphanum (join of alpha &amp; digit).
+	 * BitSet для алфавитно-цифровых символов (объединение алфавита и цифр).
 	 * <p>
 	 * <blockquote><pre>
 	 *  alphanum      = alpha | digit
@@ -82,7 +83,7 @@ public class URIUtil {
 	}
 
 	/**
-	 * BitSet for hex.
+	 * Множество битов для шестнадцатеричной системы.
 	 * <p>
 	 * <blockquote><pre>
 	 * hex           = digit | "A" | "B" | "C" | "D" | "E" | "F" |
@@ -104,10 +105,10 @@ public class URIUtil {
 	}
 
 	/**
-	 * BitSet for escaped.
+	 * Множество битов для экранированных символов.
 	 * <p>
 	 * <blockquote><pre>
-	 * escaped       = "%" hex hex
+	 * экранированный = "%" шестнадцатеричный шестнадцатеричный
 	 * </pre></blockquote>
 	 * <p>
 	 */
@@ -120,10 +121,10 @@ public class URIUtil {
 	}
 
 	/**
-	 * BitSet for mark.
+	 * Битовый набор для отметки.
 	 * <p>
 	 * <blockquote><pre>
-	 * mark          = "-" | "_" | "." | "!" | "~" | "*" | "'" |
+	 * отметка       = "-" | "_" | "." | "!" | "~" | "*" | "'" |
 	 *                 "(" | ")"
 	 * </pre></blockquote>
 	 * <p>
@@ -144,11 +145,11 @@ public class URIUtil {
 	}
 
 	/**
-	 * Data characters that are allowed in a URI but do not have a reserved purpose are
-	 * called unreserved.
+	 * Символы данных, которые допустимы в URI, но не имеют зарезервированной цели,
+	 * называются незарезервированными.
 	 * <p>
 	 * <blockquote><pre>
-	 * unreserved    = alphanum | mark
+	 * незарезервированные    = алфавитно-цифровые | знаки
 	 * </pre></blockquote>
 	 * <p>
 	 */
@@ -161,11 +162,11 @@ public class URIUtil {
 	}
 
 	/**
-	 * BitSet for reserved.
+	 * Битовый набор для зарезервированных.
 	 * <p>
 	 * <blockquote><pre>
-	 * reserved      = ";" | "/" | "?" | ":" | "@" | "&amp;" | "=" | "+" |
-	 *                 "$" | ","
+	 * зарезервированные = ";" | "/" | "?" | ":" | "@" | "&amp;" | "=" | "+" |
+	 *                     "$" | ","
 	 * </pre></blockquote>
 	 * <p>
 	 */
@@ -186,10 +187,10 @@ public class URIUtil {
 	}
 
 	/**
-	 * BitSet for uric.
+	 * Набор битов для uric.
 	 * <p>
 	 * <blockquote><pre>
-	 * uric          = reserved | unreserved | escaped
+	 * uric          = зарезервировано | незарезервировано | экранировано
 	 * </pre></blockquote>
 	 * <p>
 	 */
@@ -203,11 +204,11 @@ public class URIUtil {
 	}
 
 	/**
-	 * BitSet for pchar.
+	 * Набор битов для pchar.
 	 * <p>
 	 * <blockquote><pre>
 	 * pchar         = unreserved | escaped |
-	 *                 ":" | "@" | "&amp;" | "=" | "+" | "$" | ","
+	 *                 ":" | "@" | "&" | "=" | "+" | "$" | ","
 	 * </pre></blockquote>
 	 * <p>
 	 */
@@ -227,7 +228,7 @@ public class URIUtil {
 	}
 
 	/**
-	 * BitSet for param (alias for pchar).
+	 * Массив битов для параметра (псевдоним для pchar).
 	 * <p>
 	 * <blockquote><pre>
 	 * param         = *pchar
@@ -237,10 +238,10 @@ public class URIUtil {
 	protected static final BitSet param = pchar;
 
 	/**
-	 * BitSet for segment.
+	 * Набор битов для сегмента.
 	 * <p>
 	 * <blockquote><pre>
-	 * segment       = *pchar *( ";" param )
+	 * сегмент       = *pchar *( ";" параметр )
 	 * </pre></blockquote>
 	 * <p>
 	 */
@@ -254,10 +255,10 @@ public class URIUtil {
 	}
 
 	/**
-	 * BitSet for path segments.
+	 * Набор битов для сегментов пути.
 	 * <p>
 	 * <blockquote><pre>
-	 * path_segments = segment *( "/" segment )
+	 * path_segments = сегмент *( "/" сегмент )
 	 * </pre></blockquote>
 	 * <p>
 	 */
@@ -270,7 +271,7 @@ public class URIUtil {
 	}
 
 	/**
-	 * URI absolute path.
+	 * Абсолютный путь URI.
 	 * <p>
 	 * <blockquote><pre>
 	 * abs_path      = "/"  path_segments
@@ -286,7 +287,7 @@ public class URIUtil {
 	}
 
 	/**
-	 * Those characters that are allowed for the abs_path.
+	 * Те символы, которые разрешены для abs_path.
 	 */
 	public static final BitSet allowed_abs_path = new BitSet(256);
 	static {
@@ -297,7 +298,7 @@ public class URIUtil {
 	}
 
 	/**
-	 * Those characters that are allowed for the query component.
+	 * Те символы, которые разрешены для компонента запроса.
 	 */
 	public static final BitSet allowed_query = new BitSet(256);
 
@@ -308,7 +309,7 @@ public class URIUtil {
 	}
 
 	/**
-	 * Those characters that are allowed within the query component.
+	 * Те символы, которые разрешены в компоненте запроса.
 	 */
 	public static final BitSet allowed_within_query = new BitSet(256);
 
@@ -319,10 +320,10 @@ public class URIUtil {
 	}
 
 	/**
-	 * Decode url encoded string.
-	 * @param escaped encoded string
-	 * @return decoded string
-	 * @throws IOException on error
+	 * Декодировать строку с URL-кодировкой.
+	 * @param escaped закодированная строка
+	 * @return декодированная строка
+	 * @throws IOException в случае ошибки
 	 */
 	public static String decode(String escaped) throws IOException {
 		try {
@@ -334,37 +335,37 @@ public class URIUtil {
 	}
 
 	/**
-	 * Encode url path.
-	 * @param unescaped unencoded path
-	 * @return escaped path
+	 * Кодировать путь URL.
+	 * @param unescaped не закодированный путь
+	 * @return закодированный путь
 	 */
 	public static String encodePath(String unescaped) {
 		return encode(unescaped, allowed_abs_path);
 	}
 
 	/**
-	 * URL encode string.
-	 * @param unescaped unencoded string
-	 * @param allowed allowed characters bitset
-	 * @return encoded string
+	 * Кодирует строку в формате URL.
+	 * @param unescaped не закодированная строка
+	 * @param allowed набор разрешенных символов
+	 * @return закодированная строка
 	 */
 	public static String encode(String unescaped, BitSet allowed) {
 		return getAsciiString(URLCodec.encodeUrl(allowed, getBytes(unescaped)));
 	}
 
 	/**
-	 * URL encode query string.
-	 * @param unescaped unencoded query string
-	 * @return encoded string query string
+	 * Кодировать строку запроса в URL.
+	 * @param unescaped не закодированная строка запроса
+	 * @return закодированная строка запроса
 	 */
 	public static String encodeWithinQuery(String unescaped) {
 		return encode(unescaped, allowed_within_query);
 	}
 
 	/**
-	 * URL encode path and query string.
-	 * @param unescaped unencoded path and query string
-	 * @return encoded string path and query string
+	 * Кодирование URL для пути и строки запроса.
+	 * @param unescaped не закодированный путь и строка запроса
+	 * @return закодированная строка пути и строки запроса
 	 */
 	public static String encodePathQuery(String unescaped) {
 		int at = unescaped.indexOf('?');
@@ -394,9 +395,9 @@ public class URIUtil {
 	}
 
 	/**
-	 * Convert byte array to an ASCII string value.
-	 * @param bytes byte array
-	 * @return ASCII string
+	 * Преобразовать массив байтов в строковое значение ASCII.
+	 * @param bytes массив байтов
+	 * @return строка ASCII
 	 */
 	public static String getAsciiString(final byte[] bytes) {
 		if (bytes == null) {
@@ -407,9 +408,9 @@ public class URIUtil {
 	}
 
 	/**
-	 * Convert byte array to a UTF-8 string value.
-	 * @param bytes byte array
-	 * @return ASCII string
+	 * Преобразует массив байтов в строковое значение UTF-8.
+	 * @param bytes массив байтов
+	 * @return строка ASCII
 	 */
 	public static String getString(final byte[] bytes) {
 		if (bytes == null) {

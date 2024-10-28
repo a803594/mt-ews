@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * EWS MAPI fields;
+ * Поля EWS MAPI;
  */
 public final class Field {
 
@@ -142,37 +142,6 @@ public final class Field {
 				ExtendedFieldURI.PropertyType.String));
 		FIELD_MAP.put("department", new ExtendedFieldURI(0x3A18, ExtendedFieldURI.PropertyType.String));
 
-		/*
-		 * FIELD_MAP.put("email1", new
-		 * ExtendedFieldURI(ExtendedFieldURI.DistinguishedPropertySetType.Address, 0x8083,
-		 * ExtendedFieldURI.PropertyType.String)); // Email1EmailAddress
-		 * FIELD_MAP.put("email2", new
-		 * ExtendedFieldURI(ExtendedFieldURI.DistinguishedPropertySetType.Address, 0x8093,
-		 * ExtendedFieldURI.PropertyType.String)); // Email2EmailAddress
-		 * FIELD_MAP.put("email3", new
-		 * ExtendedFieldURI(ExtendedFieldURI.DistinguishedPropertySetType.Address, 0x80A3,
-		 * ExtendedFieldURI.PropertyType.String)); // Email3EmailAddress
-		 *
-		 * FIELD_MAP.put("smtpemail1", new
-		 * ExtendedFieldURI(ExtendedFieldURI.DistinguishedPropertySetType.Address, 0x8084,
-		 * ExtendedFieldURI.PropertyType.String)); // Email1OriginalDisplayName
-		 * FIELD_MAP.put("smtpemail2", new
-		 * ExtendedFieldURI(ExtendedFieldURI.DistinguishedPropertySetType.Address, 0x8094,
-		 * ExtendedFieldURI.PropertyType.String)); // Email2OriginalDisplayName
-		 * FIELD_MAP.put("smtpemail3", new
-		 * ExtendedFieldURI(ExtendedFieldURI.DistinguishedPropertySetType.Address, 0x80A4,
-		 * ExtendedFieldURI.PropertyType.String)); // Email3OriginalDisplayName
-		 *
-		 * FIELD_MAP.put("displayemail1", new
-		 * ExtendedFieldURI(ExtendedFieldURI.DistinguishedPropertySetType.Address, 0x8080,
-		 * ExtendedFieldURI.PropertyType.String)); // Email1DisplayName
-		 * FIELD_MAP.put("displayemail2", new
-		 * ExtendedFieldURI(ExtendedFieldURI.DistinguishedPropertySetType.Address, 0x8090,
-		 * ExtendedFieldURI.PropertyType.String)); // Email2DisplayName
-		 * FIELD_MAP.put("displayemail3", new
-		 * ExtendedFieldURI(ExtendedFieldURI.DistinguishedPropertySetType.Address, 0x80A0,
-		 * ExtendedFieldURI.PropertyType.String)); // Email3DisplayName
-		 */
 		FIELD_MAP.put("smtpemail1",
 				new IndexedFieldURI("contacts:EmailAddress", "EmailAddress1", "Contact", "EmailAddresses"));
 		FIELD_MAP.put("smtpemail2",
@@ -332,9 +301,9 @@ public final class Field {
 	}
 
 	/**
-	 * Get Field by alias.
-	 * @param alias field alias
-	 * @return field
+	 * Получить поле по псевдониму.
+	 * @param alias псевдоним поля
+	 * @return поле
 	 */
 	public static FieldURI get(String alias) {
 		FieldURI field = FIELD_MAP.get(alias);
@@ -345,10 +314,10 @@ public final class Field {
 	}
 
 	/**
-	 * Create property update field
-	 * @param alias property alias
-	 * @param value property value
-	 * @return field update
+	 * Создать поле обновления свойства
+	 * @param alias псевдоним свойства
+	 * @param value значение свойства
+	 * @return обновление поля
 	 */
 	public static FieldUpdate createFieldUpdate(String alias, String value) {
 		return new FieldUpdate(Field.get(alias), value);

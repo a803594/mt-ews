@@ -22,7 +22,7 @@ import java.security.cert.CertificateException;
 import java.util.HashSet;
 
 /**
- * Generic abstract server common to SMTP and POP3 implementations
+ * Обобщенный абстрактный сервер, общий для реализаций SMTP и POP3
  */
 public abstract class AbstractServer extends Thread {
 
@@ -35,16 +35,16 @@ public abstract class AbstractServer extends Thread {
 	private ServerSocket serverSocket;
 
 	/**
-	 * Get server protocol name (SMTP, POP, IMAP, ...).
-	 * @return server protocol name
+	 * Получить имя протокола сервера (SMTP, POP, IMAP и т.д.).
+	 * @return имя протокола сервера
 	 */
 	public abstract String getProtocolName();
 
 	/**
-	 * Create a ServerSocket to listen for connections. Start the thread.
-	 * @param name thread name
-	 * @param port tcp socket chosen port
-	 * @param defaultPort tcp socket default port
+	 * Создайте ServerSocket для прослушивания соединений. Запустите поток.
+	 * @param name имя потока
+	 * @param port выбранный порт tcp сокета
+	 * @param defaultPort стандартный порт tcp сокета
 	 */
 	protected AbstractServer(String name, int port, int defaultPort) {
 		super(name);
@@ -58,8 +58,8 @@ public abstract class AbstractServer extends Thread {
 	}
 
 	/**
-	 * Bind server socket on defined port.
-	 * @throws MosTechEwsException unable to create server socket
+	 * Привязать серверный сокет к заданному порту.
+	 * @throws MosTechEwsException невозможно создать серверный сокет
 	 */
 	@SuppressWarnings("java:S3776")
 	public void bind() throws MosTechEwsException {
@@ -117,12 +117,12 @@ public abstract class AbstractServer extends Thread {
 	}
 
 	/**
-	 * Build trust managers from truststore file.
-	 * @return trust managers
-	 * @throws CertificateException on error
-	 * @throws NoSuchAlgorithmException on error
-	 * @throws IOException on error
-	 * @throws KeyStoreException on error
+	 * Создать менеджеры доверия из файла хранилища доверия.
+	 * @return менеджеры доверия
+	 * @throws CertificateException при ошибке
+	 * @throws NoSuchAlgorithmException при ошибке
+	 * @throws IOException при ошибке
+	 * @throws KeyStoreException при ошибке
 	 */
 	protected TrustManager[] getTrustManagers()
 			throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException {
@@ -130,12 +130,12 @@ public abstract class AbstractServer extends Thread {
 	}
 
 	/**
-	 * Build key managers from keystore file.
-	 * @return key managers
-	 * @throws CertificateException on error
-	 * @throws NoSuchAlgorithmException on error
-	 * @throws IOException on error
-	 * @throws KeyStoreException on error
+	 * Создание менеджеров ключей из файла хранилища ключей.
+	 * @return менеджеры ключей
+	 * @throws CertificateException в случае ошибки
+	 * @throws NoSuchAlgorithmException в случае ошибки
+	 * @throws IOException в случае ошибки
+	 * @throws KeyStoreException в случае ошибки
 	 */
 	protected KeyManager[] getKeyManagers() throws CertificateException, NoSuchAlgorithmException, IOException,
 			KeyStoreException, UnrecoverableKeyException {
@@ -143,9 +143,9 @@ public abstract class AbstractServer extends Thread {
 	}
 
 	/**
-	 * The body of the server thread. Loop forever, listening for and accepting
-	 * connections from clients. For each connection, create a Connection object to handle
-	 * communication through the new Socket.
+	 * Основная часть потока сервера. Цикл без конца, прослушивающий и принимающий
+	 * подключения от клиентов. Для каждого соединения создается объект Connection для
+	 * обработки коммуникации через новый сокет.
 	 */
 	@Override
 	public void run() {
@@ -197,14 +197,14 @@ public abstract class AbstractServer extends Thread {
 	}
 
 	/**
-	 * Create a connection handler for the current listener.
-	 * @param clientSocket client socket
-	 * @return connection handler
+	 * Создайте обработчик подключения для текущего слушателя.
+	 * @param clientSocket сокет клиента
+	 * @return обработчик подключения
 	 */
 	public abstract AbstractConnection createConnectionHandler(Socket clientSocket);
 
 	/**
-	 * Close server socket
+	 * Закрыть серверный сокет
 	 */
 	public void close() {
 		try {

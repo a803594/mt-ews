@@ -13,24 +13,24 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Mime OutputStreamWriter to build in memory Mime message.
+ * Mime OutputStreamWriter для создания Mime-сообщения в памяти.
  */
 public class MimeOutputStreamWriter extends OutputStreamWriter {
 
 	/**
-	 * Build MIME outputStreamWriter
-	 * @param out outputstream
-	 * @throws UnsupportedEncodingException on error
+	 * Создать MIME outputStreamWriter
+	 * @param out выходной поток
+	 * @throws UnsupportedEncodingException в случае ошибки
 	 */
 	public MimeOutputStreamWriter(OutputStream out) throws UnsupportedEncodingException {
 		super(out, "ASCII");
 	}
 
 	/**
-	 * Write MIME header
-	 * @param header header name
-	 * @param value header value
-	 * @throws IOException on error
+	 * Записать MIME заголовок
+	 * @param header имя заголовка
+	 * @param value значение заголовка
+	 * @throws IOException при ошибке
 	 */
 	public void writeHeader(String header, String value) throws IOException {
 		// do not write empty headers
@@ -43,10 +43,10 @@ public class MimeOutputStreamWriter extends OutputStreamWriter {
 	}
 
 	/**
-	 * Write MIME header
-	 * @param header header name
-	 * @param value header value
-	 * @throws IOException on error
+	 * Записать MIME заголовок
+	 * @param header имя заголовка
+	 * @param value значение заголовка
+	 * @throws IOException при ошибке
 	 */
 	public void writeHeader(String header, Date value) throws IOException {
 		SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss Z", Locale.ENGLISH);
@@ -54,9 +54,9 @@ public class MimeOutputStreamWriter extends OutputStreamWriter {
 	}
 
 	/**
-	 * Write line.
-	 * @param line line content
-	 * @throws IOException on error
+	 * Записать строку.
+	 * @param line содержимое строки
+	 * @throws IOException в случае ошибки
 	 */
 	public void writeLn(String line) throws IOException {
 		write(line);
@@ -64,8 +64,8 @@ public class MimeOutputStreamWriter extends OutputStreamWriter {
 	}
 
 	/**
-	 * Write CRLF.
-	 * @throws IOException on error
+	 * Запись CRLF.
+	 * @throws IOException в случае ошибки
 	 */
 	public void writeLn() throws IOException {
 		write("\r\n");

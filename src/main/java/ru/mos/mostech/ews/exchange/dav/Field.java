@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * WebDav Field
+ * Поле WebDav
  */
 public class Field {
 
@@ -529,34 +529,34 @@ public class Field {
 	protected final boolean isDateValue;
 
 	/**
-	 * Create field for namespace and name, use name as alias.
-	 * @param namespace Exchange namespace
-	 * @param name Exchange name
+	 * Создать поле для пространства имен и имени, использовать имя в качестве псевдонима.
+	 * @param namespace Пространство имен обмена
+	 * @param name Имя обмена
 	 */
 	protected Field(Namespace namespace, String name) {
 		this(name, namespace, name, null);
 	}
 
 	/**
-	 * Create field for namespace and name of type propertyType.
-	 * @param alias logical name in MT-EWS
-	 * @param namespace Exchange namespace
-	 * @param name Exchange name
-	 * @param propertyType property type
+	 * Создать поле для пространства имен и имени типа propertyType.
+	 * @param alias логическое имя в MT-EWS
+	 * @param namespace пространство имен Exchange
+	 * @param name имя Exchange
+	 * @param propertyType тип свойства
 	 */
 	protected Field(String alias, Namespace namespace, String name, PropertyType propertyType) {
 		this(alias, namespace, name, propertyType, null, null, name);
 	}
 
 	/**
-	 * Create field for namespace and name of type propertyType.
-	 * @param alias logical name in MT-EWS
-	 * @param namespace Exchange namespace
-	 * @param name Exchange name
-	 * @param propertyType property type
-	 * @param responseAlias property name in SEARCH response (as responsealias in request)
-	 * @param cast response cast type (e.g. bin.base64)
-	 * @param updateAlias some properties use a different alias in PROPPATCH requests
+	 * Создать поле для пространства имен и имени типа propertyType.
+	 * @param alias логическое имя в MT-EWS
+	 * @param namespace пространство имен Exchange
+	 * @param name имя Exchange
+	 * @param propertyType тип свойства
+	 * @param responseAlias имя свойства в ответе SEARCH (как responsealias в запросе)
+	 * @param cast тип приведения ответа (например, bin.base64)
+	 * @param updateAlias некоторые свойства используют другой алиас в запросах PROPPATCH
 	 */
 	protected Field(String alias, Namespace namespace, String name, PropertyType propertyType, String responseAlias,
 			String cast, String updateAlias) {
@@ -588,7 +588,7 @@ public class Field {
 	}
 
 	/**
-	 * Property uri.
+	 * Свойство uri.
 	 * @return uri
 	 */
 	public String getUri() {
@@ -596,17 +596,17 @@ public class Field {
 	}
 
 	/**
-	 * Integer value property type.
-	 * @return true if the field value is integer
+	 * Тип свойства значение целое число.
+	 * @return true, если значение поля является целым числом
 	 */
 	public boolean isIntValue() {
 		return isIntValue;
 	}
 
 	/**
-	 * Get Field by alias.
-	 * @param alias field alias
-	 * @return field
+	 * Получить поле по псевдониму.
+	 * @param alias псевдоним поля
+	 * @return поле
 	 */
 	public static Field get(String alias) {
 		Field field = fieldMap.get(alias);
@@ -617,19 +617,19 @@ public class Field {
 	}
 
 	/**
-	 * Get Mime header field.
-	 * @param headerName header name
-	 * @return field object
+	 * Получить поле заголовка Mime.
+	 * @param headerName имя заголовка
+	 * @return объект поля
 	 */
 	public static Field getHeader(String headerName) {
 		return new Field(SCHEMAS_MAPI_STRING_INTERNET_HEADERS, headerName);
 	}
 
 	/**
-	 * Create DavProperty object for field alias and value.
-	 * @param alias MT-EWS field alias
-	 * @param value field value
-	 * @return DavProperty with value or DavPropertyName for null values
+	 * Создать объект DavProperty для поля alias и value.
+	 * @param alias Псевдоним поля MT-EWS
+	 * @param value Значение поля
+	 * @return DavProperty со значением или DavPropertyName для нулевых значений
 	 */
 	public static PropEntry createDavProperty(String alias, String value) {
 		Field field = Field.get(alias);
@@ -664,10 +664,10 @@ public class Field {
 	}
 
 	/**
-	 * Create property value object for field and value.
-	 * @param alias field alias
-	 * @param value field value
-	 * @return property value object
+	 * Создаёт объект значения свойства для поля и значения.
+	 * @param alias псевдоним поля
+	 * @param value значение поля
+	 * @return объект значения свойства
 	 * @see ExchangePropPatchRequest
 	 */
 	public static PropertyValue createPropertyValue(String alias, String value) {
@@ -721,27 +721,27 @@ public class Field {
 	}
 
 	/**
-	 * SEARCH request property name for alias
-	 * @param alias field alias
-	 * @return request property string
+	 * Имя свойства запроса SEARCH для алиаса
+	 * @param alias алиас поля
+	 * @return строка свойства запроса
 	 */
 	public static String getRequestPropertyString(String alias) {
 		return Field.get(alias).requestPropertyString;
 	}
 
 	/**
-	 * PROPFIND request property name
-	 * @param alias field alias
-	 * @return request property name
+	 * Имя свойства запроса PROPFIND
+	 * @param alias псевдоним поля
+	 * @return имя свойства запроса
 	 */
 	public static DavPropertyName getPropertyName(String alias) {
 		return Field.get(alias).davPropertyName;
 	}
 
 	/**
-	 * SEARCH response property name
-	 * @param alias field alias
-	 * @return response property name
+	 * Имя свойства ответа для ПОИСКА
+	 * @param alias псевдоним поля
+	 * @return имя свойства ответа
 	 */
 	public static DavPropertyName getResponsePropertyName(String alias) {
 		return Field.get(alias).responsePropertyName;

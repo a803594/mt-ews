@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * ICS Buffered Reader. Read events by line, handle multiple line elements
+ * Буферизированный читатель ICS. Читает события построчно, обрабатывает несколько строк
+ * элементов
  */
 public class ICSBufferedReader extends BufferedReader {
 
@@ -17,9 +18,9 @@ public class ICSBufferedReader extends BufferedReader {
 	protected final StringBuilder currentLine = new StringBuilder(75);
 
 	/**
-	 * Create an ICS reader on the provided reader
-	 * @param in input reader
-	 * @throws IOException on error
+	 * Создает ICS-ридер на основеProvided reader
+	 * @param in входной ридер
+	 * @throws IOException в случае ошибки
 	 */
 	public ICSBufferedReader(Reader in) throws IOException {
 		super(in);
@@ -27,7 +28,7 @@ public class ICSBufferedReader extends BufferedReader {
 	}
 
 	/**
-	 * Read a line from input reader, unwrap long lines.
+	 * Прочитать строку из входного считывателя, распаковать длинные строки.
 	 */
 	@Override
 	public String readLine() throws IOException {

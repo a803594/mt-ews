@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * Wrapper class to call Java6 Desktop class to launch default browser.
+ * Обертка класса для вызова класса Desktop Java6 для запуска браузера по умолчанию.
  */
 public final class AwtDesktopBrowser {
 
@@ -16,9 +16,9 @@ public final class AwtDesktopBrowser {
 	}
 
 	/**
-	 * Open default browser at location URI. User Java 6 Desktop class
-	 * @param location location URI
-	 * @throws IOException on error
+	 * Открыть браузер по умолчанию по адресу URI. Используйте класс Desktop Java 6
+	 * @param location адрес URI
+	 * @throws IOException при ошибке
 	 */
 	public static void browse(URI location) throws IOException {
 		Desktop desktop = Desktop.getDesktop();

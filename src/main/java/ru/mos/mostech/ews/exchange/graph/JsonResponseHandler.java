@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 /**
- * Generic Json response handler for graph API calls
+ * Общий обработчик JSON-ответов для вызовов графического API
  */
 public class JsonResponseHandler implements ResponseHandler<JSONObject> {
 

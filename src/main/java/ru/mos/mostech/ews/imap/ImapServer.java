@@ -10,18 +10,18 @@ import ru.mos.mostech.ews.Settings;
 import java.net.Socket;
 
 /**
- * Pop3 server
+ * Сервер Pop3
  */
 public class ImapServer extends AbstractServer {
 
 	/**
-	 * Default IMAP port
+	 * Порт IMAP по умолчанию
 	 */
 	public static final int DEFAULT_PORT = 143;
 
 	/**
-	 * Create a ServerSocket to listen for connections. Start the thread.
-	 * @param port imap listen port, 143 if not defined (0)
+	 * Создать ServerSocket для прослушивания подключений. Запустить поток.
+	 * @param port порт прослушивания imap, 143, если не определен (0)
 	 */
 	public ImapServer(int port) {
 		super(ImapServer.class.getName(), port, ImapServer.DEFAULT_PORT);

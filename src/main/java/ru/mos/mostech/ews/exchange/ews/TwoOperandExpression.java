@@ -6,7 +6,7 @@ package ru.mos.mostech.ews.exchange.ews;
 import ru.mos.mostech.ews.util.StringUtil;
 
 /**
- * Two operand expression.
+ * Двоичный операнд выражения.
  */
 public class TwoOperandExpression implements SearchExpression {
 
@@ -24,10 +24,10 @@ public class TwoOperandExpression implements SearchExpression {
 	protected final String value;
 
 	/**
-	 * Create two operand expression.
-	 * @param operator operator
-	 * @param fieldURI field operand
-	 * @param value value operand
+	 * Создайте выражение с двумя операндами.
+	 * @param operator оператор
+	 * @param fieldURI операнд поля
+	 * @param value операнд значения
 	 */
 	public TwoOperandExpression(Operator operator, FieldURI fieldURI, String value) {
 		this.operator = operator;

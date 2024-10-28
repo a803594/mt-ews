@@ -36,7 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * EWS Exchange adapter. Compatible with Exchange 2007, 2010 and 2013.
+ * Aдаптер EWS Exchange. Совместим с Exchange 2007, 2010 и 2013.
  */
 @Slf4j
 public class EwsExchangeSession extends ExchangeSession {
@@ -46,7 +46,7 @@ public class EwsExchangeSession extends ExchangeSession {
 	protected static final String ARCHIVE_ROOT = "/archive/";
 
 	/**
-	 * Message types.
+	 * Типы сообщений.
 	 *
 	 * @see <a href=
 	 * "http://msdn.microsoft.com/en-us/library/aa565652%28v=EXCHG.140%29.aspx">
@@ -126,7 +126,7 @@ public class EwsExchangeSession extends ExchangeSession {
 	protected boolean directEws;
 
 	/**
-	 * Oauth2 token
+	 * Токен Oauth2
 	 */
 	private O365Token token;
 
@@ -195,16 +195,16 @@ public class EwsExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * EWS fetch page size.
-	 * @return page size
+	 * Размер страницы EWS.
+	 * @return размер страницы
 	 */
 	private static int getPageSize() {
 		return Settings.getIntProperty("mt.ews.folderFetchPageSize", PAGE_SIZE);
 	}
 
 	/**
-	 * Check endpoint url.
-	 * @throws IOException on error
+	 * Проверьте URL конечной точки.
+	 * @throws IOException при ошибке
 	 */
 	protected void checkEndPointUrl() throws IOException {
 		GetFolderMethod checkMethod = new GetFolderMethod(BaseShape.ID_ONLY,
@@ -352,9 +352,9 @@ public class EwsExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Message create/update properties
-	 * @param properties flag values map
-	 * @return field values
+	 * Создание/обновление свойств сообщения
+	 * @param properties карта значений флагов
+	 * @return значения полей
 	 */
 	protected List<FieldUpdate> buildProperties(Map<String, String> properties) {
 		ArrayList<FieldUpdate> list = new ArrayList<>();
@@ -476,8 +476,7 @@ public class EwsExchangeSession extends ExchangeSession {
 			messageDisposition = MessageDisposition.SendOnly;
 		}
 
-		CreateItemMethod createItemMethod = new CreateItemMethod(messageDisposition,
-				getFolderId(SENT), item);
+		CreateItemMethod createItemMethod = new CreateItemMethod(messageDisposition, getFolderId(SENT), item);
 		executeMethod(createItemMethod);
 	}
 
@@ -498,19 +497,16 @@ public class EwsExchangeSession extends ExchangeSession {
 		sendMessage(itemClass, baos.toByteArray());
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	protected byte[] getContent(ExchangeSession.Message message) throws IOException {
 		return getContent(((EwsExchangeSession.Message) message).itemId);
 	}
 
 	/**
-	 * Get item content.
-	 * @param itemId EWS item id
-	 * @return item content as byte array
-	 * @throws IOException on error
+	 * Получить содержимое элемента.
+	 * @param itemId Идентификатор элемента EWS
+	 * @return содержимое элемента в виде массива байтов
+	 * @throws IOException в случае ошибки
 	 */
 	protected byte[] getContent(ItemId itemId) throws IOException {
 		GetItemMethod getItemMethod = new GetItemMethod(BaseShape.ID_ONLY, itemId, true);
@@ -678,13 +674,13 @@ public class EwsExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Paged search, retrieve all items.
-	 * @param folderPath folder path
-	 * @param attributes attributes
-	 * @param condition search condition
-	 * @param folderQueryTraversal search mode
-	 * @return items
-	 * @throws IOException on error
+	 * Пагинированный поиск, извлечение всех элементов.
+	 * @param folderPath путь к папке
+	 * @param attributes атрибуты
+	 * @param condition условие поиска
+	 * @param folderQueryTraversal режим поиска
+	 * @return элементы
+	 * @throws IOException при ошибке
 	 */
 	protected List<EWSMethod.Item> searchItems(String folderPath, Set<String> attributes, Condition condition,
 			FolderQueryTraversal folderQueryTraversal) throws IOException {
@@ -1089,9 +1085,6 @@ public class EwsExchangeSession extends ExchangeSession {
 		return folder;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public List<ExchangeSession.Folder> getSubFolders(String folderPath, Condition condition, boolean recursive)
 			throws IOException {
@@ -1142,10 +1135,10 @@ public class EwsExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Get folder by path.
-	 * @param folderPath folder path
-	 * @return folder object
-	 * @throws IOException on error
+	 * Получить папку по пути.
+	 * @param folderPath путь к папке
+	 * @return объект папки
+	 * @throws IOException в случае ошибки
 	 */
 	@Override
 	protected EwsExchangeSession.Folder internalGetFolder(String folderPath) throws IOException {
@@ -1164,9 +1157,6 @@ public class EwsExchangeSession extends ExchangeSession {
 		return folder;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public int createFolder(String folderPath, String folderClass, Map<String, String> properties) throws IOException {
 		FolderPath path = new FolderPath(folderPath);
@@ -1180,9 +1170,6 @@ public class EwsExchangeSession extends ExchangeSession {
 		return HttpStatus.SC_CREATED;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public int updateFolder(String folderPath, Map<String, String> properties) throws IOException {
 		ArrayList<FieldUpdate> updates = new ArrayList<>();
@@ -1195,9 +1182,6 @@ public class EwsExchangeSession extends ExchangeSession {
 		return HttpStatus.SC_CREATED;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void deleteFolder(String folderPath) throws IOException {
 		FolderId folderId = getFolderIdIfExists(folderPath);
@@ -1210,9 +1194,6 @@ public class EwsExchangeSession extends ExchangeSession {
 		}
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void moveMessage(ExchangeSession.Message message, String targetFolder) throws IOException {
 		MoveItemMethod moveItemMethod = new MoveItemMethod(((EwsExchangeSession.Message) message).itemId,
@@ -1220,9 +1201,6 @@ public class EwsExchangeSession extends ExchangeSession {
 		executeMethod(moveItemMethod);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void moveMessages(List<ExchangeSession.Message> messages, String targetFolder) throws IOException {
 		ArrayList<ItemId> itemIds = new ArrayList<>();
@@ -1234,9 +1212,6 @@ public class EwsExchangeSession extends ExchangeSession {
 		executeMethod(moveItemMethod);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void copyMessage(ExchangeSession.Message message, String targetFolder) throws IOException {
 		CopyItemMethod copyItemMethod = new CopyItemMethod(((EwsExchangeSession.Message) message).itemId,
@@ -1244,9 +1219,6 @@ public class EwsExchangeSession extends ExchangeSession {
 		executeMethod(copyItemMethod);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void copyMessages(List<ExchangeSession.Message> messages, String targetFolder) throws IOException {
 		ArrayList<ItemId> itemIds = new ArrayList<>();
@@ -1258,9 +1230,6 @@ public class EwsExchangeSession extends ExchangeSession {
 		executeMethod(copyItemMethod);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void moveFolder(String folderPath, String targetFolderPath) throws IOException {
 		FolderPath path = new FolderPath(folderPath);
@@ -1292,9 +1261,6 @@ public class EwsExchangeSession extends ExchangeSession {
 		executeMethod(moveItemMethod);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	protected void moveToTrash(ExchangeSession.Message message) throws IOException {
 		MoveItemMethod moveItemMethod = new MoveItemMethod(((EwsExchangeSession.Message) message).itemId,
@@ -1344,7 +1310,7 @@ public class EwsExchangeSession extends ExchangeSession {
 		}
 
 		/**
-		 * Empty constructor for GalFind
+		 * Пустой конструктор для GalFind
 		 */
 		protected Contact() {
 		}
@@ -1391,9 +1357,9 @@ public class EwsExchangeSession extends ExchangeSession {
 		}
 
 		/**
-		 * Create or update contact
-		 * @return action result
-		 * @throws IOException on error
+		 * Создать или обновить контакт
+		 * @return результат действия
+		 * @throws IOException в случае ошибки
 		 */
 		@Override
 		public ItemResult createOrUpdate() throws IOException {
@@ -1545,10 +1511,10 @@ public class EwsExchangeSession extends ExchangeSession {
 		}
 
 		/**
-		 * Handle excluded dates (deleted occurrences).
-		 * @param currentItemId current item id to iterate over occurrences
-		 * @param vCalendar vCalendar object
-		 * @throws MosTechEwsException on error
+		 * Обработка исключенных дат (удаленные вхождения).
+		 * @param currentItemId идентификатор текущего элемента для итерации по вхождениям
+		 * @param vCalendar объект vCalendar
+		 * @throws MosTechEwsException в случае ошибки
 		 */
 		protected void handleExcludedDates(ItemId currentItemId, VCalendar vCalendar) throws MosTechEwsException {
 			List<VProperty> excludedDates = vCalendar.getFirstVeventProperties("EXDATE");
@@ -1609,10 +1575,10 @@ public class EwsExchangeSession extends ExchangeSession {
 		}
 
 		/**
-		 * Handle modified occurrences.
-		 * @param currentItemId current item id to iterate over occurrences
-		 * @param vCalendar vCalendar object
-		 * @throws MosTechEwsException on error
+		 * Обработка измененных вхождений.
+		 * @param currentItemId текущий идентификатор элемента для итерации по вхождениям
+		 * @param vCalendar объект vCalendar
+		 * @throws MosTechEwsException в случае ошибки
 		 */
 		protected void handleModifiedOccurrences(ItemId currentItemId, VCalendar vCalendar) throws MosTechEwsException {
 			for (VObject modifiedOccurrence : vCalendar.getModifiedOccurrences()) {
@@ -2407,10 +2373,10 @@ public class EwsExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Get all contacts and distribution lists in provided folder.
-	 * @param folderPath Exchange folder path
-	 * @return list of contacts
-	 * @throws IOException on error
+	 * Получить все контакты и списки рассылки в указанной папке.
+	 * @param folderPath Путь к папке Exchange
+	 * @return список контактов
+	 * @throws IOException в случае ошибки
 	 */
 	@Override
 	public List<ExchangeSession.Contact> getAllContacts(String folderPath, boolean includeDistList) throws IOException {
@@ -2487,7 +2453,7 @@ public class EwsExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Common item properties
+	 * Общие свойства элементов
 	 */
 	protected static final Set<String> ITEM_PROPERTIES = new HashSet<>();
 
@@ -3012,10 +2978,10 @@ public class EwsExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Check if folderPath is base folder or a sub folder path.
-	 * @param folderPath folder path
-	 * @param baseFolder base folder
-	 * @return true if folderPath is under baseFolder
+	 * Проверьте, является ли folderPath базовой папкой или путём к подпапке.
+	 * @param folderPath путь к папке
+	 * @param baseFolder базовая папка
+	 * @return true, если folderPath находится под baseFolder
 	 */
 	private boolean isSubFolderOf(String folderPath, String baseFolder) {
 		if (PUBLIC_ROOT.equals(baseFolder) || ARCHIVE_ROOT.equals(baseFolder)) {
@@ -3326,9 +3292,9 @@ public class EwsExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Format date to exchange search format.
-	 * @param date date object
-	 * @return formatted search date
+	 * Форматировать дату в формат поиска для обмена.
+	 * @param date объект даты
+	 * @return отформатированная дата для поиска
 	 */
 	@Override
 	public String formatSearchDate(Date date) {
@@ -3338,10 +3304,10 @@ public class EwsExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Check if itemName is long and base64 encoded. User generated item names are usually
-	 * short
-	 * @param itemName item name
-	 * @return true if itemName is an EWS item id
+	 * Проверяет, является ли itemName длинным и закодированным в base64. Имена предметов,
+	 * сгенерированные пользователем, обычно короткие
+	 * @param itemName имя предмета
+	 * @return true, если itemName является идентификатором предмета EWS
 	 */
 	protected static boolean isItemId(String itemName) {
 		return itemName.length() >= 140
@@ -3393,7 +3359,7 @@ public class EwsExchangeSession extends ExchangeSession {
 	}
 
 	/**
-	 * Close session. Shutdown http client connection manager
+	 * Закрыть сессию. Завершить работу менеджера соединений http-клиента
 	 */
 	@Override
 	public void close() {

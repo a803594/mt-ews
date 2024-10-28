@@ -9,16 +9,16 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Generic element option.
+ * Общий вариант элемента.
  */
 public class ElementOption extends Option {
 
 	ElementOption option;
 
 	/**
-	 * Create element option.
-	 * @param name element tag name
-	 * @param value element value
+	 * Создать элемент опции.
+	 * @param name имя тега элемента
+	 * @param value значение элемента
 	 */
 	protected ElementOption(String name, String value) {
 		super(name, value);
@@ -29,9 +29,6 @@ public class ElementOption extends Option {
 		this.option = option;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	public void write(Writer writer) throws IOException {
 		writer.write('<');

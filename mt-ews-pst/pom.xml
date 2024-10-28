@@ -99,7 +99,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>pt.cjmach.pstconv.Launcher</mainClass>
+                            <mainClass>ru.mos.mostech.pst.Launcher</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

@@ -34,8 +34,8 @@ public abstract class ExchangeDavRequest extends HttpPost implements ResponseHan
 	private List<MultiStatusResponse> responses;
 
 	/**
-	 * Create PROPPATCH method.
-	 * @param path path
+	 * Создать метод PROPPATCH.
+	 * @param path путь
 	 */
 	public ExchangeDavRequest(String path) {
 		super(path);
@@ -82,8 +82,8 @@ public abstract class ExchangeDavRequest extends HttpPost implements ResponseHan
 	}
 
 	/**
-	 * Generate request content from property values.
-	 * @return request content as byte array
+	 * Сгенерировать содержимое запроса из значений свойств.
+	 * @return содержимое запроса в виде массива байтов
 	 */
 	protected abstract byte[] generateRequestContent();
 
@@ -236,9 +236,9 @@ public abstract class ExchangeDavRequest extends HttpPost implements ResponseHan
 	}
 
 	/**
-	 * Get Multistatus responses.
-	 * @return responses
-	 * @throws HttpResponseException on error
+	 * Получить ответы с мультистатусом.
+	 * @return ответы
+	 * @throws HttpResponseException в случае ошибки
 	 */
 	public MultiStatusResponse[] getResponses() throws HttpResponseException {
 		if (responses == null) {
@@ -250,9 +250,9 @@ public abstract class ExchangeDavRequest extends HttpPost implements ResponseHan
 	}
 
 	/**
-	 * Get single Multistatus response.
-	 * @return response
-	 * @throws HttpResponseException on error
+	 * Получить единичный ответ Multistatus.
+	 * @return ответ
+	 * @throws HttpResponseException в случае ошибки
 	 */
 	public MultiStatusResponse getResponse() throws HttpResponseException {
 		if (responses == null || responses.size() != 1) {
@@ -263,9 +263,9 @@ public abstract class ExchangeDavRequest extends HttpPost implements ResponseHan
 	}
 
 	/**
-	 * Return method http status code.
-	 * @return http status code
-	 * @throws HttpResponseException on error
+	 * Возвращает код статуса http.
+	 * @return код статуса http
+	 * @throws HttpResponseException в случае ошибки
 	 */
 	public int getResponseStatusCode() throws HttpResponseException {
 		String responseDescription = getResponse().getResponseDescription();

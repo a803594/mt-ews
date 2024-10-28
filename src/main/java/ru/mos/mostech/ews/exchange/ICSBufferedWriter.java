@@ -4,15 +4,15 @@ DIT
 package ru.mos.mostech.ews.exchange;
 
 /**
- * ICS String writer. split lines longer than 75 characters
+ * Писатель строк ICS. Делит строки длиннее 75 символов
  */
 public class ICSBufferedWriter {
 
 	final StringBuilder buffer = new StringBuilder();
 
 	/**
-	 * Write content to buffer, do not split lines.
-	 * @param content ics content
+	 * Записать содержимое в буфер, не разбивая строки.
+	 * @param content содержимое ics
 	 */
 	public void write(String content) {
 		if (content != null) {
@@ -21,17 +21,17 @@ public class ICSBufferedWriter {
 	}
 
 	/**
-	 * Write line to buffer, split lines at 75 characters.
-	 * @param line ics event line
+	 * Записать строку в буфер, разбивая строки на 75 символов.
+	 * @param line строка события ics
 	 */
 	public void writeLine(String line) {
 		writeLine(line, false);
 	}
 
 	/**
-	 * Write line with or without continuation prefix.
-	 * @param line line content
-	 * @param prefix continuation flag
+	 * Записать строку с или без префикса продолжения.
+	 * @param line содержимое строки
+	 * @param prefix флаг продолжения
 	 */
 	public void writeLine(String line, boolean prefix) {
 		int maxLength = 77;
@@ -51,15 +51,15 @@ public class ICSBufferedWriter {
 	}
 
 	/**
-	 * Append CRLF.
+	 * Добавить CRLF.
 	 */
 	public void newLine() {
 		buffer.append((char) 13).append((char) 10);
 	}
 
 	/**
-	 * Get buffer as String
-	 * @return ICS content as String
+	 * Получить буфер как строку
+	 * @return Содержимое ICS как строка
 	 */
 	@Override
 	public String toString() {
@@ -67,9 +67,9 @@ public class ICSBufferedWriter {
 	}
 
 	/**
-	 * Append single value property
-	 * @param propertyName property name
-	 * @param propertyValue property value
+	 * Добавить свойство с одним значением
+	 * @param propertyName имя свойства
+	 * @param propertyValue значение свойства
 	 */
 	public void appendProperty(String propertyName, String propertyValue) {
 		if ((propertyValue != null) && (propertyValue.length() > 0)) {
@@ -83,9 +83,9 @@ public class ICSBufferedWriter {
 	}
 
 	/**
-	 * Append and encode \n to \\n in value.
-	 * @param buffer line buffer
-	 * @param value value
+	 * Добавить и закодировать \n в \\n в значении.
+	 * @param buffer буфер строки
+	 * @param value значение
 	 */
 	protected void appendMultilineEncodedValue(StringBuilder buffer, String value) {
 		for (int i = 0; i < value.length(); i++) {

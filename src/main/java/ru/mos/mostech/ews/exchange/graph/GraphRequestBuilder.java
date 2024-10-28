@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Build Microsoft graph request
+ * Создать запрос к Microsoft Graph
  */
 public class GraphRequestBuilder {
 
@@ -51,10 +51,10 @@ public class GraphRequestBuilder {
 	private String objectId;
 
 	/**
-	 * Set property in Json body.
-	 * @param name property name
-	 * @param value property value
-	 * @throws JSONException on error
+	 * Установить свойство в теле Json.
+	 * @param name имя свойства
+	 * @param value значение свойства
+	 * @throws JSONException в случае ошибки
 	 */
 	public GraphRequestBuilder setProperty(String name, String value) throws JSONException {
 		if (jsonBody == null) {
@@ -65,8 +65,8 @@ public class GraphRequestBuilder {
 	}
 
 	/**
-	 * Set epxand fields (returning attributes).
-	 * @param expandFields set of fields to return
+	 * Установить расширенные поля (возвращаемые атрибуты).
+	 * @param expandFields набор полей для возврата
 	 * @return this
 	 */
 	public GraphRequestBuilder setExpandFields(Set<FieldURI> expandFields) {
@@ -110,8 +110,9 @@ public class GraphRequestBuilder {
 	}
 
 	/**
-	 * Build request path based on version, username, object type and object id.
-	 * @return request path
+	 * Построить путь запроса на основе версии, имени пользователя, типа объекта и
+	 * идентификатора объекта.
+	 * @return путь запроса
 	 */
 	protected String buildPath() {
 		StringBuilder buffer = new StringBuilder();
@@ -136,8 +137,8 @@ public class GraphRequestBuilder {
 	}
 
 	/**
-	 * Compute expand parameters from properties.
-	 * @return $expand value
+	 * Вычислить параметры расширения из свойств.
+	 * @return $expand значение
 	 */
 	private String buildExpand() {
 		ArrayList<String> singleValueProperties = new ArrayList<>();
@@ -181,9 +182,9 @@ public class GraphRequestBuilder {
 	}
 
 	/**
-	 * Build http request.
-	 * @return Http request
-	 * @throws IOException on error
+	 * Построить http запрос.
+	 * @return Http запрос
+	 * @throws IOException в случае ошибки
 	 */
 	public HttpRequestBase build() throws IOException {
 		try {

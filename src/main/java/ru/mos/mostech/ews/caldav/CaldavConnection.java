@@ -36,14 +36,14 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Handle a caldav connection.
+ * Обработать соединение caldav.
  */
 @Slf4j
 @SuppressWarnings({ "java:S3776", "java:S6541" })
 public class CaldavConnection extends AbstractConnection {
 
 	/**
-	 * Maximum keep alive time in seconds
+	 * Максимальное время поддержания соединения в секундах
 	 */
 	protected static final int MAX_KEEP_ALIVE_TIME = 300;
 
@@ -98,7 +98,7 @@ public class CaldavConnection extends AbstractConnection {
 	protected boolean closed;
 
 	/**
-	 * custom url encode path set for iCal 5
+	 * пользовательская кодировка URL-пути для iCal 5
 	 */
 	public static final BitSet ICAL_ALLOWED_ABS_PATH = new BitSet(256);
 
@@ -117,8 +117,8 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Initialize the streams and start the thread.
-	 * @param clientSocket Caldav client socket
+	 * Инициализация потоков и запуск потока.
+	 * @param clientSocket Сокет клиента Caldav
 	 */
 	public CaldavConnection(Socket clientSocket) {
 		super(CaldavConnection.class.getSimpleName(), clientSocket, "UTF-8");
@@ -255,12 +255,12 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Handle caldav request.
-	 * @param command Http command
-	 * @param path request path
-	 * @param headers Http headers map
-	 * @param body request body
-	 * @throws IOException on error
+	 * Обработать запрос caldav.
+	 * @param command HTTP команда
+	 * @param path путь запроса
+	 * @param headers карта HTTP заголовков
+	 * @param body тело запроса
+	 * @throws IOException в случае ошибки
 	 */
 	private void handleRequest(String command, String path, Map<String, String> headers, String body)
 			throws IOException {
@@ -563,12 +563,12 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Append folder object to Caldav response.
-	 * @param response Caldav response
-	 * @param request Caldav request
-	 * @param folder folder object
-	 * @param subFolder calendar folder path relative to request path
-	 * @throws IOException on error
+	 * Добавить объект папки к ответу Caldav.
+	 * @param response Ответ Caldav
+	 * @param request Запрос Caldav
+	 * @param folder объект папки
+	 * @param subFolder путь к календарной папке относительно пути запроса
+	 * @throws IOException при ошибке
 	 */
 	private void appendFolderOrItem(CaldavResponse response, CaldavRequest request, ExchangeSession.Folder folder,
 			String subFolder) throws IOException {
@@ -648,11 +648,11 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Append calendar inbox object to Caldav response.
-	 * @param response Caldav response
-	 * @param request Caldav request
-	 * @param subFolder inbox folder path relative to request path
-	 * @throws IOException on error
+	 * Добавить объект календарного входящего потока к ответу Caldav.
+	 * @param response Ответ Caldav
+	 * @param request Запрос Caldav
+	 * @param subFolder Путь к папке входящих сообщений относительно пути запроса
+	 * @throws IOException при ошибке
 	 */
 	private void appendInbox(CaldavResponse response, CaldavRequest request, String subFolder) throws IOException {
 		String ctag = "0";
@@ -694,11 +694,11 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Append calendar outbox object to Caldav response.
-	 * @param response Caldav response
-	 * @param request Caldav request
-	 * @param subFolder outbox folder path relative to request path
-	 * @throws IOException on error
+	 * Добавить объект календаря в папку "Исходящие" в ответ Caldav.
+	 * @param response Ответ Caldav
+	 * @param request Запрос Caldav
+	 * @param subFolder Путь к папке "Исходящие", относительный к пути запроса
+	 * @throws IOException в случае ошибки
 	 */
 	private void appendOutbox(CaldavResponse response, CaldavRequest request, String subFolder) throws IOException {
 		response.startResponse(encodePath(request, request.getPath(subFolder)));
@@ -722,8 +722,8 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send simple html response to GET /.
-	 * @throws IOException on error
+	 * Отправить простой HTML-ответ на GET /.
+	 * @throws IOException при ошибке
 	 */
 	public void sendGetRoot() throws IOException {
 		String buffer = "Connected to MT-EWS" + MosTechEws.getCurrentVersion() + "<br/>" + "UserName: " + userName
@@ -732,9 +732,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send inbox response for request.
-	 * @param request Caldav request
-	 * @throws IOException on error
+	 * Отправить ответ в почтовый ящик на запрос.
+	 * @param request Запрос Caldav
+	 * @throws IOException при ошибке
 	 */
 	private void sendInbox(CaldavRequest request) throws IOException {
 		CaldavResponse response = new CaldavResponse(this, HttpStatus.SC_MULTI_STATUS);
@@ -759,9 +759,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send outbox response for request.
-	 * @param request Caldav request
-	 * @throws IOException on error
+	 * Отправить ответ из исходящих сообщений для запроса.
+	 * @param request Запрос Caldav
+	 * @throws IOException в случае ошибки
 	 */
 	private void sendOutbox(CaldavRequest request) throws IOException {
 		CaldavResponse response = new CaldavResponse(this, HttpStatus.SC_MULTI_STATUS);
@@ -772,9 +772,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send calendar response for request.
-	 * @param request Caldav request
-	 * @throws IOException on error
+	 * Отправить ответ на запрос календаря.
+	 * @param request Запрос Caldav
+	 * @throws IOException при ошибке
 	 */
 	private void sendFolderOrItem(CaldavRequest request) throws IOException {
 		String folderPath = request.getFolderPath();
@@ -819,9 +819,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Fake PROPPATCH response for request.
-	 * @param request Caldav request
-	 * @throws IOException on error
+	 * Фейковый ответ PROPPATCH для запроса.
+	 * @param request Запрос Caldav
+	 * @throws IOException в случае ошибки
 	 */
 	private void patchCalendar(CaldavRequest request) throws IOException {
 		String displayname = request.getProperty(DISPLAYNAME);
@@ -860,9 +860,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Report items listed in request.
-	 * @param request Caldav request
-	 * @throws IOException on error
+	 * Отчет о предметах, указанных в запросе.
+	 * @param request Запрос Caldav
+	 * @throws IOException в случае ошибки
 	 */
 	private void reportItems(CaldavRequest request) throws IOException {
 		String folderPath = request.getFolderPath();
@@ -960,9 +960,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send principals folder.
-	 * @param request Caldav request
-	 * @throws IOException on error
+	 * Отправить папку принципалов.
+	 * @param request Запрос Caldav
+	 * @throws IOException при ошибке
 	 */
 	private void sendPrincipalsFolder(CaldavRequest request) throws IOException {
 		CaldavResponse response = new CaldavResponse(this, HttpStatus.SC_MULTI_STATUS);
@@ -981,9 +981,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send user response for request.
-	 * @param request Caldav request
-	 * @throws IOException on error
+	 * Отправить ответ пользователя на запрос.
+	 * @param request Запрос Caldav
+	 * @throws IOException в случае ошибки
 	 */
 	private void sendUserRoot(CaldavRequest request) throws IOException {
 		CaldavResponse response = new CaldavResponse(this, HttpStatus.SC_MULTI_STATUS);
@@ -1015,9 +1015,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send caldav response for / request.
-	 * @param request Caldav request
-	 * @throws IOException on error
+	 * Отправить ответ caldav на / запрос.
+	 * @param request Запрос Caldav
+	 * @throws IOException при ошибке
 	 */
 	private void sendRoot(CaldavRequest request) throws IOException {
 		CaldavResponse response = new CaldavResponse(this, HttpStatus.SC_MULTI_STATUS);
@@ -1084,9 +1084,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send caldav response for /directory/ request.
-	 * @param request Caldav request
-	 * @throws IOException on error
+	 * Отправить ответ caldav для запроса /directory/.
+	 * @param request Запрос Caldav
+	 * @throws IOException в случае ошибки
 	 */
 	private void sendDirectory(CaldavRequest request) throws IOException {
 		CaldavResponse response = new CaldavResponse(this, HttpStatus.SC_MULTI_STATUS);
@@ -1103,8 +1103,8 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send caldav response for /.well-known/ request.
-	 * @throws IOException on error
+	 * Отправить ответ caldav для запроса /.well-known/.
+	 * @throws IOException при ошибке
 	 */
 	public void sendWellKnown() throws IOException {
 		HashMap<String, String> headers = new HashMap<>();
@@ -1113,11 +1113,11 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send Caldav principal response.
-	 * @param request Caldav request
-	 * @param prefix principal prefix (users or public)
-	 * @param principal principal name (email address for users)
-	 * @throws IOException on error
+	 * Отправить ответ по принципалу Caldav.
+	 * @param request Запрос Caldav
+	 * @param prefix префикс принципала (пользователи или публичный)
+	 * @param principal имя принципала (адрес электронной почты для пользователей)
+	 * @throws IOException при ошибке
 	 */
 	private void sendPrincipal(CaldavRequest request, String prefix, String principal) throws IOException {
 		// actual principal is email address
@@ -1207,9 +1207,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send free busy response for body request.
-	 * @param body request body
-	 * @throws IOException on error
+	 * Отправить ответ о занятости для тела запроса.
+	 * @param body тело запроса
+	 * @throws IOException при ошибке
 	 */
 	public void sendFreeBusy(String body) throws IOException {
 		HashMap<String, String> valueMap = new HashMap<>();
@@ -1309,9 +1309,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send Http error response for exception
-	 * @param e exception
-	 * @throws IOException on error
+	 * Отправить Http-ошибку в ответ на исключение
+	 * @param e исключение
+	 * @throws IOException при ошибке
 	 */
 	public void sendErr(Exception e) throws IOException {
 		String message = e.getMessage();
@@ -1337,9 +1337,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send 404 not found for unknown request.
-	 * @param request Caldav request
-	 * @throws IOException on error
+	 * Отправка 404 не найдено для неизвестного запроса.
+	 * @param request Запрос Caldav
+	 * @throws IOException в случае ошибки
 	 */
 	private void sendNotFound(CaldavRequest request) throws IOException {
 		BundleMessage message = new BundleMessage("LOG_UNSUPPORTED_REQUEST", request);
@@ -1348,18 +1348,18 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send Http error status and message.
-	 * @param status Http status
-	 * @param message error messagee
-	 * @throws IOException on error
+	 * Отправить статус ошибки Http и сообщение.
+	 * @param status Статус Http
+	 * @param message сообщение об ошибке
+	 * @throws IOException при ошибке
 	 */
 	public void sendErr(int status, String message) throws IOException {
 		sendHttpResponse(status, null, "text/plain;charset=UTF-8", message, false);
 	}
 
 	/**
-	 * Send OPTIONS response.
-	 * @throws IOException on error
+	 * Отправить ответ OPTIONS.
+	 * @throws IOException в случае ошибки
 	 */
 	public void sendOptions() throws IOException {
 		HashMap<String, String> headers = new HashMap<>();
@@ -1368,8 +1368,8 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send 401 Unauthorized response.
-	 * @throws IOException on error
+	 * Отправить ответ с кодом 401 Неавторизован.
+	 * @throws IOException при ошибке
 	 */
 	public void sendUnauthorized() throws IOException {
 		HashMap<String, String> headers = new HashMap<>();
@@ -1378,29 +1378,29 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send Http response with given status.
-	 * @param status Http status
-	 * @throws IOException on error
+	 * Отправить Http ответ с заданным статусом.
+	 * @param status Http статус
+	 * @throws IOException при ошибке
 	 */
 	public void sendHttpResponse(int status) throws IOException {
 		sendHttpResponse(status, null, null, (byte[]) null, true);
 	}
 
 	/**
-	 * Send Http response with given status and headers.
-	 * @param status Http status
-	 * @param headers Http headers
-	 * @throws IOException on error
+	 * Отправить Http ответ с заданным статусом и заголовками.
+	 * @param status Http статус
+	 * @param headers Http заголовки
+	 * @throws IOException в случае ошибки
 	 */
 	public void sendHttpResponse(int status, Map<String, String> headers) throws IOException {
 		sendHttpResponse(status, headers, null, (byte[]) null, true);
 	}
 
 	/**
-	 * Send Http response with given status in chunked mode.
-	 * @param status Http status
-	 * @param contentType MIME content type
-	 * @throws IOException on error
+	 * Отправить HTTP-ответ с указанным статусом в режиме кусочной передачи.
+	 * @param status HTTP статус
+	 * @param contentType MIME тип содержимого
+	 * @throws IOException при ошибке
 	 */
 	public void sendChunkedHttpResponse(int status, String contentType) throws IOException {
 		HashMap<String, String> headers = new HashMap<>();
@@ -1409,14 +1409,14 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send Http response with given status, headers, content type and content. Close
-	 * connection if keepAlive is false
-	 * @param status Http status
-	 * @param headers Http headers
-	 * @param contentType MIME content type
-	 * @param content response body as string
-	 * @param keepAlive keep connection open
-	 * @throws IOException on error
+	 * Отправить Http ответ с заданным статусом, заголовками, типом контента и содержимым.
+	 * Закройте соединение, если keepAlive false
+	 * @param status Http статус
+	 * @param headers Http заголовки
+	 * @param contentType MIME тип контента
+	 * @param content тело ответа в виде строки
+	 * @param keepAlive поддерживать соединение открытым
+	 * @throws IOException при ошибке
 	 */
 	public void sendHttpResponse(int status, Map<String, String> headers, String contentType, String content,
 			boolean keepAlive) throws IOException {
@@ -1424,14 +1424,14 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send Http response with given status, headers, content type and content. Close
-	 * connection if keepAlive is false
-	 * @param status Http status
-	 * @param headers Http headers
-	 * @param contentType MIME content type
-	 * @param content response body as byte array
-	 * @param keepAlive keep connection open
-	 * @throws IOException on error
+	 * Отправить Http-ответ с указанным статусом, заголовками, типом контента и
+	 * содержимым. Закрыть соединение, если keepAlive равно false
+	 * @param status Http статус
+	 * @param headers Http заголовки
+	 * @param contentType MIME тип контента
+	 * @param content тело ответа в виде массива байтов
+	 * @param keepAlive поддерживать соединение открытым
+	 * @throws IOException при ошибке
 	 */
 	public void sendHttpResponse(int status, Map<String, String> headers, String contentType, byte[] content,
 			boolean keepAlive) throws IOException {
@@ -1483,9 +1483,9 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Decode HTTP credentials
-	 * @param authorization http authorization header value
-	 * @throws IOException if invalid credentials
+	 * Декодировать HTTP учетные данные
+	 * @param authorization значение заголовка http авторизации
+	 * @throws IOException если учетные данные неверны
 	 */
 	private void decodeCredentials(String authorization) throws IOException {
 		int index = authorization.indexOf(' ');
@@ -1601,8 +1601,8 @@ public class CaldavConnection extends AbstractConnection {
 		}
 
 		/**
-		 * Check if this request is a folder request.
-		 * @return true if this is a folder (not event) request
+		 * Проверьте, является ли этот запрос запросом на папку.
+		 * @return true, если это запрос на папку (не событие)
 		 */
 		public boolean isFolder() {
 			return path.endsWith("/") || isPropFind() || isReport() || isPropPatch() || isOptions() || isPost();
@@ -1640,10 +1640,10 @@ public class CaldavConnection extends AbstractConnection {
 		}
 
 		/**
-		 * Check if path element at index is value
-		 * @param index path element index
-		 * @param value path value
-		 * @return true if path element at index is value
+		 * Проверить, является ли элемент пути по индексу значением
+		 * @param index индекс элемента пути
+		 * @param value значение пути
+		 * @return true, если элемент пути по индексу является значением
 		 */
 		public boolean isPath(int index, String value) {
 			return value != null && value.equals(getPathElement(index));
@@ -1813,8 +1813,8 @@ public class CaldavConnection extends AbstractConnection {
 		}
 
 		/**
-		 * Get request folder path.
-		 * @return exchange folder path
+		 * Получить путь к папке запроса.
+		 * @return путь к папке обмена
 		 */
 		public String getFolderPath() {
 			return getFolderPath(null);
@@ -1832,9 +1832,9 @@ public class CaldavConnection extends AbstractConnection {
 		}
 
 		/**
-		 * Get request folder path with subFolder.
-		 * @param subFolder sub folder path
-		 * @return folder path
+		 * Получить путь к папке запроса с подпапкой.
+		 * @param subFolder путь к подпапке
+		 * @return путь к папке
 		 */
 		public String getFolderPath(String subFolder) {
 			int endIndex;
@@ -1860,12 +1860,14 @@ public class CaldavConnection extends AbstractConnection {
 			}
 			if (this.isUserAgent("Address%20Book") || this.isUserAgent("Darwin")) {
 				/*
-				 * WARNING - This is a kludge - If your public folder address book path
-				 * has spaces, then Address Book app just ignores that account This kludge
-				 * allows you to specify the path in which spaces are encoded as ___ It'll
-				 * make Address book to not ignore the account and communicate with
-				 * MT-EWS. Here we replace the ___ in the path with spaces. Be warned if
-				 * your actual address book path has ___ it'll fail.
+				 * ВНИМАНИЕ - Это временное решение - Если в вашем пути к адресной книге в
+				 * публичной папке есть пробелы, то приложение "Адресная книга" просто
+				 * игнорирует эту учетную запись. Это временное решение позволяет вам
+				 * указать путь, в котором пробелы закодированы как ___. Это заставит
+				 * адресную книгу не игнорировать учетную запись и взаимодействовать с
+				 * MT-EWS. Здесь мы заменяем ___ в пути на пробелы. Будьте осторожны, если
+				 * ваш фактический путь к адресной книге содержит ___, это приведет к
+				 * сбою.
 				 */
 				String result = calendarPath.toString();
 				// replace unsupported spaces
@@ -1887,7 +1889,7 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Http chunked response.
+	 * HTTP ответ с чанками.
 	 */
 	private static class ChunkedResponse {
 
@@ -1932,7 +1934,8 @@ public class CaldavConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Caldav response wrapper, content sent in chunked mode to avoid timeout
+	 * Обертка для ответа Caldav, содержимое отправляется в режиме кусочков, чтобы
+	 * избежать таймаута
 	 */
 	private static class CaldavResponse extends ChunkedResponse {
 

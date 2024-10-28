@@ -22,16 +22,16 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 
 /**
- * Custom Trust Manager, let user accept or deny.
+ * Пользовательский менеджер доверия, позволяет пользователю принимать или отвергать.
  */
 public class MosTechEwsX509TrustManager implements X509TrustManager {
 
 	private final X509TrustManager standardTrustManager;
 
 	/**
-	 * Create a new custom X509 trust manager.
-	 * @throws NoSuchAlgorithmException on error
-	 * @throws KeyStoreException on error
+	 * Создает новый пользовательский X509 менеджер доверия.
+	 * @throws NoSuchAlgorithmException при ошибке
+	 * @throws KeyStoreException при ошибке
 	 */
 	public MosTechEwsX509TrustManager() throws NoSuchAlgorithmException, KeyStoreException {
 		TrustManagerFactory factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
@@ -137,8 +137,8 @@ public class MosTechEwsX509TrustManager implements X509TrustManager {
 	}
 
 	/**
-	 * Get rdn value from principal dn.
-	 * @param principal security principal
+	 * Получить значение rdn из основного dn.
+	 * @param principal объект безопасности
 	 * @return rdn
 	 */
 	public static String getRDN(Principal principal) {
@@ -154,9 +154,9 @@ public class MosTechEwsX509TrustManager implements X509TrustManager {
 	}
 
 	/**
-	 * Build a formatted certificate serial string.
-	 * @param certificate X509 certificate
-	 * @return formatted serial
+	 * Построить форматированную строку серийного номера сертификата.
+	 * @param certificate X509 сертификат
+	 * @return форматированный серийный номер
 	 */
 	public static String getFormattedSerial(X509Certificate certificate) {
 		StringBuilder builder = new StringBuilder();
@@ -171,9 +171,9 @@ public class MosTechEwsX509TrustManager implements X509TrustManager {
 	}
 
 	/**
-	 * Build a formatted hash string.
-	 * @param certificate X509 certificate
-	 * @return formatted hash
+	 * Создает отформатированную строку хеша.
+	 * @param certificate X509 сертификат
+	 * @return отформатированный хеш
 	 */
 	public static String getFormattedHash(X509Certificate certificate) {
 		String sha1Hash;
@@ -189,9 +189,9 @@ public class MosTechEwsX509TrustManager implements X509TrustManager {
 	}
 
 	/**
-	 * Format byte buffer to a hexadecimal hash string.
-	 * @param buffer byte array
-	 * @return hexadecimal hash string
+	 * Форматировать массив байтов в шестнадцатиричную хэш-строку.
+	 * @param buffer массив байтов
+	 * @return шестнадцатиричная хэш-строка
 	 */
 	protected static String formatHash(byte[] buffer) {
 		StringBuilder builder = new StringBuilder();

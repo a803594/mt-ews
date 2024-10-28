@@ -33,18 +33,18 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Handle a caldav connection.
+ * Обработать соединение caldav.
  */
 @Slf4j
 public class LdapConnection extends AbstractConnection {
 
 	/**
-	 * MT-EWS base context
+	 * MT-EWS базовый контекст
 	 */
 	static final String BASE_CONTEXT = "ou=people";
 
 	/**
-	 * OSX server (OpenDirectory) base context
+	 * Базовый контекст сервера OSX (OpenDirectory)
 	 */
 	static final String OD_BASE_CONTEXT = "o=od";
 	static final String OD_USER_CONTEXT = "cn=users, o=od";
@@ -57,7 +57,7 @@ public class LdapConnection extends AbstractConnection {
 	static final String OD_USER_CONTEXT_LION = "cn=users, ou=people";
 
 	/**
-	 * Root DSE naming contexts (default and OpenDirectory)
+	 * Корневые контексты именования DSE (по умолчанию и OpenDirectory)
 	 */
 	static final List<String> NAMING_CONTEXTS = new ArrayList<>();
 
@@ -78,8 +78,9 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Map Exchange contact attribute names to LDAP attributes. Used only when
-	 * returningAttributes is empty in LDAP request (return all available attributes)
+	 * Сопоставление имен атрибутов контактов Exchange с атрибутами LDAP. Используется
+	 * только когда возвращаемые атрибуты пусты в запросе LDAP (возвращает все доступные
+	 * атрибуты)
 	 */
 	static final HashMap<String, String> CONTACT_TO_LDAP_ATTRIBUTE_MAP = new HashMap<>();
 
@@ -102,17 +103,18 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * OSX constant computer guid (used by iCal attendee completion)
+	 * Константа GUID компьютера OSX (используется для завершения участников в iCal)
 	 */
 	static final String COMPUTER_GUID = "52486C30-F0AB-48E3-9C37-37E9B28CDD7B";
 
 	/**
-	 * OSX constant virtual host guid (used by iCal attendee completion)
+	 * Константа виртуального хоста OSX guid (используется для завершения участников в
+	 * iCal)
 	 */
 	static final String VIRTUALHOST_GUID = "D6DD8A10-1098-11DE-8C30-0800200C9A66";
 
 	/**
-	 * OSX constant value for attribute apple-serviceslocator
+	 * Константное значение OSX для атрибута apple-serviceslocator
 	 */
 	static final HashMap<String, String> STATIC_ATTRIBUTE_MAP = new HashMap<>();
 
@@ -121,7 +123,7 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * LDAP to Exchange Criteria Map
+	 * Карта критериев LDAP в Exchange
 	 */
 	// TODO: remove
 	static final HashMap<String, String> CRITERIA_MAP = new HashMap<>();
@@ -143,7 +145,7 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * LDAP to Exchange contact attribute map.
+	 * Сопоставление атрибутов контактов LDAP и Exchange.
 	 */
 	static final HashMap<String, String> LDAP_TO_CONTACT_ATTRIBUTE_MAP = new HashMap<>();
 
@@ -268,7 +270,7 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * LDAP filter attributes ignore map
+	 * Карта игнорируемых атрибутов фильтра LDAP
 	 */
 	// TODO remove
 	static final HashSet<String> IGNORE_MAP = new HashSet<>();
@@ -340,33 +342,33 @@ public class LdapConnection extends AbstractConnection {
 	// static final int SCOPE_SUBTREE = 2;
 
 	/**
-	 * Sasl server for DIGEST-MD5 authentication
+	 * Сервис SASL для аутентификации DIGEST-MD5
 	 */
 	protected SaslServer saslServer;
 
 	/**
-	 * raw connection inputStream
+	 * сырой ввод подключения inputStream
 	 */
 	protected BufferedInputStream is;
 
 	/**
-	 * reusable BER encoder
+	 * многоразовый кодировщик BER
 	 */
 	protected final BerEncoder responseBer = new BerEncoder();
 
 	/**
-	 * Current LDAP version (used for String encoding)
+	 * Текущая версия LDAP (используется для кодирования строк)
 	 */
 	int ldapVersion = LDAP_VERSION3;
 
 	/**
-	 * Search threads map
+	 * Карта потоков поиска
 	 */
 	protected final HashMap<Integer, SearchRunnable> searchThreadMap = new HashMap<>();
 
 	/**
-	 * Initialize the streams and start the thread.
-	 * @param clientSocket LDAP client socket
+	 * Инициализировать потоки и запустить поток.
+	 * @param clientSocket Сокет LDAP клиента
 	 */
 	public LdapConnection(Socket clientSocket) {
 		super(LdapConnection.class.getSimpleName(), clientSocket);
@@ -624,14 +626,14 @@ public class LdapConnection extends AbstractConnection {
 				reqBer.parseSeq(null);
 				String dn = reqBer.parseString(isLdapV3());
 				int scope = reqBer.parseEnumeration();
-				/* int derefAliases = */
+				/* int разыменованныеПсевдонимы = */
 				reqBer.parseEnumeration();
 				int sizeLimit = reqBer.parseInt();
 				if (sizeLimit > 100 || sizeLimit == 0) {
 					sizeLimit = 100;
 				}
 				int timelimit = reqBer.parseInt();
-				/* boolean typesOnly = */
+				/* типы только для */
 				reqBer.parseBoolean();
 				LdapFilter ldapFilter = parseFilter(reqBer);
 				Set<String> returningAttributes = parseReturningAttributes(reqBer);
@@ -684,9 +686,9 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Extract rdn value from username
-	 * @param dn distinguished name or username
-	 * @return username
+	 * Извлечь значение rdn из имени пользователя
+	 * @param dn отличительное имя или имя пользователя
+	 * @return имя пользователя
 	 */
 	private String extractRdnValue(String dn) throws IOException {
 		if (dn.startsWith("uid=")) {
@@ -766,7 +768,7 @@ public class LdapConnection extends AbstractConnection {
 		if (ldapFilterOperator == LDAP_FILTER_SUBSTRINGS) {
 			// Thunderbird sends values with space as separate strings, rebuild value
 			int[] seqSize = new int[1];
-			/* LBER_SEQUENCE */
+			/* ПОДОБИЕ_ЛБЕР */
 			reqBer.parseSeq(seqSize);
 			int end = reqBer.getParsePosition() + seqSize[0];
 			while (reqBer.getParsePosition() < end && reqBer.bytesLeft() > 0) {
@@ -809,9 +811,9 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send Root DSE
-	 * @param currentMessageId current message id
-	 * @throws IOException on error
+	 * Отправить корневую DSE
+	 * @param currentMessageId текущий идентификатор сообщения
+	 * @throws IOException в случае ошибки
 	 */
 	protected void sendRootDSE(int currentMessageId) throws IOException {
 		MosTechEwsTray.debug(new BundleMessage("LOG_LDAP_SEND_ROOT_DSE"));
@@ -848,7 +850,7 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Cache serviceInfo string value
+	 * Кэшировать строковое значение serviceInfo
 	 */
 	protected String serviceInfo;
 
@@ -877,10 +879,10 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send ComputerContext
-	 * @param currentMessageId current message id
-	 * @param returningAttributes attributes to return
-	 * @throws IOException on error
+	 * Отправить ComputerContext
+	 * @param currentMessageId текущий идентификатор сообщения
+	 * @param returningAttributes атрибуты для возврата
+	 * @throws IOException при ошибке
 	 */
 	protected void sendComputerContext(int currentMessageId, Set<String> returningAttributes) throws IOException {
 		List<String> objectClasses = new ArrayList<>();
@@ -902,9 +904,9 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Send Base Context
-	 * @param currentMessageId current message id
-	 * @throws IOException on error
+	 * Отправить базовый контекст
+	 * @param currentMessageId текущий идентификатор сообщения
+	 * @throws IOException при ошибке
 	 */
 	protected void sendBaseContext(int currentMessageId) throws IOException {
 		List<String> objectClasses = new ArrayList<>();
@@ -1032,16 +1034,17 @@ public class LdapConnection extends AbstractConnection {
 		}
 
 		/**
-		 * Add child filter
-		 * @param filter inner filter
+		 * Добавить дочерний фильтр
+		 * @param filter внутренний фильтр
 		 */
 		public void add(LdapFilter filter) {
 			criteria.add(filter);
 		}
 
 		/**
-		 * This is only a full search if every child is also a full search
-		 * @return true if full search filter
+		 * Это полный поиск только в том случае, если каждый дочерний элемент также
+		 * является полным поиском
+		 * @return true, если фильтр полного поиска
 		 */
 		public boolean isFullSearch() {
 			for (LdapFilter child : criteria) {
@@ -1054,8 +1057,9 @@ public class LdapConnection extends AbstractConnection {
 		}
 
 		/**
-		 * Build search filter for Contacts folder search. Use Exchange SEARCH syntax
-		 * @return contact search filter
+		 * Постройте фильтр поиска для поиска в папке Контакты. Используйте синтаксис
+		 * Exchange SEARCH
+		 * @return фильтр поиска контактов
 		 */
 		public ExchangeSession.Condition getContactSearchFilter() {
 			ExchangeSession.MultiCondition condition;
@@ -1075,9 +1079,9 @@ public class LdapConnection extends AbstractConnection {
 		}
 
 		/**
-		 * Test if person matches the current filter.
-		 * @param person person attributes map
-		 * @return true if filter match
+		 * Проверка соответствия человека текущему фильтру.
+		 * @param person карта атрибутов человека
+		 * @return true, если фильтр совпадает
 		 */
 		public boolean isMatch(Map<String, String> person) {
 			if (type == LDAP_FILTER_OR) {
@@ -1111,11 +1115,11 @@ public class LdapConnection extends AbstractConnection {
 		}
 
 		/**
-		 * Find persons in Exchange GAL matching filter. Iterate over child filters to
-		 * build results.
-		 * @param session Exchange session
-		 * @return persons map
-		 * @throws IOException on error
+		 * Найти лиц в глобальной адресной книге Exchange, соответствующих фильтру.
+		 * Итерация по дочерним фильтрам для построения результатов.
+		 * @param session Сессия Exchange
+		 * @return карта лиц
+		 * @throws IOException в случае ошибки
 		 */
 		public Map<String, ExchangeSession.Contact> findInGAL(ExchangeSession session, Set<String> returningAttributes,
 				int sizeLimit) throws IOException {
@@ -1351,9 +1355,9 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Convert contact attribute name to LDAP attribute name.
-	 * @param ldapAttributeName ldap attribute name
-	 * @return contact attribute name
+	 * Преобразовать имя атрибута контакта в имя атрибута LDAP.
+	 * @param ldapAttributeName имя атрибута LDAP
+	 * @return имя атрибута контакта
 	 */
 	protected static String getContactAttributeName(String ldapAttributeName) {
 		String contactAttributeName = null;
@@ -1374,9 +1378,9 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	/**
-	 * Convert LDAP attribute name to contact attribute name.
-	 * @param contactAttributeName ldap attribute name
-	 * @return contact attribute name
+	 * Преобразовать имя атрибута LDAP в имя атрибута контакта.
+	 * @param contactAttributeName имя атрибута ldap
+	 * @return имя атрибута контакта
 	 */
 	protected static String getLdapAttributeName(String contactAttributeName) {
 		String mappedAttributeName = CONTACT_TO_LDAP_ATTRIBUTE_MAP.get(contactAttributeName);
@@ -1437,7 +1441,7 @@ public class LdapConnection extends AbstractConnection {
 		}
 
 		/**
-		 * Abandon search.
+		 * Отменить поиск.
 		 */
 		protected void abandon() {
 			abandon = true;
@@ -1619,12 +1623,12 @@ public class LdapConnection extends AbstractConnection {
 		}
 
 		/**
-		 * Search users in contacts folder
-		 * @param condition search filter
-		 * @param returningAttributes requested attributes
-		 * @param maxCount maximum item count
-		 * @return List of users
-		 * @throws IOException on error
+		 * Поиск пользователей в папке контактов
+		 * @param condition фильтр поиска
+		 * @param returningAttributes запрашиваемые атрибуты
+		 * @param maxCount максимальное количество элементов
+		 * @return Список пользователей
+		 * @throws IOException при ошибке
 		 */
 		public Map<String, ExchangeSession.Contact> contactFind(ExchangeSession.Condition condition,
 				Set<String> returningAttributes, int maxCount) throws IOException {
@@ -1647,12 +1651,12 @@ public class LdapConnection extends AbstractConnection {
 		}
 
 		/**
-		 * Convert to LDAP attributes and send entry
-		 * @param currentMessageId current Message Id
-		 * @param baseContext request base context (BASE_CONTEXT or OD_BASE_CONTEXT)
-		 * @param persons persons Map
-		 * @param returningAttributes returning attributes
-		 * @throws IOException on error
+		 * Преобразовать в атрибуты LDAP и отправить запись
+		 * @param currentMessageId текущий идентификатор сообщения
+		 * @param baseContext базовый контекст запроса (BASE_CONTEXT или OD_BASE_CONTEXT)
+		 * @param persons карта персон
+		 * @param returningAttributes возвращаемые атрибуты
+		 * @throws IOException в случае ошибки
 		 */
 		protected void sendPersons(int currentMessageId, String baseContext,
 				Map<String, ExchangeSession.Contact> persons, Set<String> returningAttributes) throws IOException {

@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Item update conflict resolution
+ * Разрешение конфликта обновления элемента
  */
 @SuppressWarnings({ "UnusedDeclaration" })
 public final class ConflictResolution extends AttributeOption {

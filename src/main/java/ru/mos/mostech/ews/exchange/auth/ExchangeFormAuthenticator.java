@@ -42,13 +42,14 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * New Exchange form authenticator based on HttpClient 4.
+ * Новый форма аутентификации обмена на основе HttpClient 4.
  */
 @Slf4j
 public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 
 	/**
-	 * Various username fields found on custom Exchange authentication forms
+	 * Различные поля имени пользователя, найденные на пользовательских формах
+	 * аутентификации Exchange
 	 */
 	protected static final Set<String> USER_NAME_FIELDS = new HashSet<>();
 
@@ -63,7 +64,8 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 	}
 
 	/**
-	 * Various password fields found on custom Exchange authentication forms
+	 * Различные поля паролей, найденные на пользовательских формах аутентификации
+	 * Exchange
 	 */
 	protected static final Set<String> PASSWORD_FIELDS = new HashSet<>();
 
@@ -77,8 +79,8 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 	}
 
 	/**
-	 * Various OTP (one time password) fields found on custom Exchange authentication
-	 * forms. Used to open OTP dialog
+	 * Различные поля OTP (однократный пароль), найденные на пользовательских формах
+	 * аутентификации Exchange. Используются для открытия диалога OTP
 	 */
 	protected static final Set<String> TOKEN_FIELDS = new HashSet<>();
 
@@ -88,61 +90,64 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 	}
 
 	/**
-	 * User provided username. Old preauth syntax: preauthusername"username Windows
-	 * authentication with domain: domain\\username Note that OSX Mail.app does not
-	 * support backslash in username, set default domain in MT-EWS settings instead
+	 * Указанное пользователем имя пользователя. Старая синтаксис преаутентификации:
+	 * preauthusername"username аутентификация Windows с доменом: domain\\username
+	 * Обратите внимание, что OSX Mail.app не поддерживает обратную косую черту в имени
+	 * пользователя, вместо этого установите домен по умолчанию в настройках MT-EWS
 	 */
 	private String username;
 
 	/**
-	 * User provided password
+	 * Предоставленный пользователем пароль
 	 */
 	private String password;
 
 	/**
-	 * OWA or EWS url
+	 * URL OWA или EWS
 	 */
 	private String url;
 
 	/**
-	 * HttpClient 4 adapter
+	 * Адаптер HttpClient 4
 	 */
 	private HttpClientAdapter httpClientAdapter;
 
 	/**
-	 * A OTP pre-auth page may require a different username.
+	 * Страница предварительной аутентификации OTP может требовать другого имени
+	 * пользователя.
 	 */
 	private String preAuthusername;
 
 	/**
-	 * Logon form user name fields.
+	 * Поля имени пользователя формы входа.
 	 */
 	private final List<String> usernameInputs = new ArrayList<>();
 
 	/**
-	 * Logon form password field, default is password.
+	 * Поле пароля формы входа, по умолчанию - пароль.
 	 */
 	private String passwordInput = null;
 
 	/**
-	 * Tells if, during the login navigation, an OTP pre-auth page has been found.
+	 * Указывает, была ли найдена страница предварительной авторизации OTP во время
+	 * навигации на вход.
 	 */
 	private boolean otpPreAuthFound = false;
 
 	/**
-	 * Lets the user try again a couple of times to enter the OTP pre-auth key before
-	 * giving up.
+	 * Позволяет пользователю несколько раз попытаться ввести ключ предварительной
+	 * аутентификации OTP перед тем, как сдаться.
 	 */
 	private int otpPreAuthRetries = 0;
 
 	/**
-	 * Maximum number of times the user can try to input again the OTP pre-auth key before
-	 * giving up.
+	 * Максимальное количество попыток, которые пользователь может сделать для ввода ключа
+	 * OTP перед тем, как сдаться.
 	 */
 	private static final int MAX_OTP_RETRIES = 3;
 
 	/**
-	 * base Exchange URI after authentication
+	 * базовый URI обмена после аутентификации
 	 */
 	private java.net.URI exchangeUri;
 
@@ -242,10 +247,10 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 	}
 
 	/**
-	 * Test authentication mode : form based or basic.
-	 * @param url exchange base URL
-	 * @param httpClient httpClientAdapter instance
-	 * @return true if basic authentication detected
+	 * Тест режима аутентификации: на основе формы или базовой.
+	 * @param url базовый URL обмена
+	 * @param httpClient экземпляр httpClientAdapter
+	 * @return true, если обнаружена базовая аутентификация
 	 */
 	protected boolean isHttpAuthentication(HttpClientAdapter httpClient, String url) {
 		boolean isHttpAuthentication = false;
@@ -263,8 +268,8 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 	}
 
 	/**
-	 * Look for session cookies.
-	 * @return true if session cookies are available
+	 * Ищет куки сессии.
+	 * @return true, если куки сессии доступны
 	 */
 	protected boolean isAuthenticated(ResponseWrapper getRequest) {
 		boolean authenticated = false;
@@ -304,10 +309,10 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 	}
 
 	/**
-	 * Try to find logon method path from logon form body.
-	 * @param httpClient httpClientAdapter instance
-	 * @param responseWrapper init request response wrapper
-	 * @return logon method
+	 * Попробуйте найти путь метода входа из тела формы входа.
+	 * @param httpClient экземпляр httpClientAdapter
+	 * @param responseWrapper инициализировать обертку ответа запроса
+	 * @return метод входа
 	 */
 	protected PostRequest buildLogonMethod(HttpClientAdapter httpClient, ResponseWrapper responseWrapper) {
 		PostRequest logonMethod = null;
@@ -704,8 +709,8 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 	}
 
 	/**
-	 * Get current Exchange alias name from login name
-	 * @return user name
+	 * Получить текущее имя алиаса обмена из имени пользователя
+	 * @return имя пользователя
 	 */
 	public String getAliasFromLogin() {
 		// login is email, not alias
@@ -722,15 +727,15 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 	}
 
 	/**
-	 * Close session. Shutdown http client connection manager
+	 * Закрыть сессию. Завершить работу менеджера соединений HTTP-клиента
 	 */
 	public void close() {
 		httpClientAdapter.close();
 	}
 
 	/**
-	 * Oauth token. Only for Office 365 authenticators
-	 * @return unsupported
+	 * Oauth токен. Только для аутентификаторов Office 365
+	 * @return неподдерживаемый
 	 */
 	@Override
 	public O365Token getToken() {
@@ -738,9 +743,9 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 	}
 
 	/**
-	 * Base Exchange URL. Welcome page for Exchange 2003, EWS url for Exchange 2007 and
-	 * later
-	 * @return Exchange url
+	 * Базовый URL обмена. Страница приветствия для Exchange 2003, URL EWS для Exchange
+	 * 2007 и более поздних версий
+	 * @return URL обмена
 	 */
 	@Override
 	public java.net.URI getExchangeUri() {
@@ -748,16 +753,17 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 	}
 
 	/**
-	 * Return authenticated HttpClient 4 HttpClientAdapter
-	 * @return HttpClientAdapter instance
+	 * Вернуть аутентифицированный HttpClient 4 HttpClientAdapter
+	 * @return экземпляр HttpClientAdapter
 	 */
 	public HttpClientAdapter getHttpClientAdapter() {
 		return httpClientAdapter;
 	}
 
 	/**
-	 * Actual username. may be different from input username with preauth
-	 * @return username
+	 * Реальное имя пользователя. может отличаться от введенного имени пользователя с
+	 * предварительной авторизацией
+	 * @return имя пользователя
 	 */
 	public String getUsername() {
 		return username;

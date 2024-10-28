@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Generic option.
+ * Генеральный параметр.
  */
 public abstract class Option {
 
@@ -21,9 +21,9 @@ public abstract class Option {
 	}
 
 	/**
-	 * Write XML content to writer.
-	 * @param writer writer
-	 * @throws IOException on error
+	 * Записать содержимое XML в писатель.
+	 * @param writer писатель
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract void write(Writer writer) throws IOException;
 

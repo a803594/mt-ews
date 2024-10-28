@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.dav;
 
 /**
- * Property value.
+ * Значение свойства.
  */
 public class PropertyValue {
 
@@ -17,30 +17,30 @@ public class PropertyValue {
 	protected final String typeString;
 
 	/**
-	 * Create Dav property value.
-	 * @param namespaceUri property namespace
-	 * @param name property name
+	 * Создать значение свойства Dav.
+	 * @param namespaceUri пространство имен свойства
+	 * @param name имя свойства
 	 */
 	public PropertyValue(String namespaceUri, String name) {
 		this(namespaceUri, name, null, null);
 	}
 
 	/**
-	 * Create Dav property value.
-	 * @param namespaceUri property namespace
-	 * @param name property name
-	 * @param xmlEncodedValue xml encoded value
+	 * Создание значения свойства Dav.
+	 * @param namespaceUri пространство имен свойства
+	 * @param name имя свойства
+	 * @param xmlEncodedValue xml закодированное значение
 	 */
 	public PropertyValue(String namespaceUri, String name, String xmlEncodedValue) {
 		this(namespaceUri, name, xmlEncodedValue, null);
 	}
 
 	/**
-	 * Create Dav property value.
-	 * @param namespaceUri property namespace
-	 * @param name property name
-	 * @param xmlEncodedValue xml encoded value
-	 * @param typeString property type
+	 * Создать значение свойства Dav.
+	 * @param namespaceUri пространство имен свойства
+	 * @param name имя свойства
+	 * @param xmlEncodedValue xml закодированное значение
+	 * @param typeString тип свойства
 	 */
 	public PropertyValue(String namespaceUri, String name, String xmlEncodedValue, String typeString) {
 		this.namespaceUri = namespaceUri;
@@ -50,32 +50,32 @@ public class PropertyValue {
 	}
 
 	/**
-	 * Get property namespace.
-	 * @return property namespace
+	 * Получить пространство имен свойства.
+	 * @return пространство имен свойства
 	 */
 	public String getNamespaceUri() {
 		return namespaceUri;
 	}
 
 	/**
-	 * Get xml encoded value.
-	 * @return Xml encoded value
+	 * Получить значение в формате xml.
+	 * @return Значение в формате xml
 	 */
 	public String getXmlEncodedValue() {
 		return xmlEncodedValue;
 	}
 
 	/**
-	 * Get property type.
-	 * @return property type
+	 * Получить тип свойства.
+	 * @return тип свойства
 	 */
 	public String getTypeString() {
 		return typeString;
 	}
 
 	/**
-	 * Get property name.
-	 * @return property name
+	 * Получить имя свойства.
+	 * @return имя свойства
 	 */
 	public String getName() {
 		return name;

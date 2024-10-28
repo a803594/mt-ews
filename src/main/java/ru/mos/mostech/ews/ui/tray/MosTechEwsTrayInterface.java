@@ -8,51 +8,51 @@ import org.slf4j.event.Level;
 import java.awt.*;
 
 /**
- * Gateway tray interface common to SWT and pure java implementations
+ * Интерфейс трейлера шлюза, общий для реализаций SWT и чистого Java
  */
 public interface MosTechEwsTrayInterface {
 
 	/**
-	 * Switch tray icon between active and standby icon.
+	 * Переключить значок в трее между активным и резервным значком.
 	 */
 	void switchIcon();
 
 	/**
-	 * Reset tray icon to standby
+	 * Сбросить значок в трее в режим ожидания
 	 */
 	void resetIcon();
 
 	/**
-	 * Set tray icon to inactive (network down)
+	 * Установить значок в Tray как неактивный (сеть отключена)
 	 */
 	void inactiveIcon();
 
 	/**
-	 * Check if current tray status is inactive (network down).
-	 * @return true if inactive
+	 * Проверьте, является ли текущее состояние подноса неактивным (неисправность сети).
+	 * @return true, если неактивно
 	 */
 	boolean isActive();
 
 	/**
-	 * Return AWT Image icon for frame title.
-	 * @return frame icon
+	 * Вернуть иконку AWT изображения для заголовка окна.
+	 * @return иконка окна
 	 */
 	java.util.List<Image> getFrameIcons();
 
 	/**
-	 * Display balloon message for log level.
-	 * @param message text message
-	 * @param level log level
+	 * Отобразить сообщение в виде баллона для уровня журнала.
+	 * @param message текст сообщения
+	 * @param level уровень журнала
 	 */
 	void displayMessage(String message, Level level);
 
 	/**
-	 * Create tray icon and register frame listeners.
+	 * Создать иконку в трее и зарегистрировать слушатели фрейма.
 	 */
 	void init();
 
 	/**
-	 * destroy frames
+	 * уничтожить фреймы
 	 */
 	void dispose();
 

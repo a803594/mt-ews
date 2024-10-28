@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * MessageDisposition flag.
+ * Флаг MessageDisposition.
  */
 @SuppressWarnings({ "UnusedDeclaration" })
 public final class MessageDisposition extends AttributeOption {

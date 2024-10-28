@@ -8,7 +8,7 @@ import ru.mos.mostech.ews.BundleMessage;
 import javax.swing.*;
 
 /**
- * MacOSX specific frame to handle menu
+ * Специфический фрейм для MacOSX для обработки меню
  */
 public class OSXFrameGatewayTray extends FrameGatewayTray implements OSXTrayInterface {
 

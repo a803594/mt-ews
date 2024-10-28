@@ -26,13 +26,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Exchange session through Outlook Web Access (DAV)
+ * Обмен сессией через Outlook Web Access (DAV)
  */
 @Slf4j
 public abstract class ExchangeSession {
 
 	/**
-	 * Reference GMT timezone to format dates
+	 * Ссылка на часовой пояс GMT для форматирования дат
 	 */
 	public static final SimpleTimeZone GMT_TIMEZONE = new SimpleTimeZone(0, "GMT");
 
@@ -45,7 +45,7 @@ public abstract class ExchangeSession {
 	protected static final String TASKS = "tasks";
 
 	/**
-	 * Contacts folder logical name
+	 * Логическое имя папки контактов
 	 */
 	public static final String CONTACTS = "contacts";
 
@@ -94,7 +94,7 @@ public abstract class ExchangeSession {
 	protected String publicFolderUrl;
 
 	/**
-	 * Base user mailboxes path (used to select folder)
+	 * Базовый путь пользовательских почтовых ящиков (используется для выбора папки)
 	 */
 	protected String mailPath;
 
@@ -105,7 +105,8 @@ public abstract class ExchangeSession {
 	protected String alias;
 
 	/**
-	 * Lower case Caldav path to current user mailbox. /users/<i>email</i>
+	 * Путь Caldav в нижнем регистре к почтовому ящику текущего пользователя.
+	 * /users/<i>email</i>
 	 */
 	protected String currentMailboxPath;
 
@@ -128,20 +129,20 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Close session. Shutdown http client connection manager
+	 * Закрыть сессию. Завершить работу менеджера соединений http-клиента
 	 */
 	public abstract void close();
 
 	/**
-	 * Format date to exchange search format.
-	 * @param date date object
-	 * @return formatted search date
+	 * Форматировать дату в формат поиска для обмена.
+	 * @param date объект даты
+	 * @return отформатированная дата для поиска
 	 */
 	public abstract String formatSearchDate(Date date);
 
 	/**
-	 * Return standard zulu date formatter.
-	 * @return zulu date formatter
+	 * Вернуть стандартный форматер даты Zulu.
+	 * @return форматер даты Zulu
 	 */
 	public static SimpleDateFormat getZuluDateFormat() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(YYYYMMDD_T_HHMMSS_Z, Locale.ENGLISH);
@@ -194,10 +195,10 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Test if the session expired.
-	 * @return true this session expired
-	 * @throws NoRouteToHostException on error
-	 * @throws UnknownHostException on error
+	 * Проверяет, истекла ли сессия.
+	 * @return true, если сессия истекла
+	 * @throws NoRouteToHostException в случае ошибки
+	 * @throws UnknownHostException в случае ошибки
 	 */
 	public boolean isExpired() throws NoRouteToHostException, UnknownHostException {
 		boolean isExpired = false;
@@ -217,37 +218,37 @@ public abstract class ExchangeSession {
 	protected abstract void buildSessionInfo(java.net.URI uri) throws IOException;
 
 	/**
-	 * Create message in specified folder. Will overwrite an existing message with same
-	 * subject in the same folder
-	 * @param folderPath Exchange folder path
-	 * @param messageName message name
-	 * @param properties message properties (flags)
-	 * @param mimeMessage MIME message
-	 * @throws IOException when unable to create message
+	 * Создает сообщение в указанной папке. Перезапишет существующее сообщение с таким же
+	 * заголовком в той же папке
+	 * @param folderPath Путь к папке Exchange
+	 * @param messageName Имя сообщения
+	 * @param properties Свойства сообщения (флаги)
+	 * @param mimeMessage MIME сообщение
+	 * @throws IOException когда невозможно создать сообщение
 	 */
 	public abstract Message createMessage(String folderPath, String messageName, Map<String, String> properties,
 			MimeMessage mimeMessage) throws IOException;
 
 	/**
-	 * Update given properties on message.
-	 * @param message Exchange message
-	 * @param properties Webdav properties map
-	 * @throws IOException on error
+	 * Обновить заданные свойства в сообщении.
+	 * @param message Сообщение обмена
+	 * @param properties Карта свойств Webdav
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract void updateMessage(Message message, Map<String, String> properties) throws IOException;
 
 	/**
-	 * Delete Exchange message.
-	 * @param message Exchange message
-	 * @throws IOException on error
+	 * Удалить сообщение обмена.
+	 * @param message Сообщение обмена
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract void deleteMessage(Message message) throws IOException;
 
 	/**
-	 * Get raw MIME message content
-	 * @param message Exchange message
-	 * @return message body
-	 * @throws IOException on error
+	 * Получить сырое содержимое MIME-сообщения
+	 * @param message Сообщение обмена
+	 * @return тело сообщения
+	 * @throws IOException при ошибке
 	 */
 	protected abstract byte[] getContent(Message message) throws IOException;
 
@@ -262,10 +263,11 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Return folder message list with id and size only (for POP3 listener).
-	 * @param folderName Exchange folder name
-	 * @return folder message list
-	 * @throws IOException on error
+	 * Вернуть список сообщений папки только с идентификатором и размером (для слушателя
+	 * POP3).
+	 * @param folderName Название папки Exchange
+	 * @return список сообщений папки
+	 * @throws IOException при ошибке
 	 */
 	public MessageList getAllMessageUidAndSize(String folderName) throws IOException {
 		return searchMessages(folderName, POP_MESSAGE_ATTRIBUTES, null);
@@ -307,10 +309,10 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Get all folder messages.
-	 * @param folderPath Exchange folder name
-	 * @return message list
-	 * @throws IOException on error
+	 * Получить все сообщения в папке.
+	 * @param folderPath Имя папки Exchange
+	 * @return список сообщений
+	 * @throws IOException при ошибке
 	 */
 	@SuppressWarnings("unused")
 	public MessageList searchMessages(String folderPath) throws IOException {
@@ -318,24 +320,24 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Search folder for messages matching conditions, with attributes needed by IMAP
-	 * listener.
-	 * @param folderName Exchange folder name
-	 * @param condition search filter
-	 * @return message list
-	 * @throws IOException on error
+	 * Поиск папки для сообщений, соответствующих условиям, с атрибутами, необходимыми для
+	 * IMAP слушателя.
+	 * @param folderName Название папки Exchange
+	 * @param condition фильтр поиска
+	 * @return список сообщений
+	 * @throws IOException при ошибке
 	 */
 	public MessageList searchMessages(String folderName, Condition condition) throws IOException {
 		return searchMessages(folderName, IMAP_MESSAGE_ATTRIBUTES, condition);
 	}
 
 	/**
-	 * Search folder for messages matching conditions, with given attributes.
-	 * @param folderName Exchange folder name
-	 * @param attributes requested Webdav attributes
-	 * @param condition search filter
-	 * @return message list
-	 * @throws IOException on error
+	 * Поиск папки на наличие сообщений, соответствующих условиям, с заданными атрибутами.
+	 * @param folderName Имя папки Exchange
+	 * @param attributes запрашиваемые атрибуты Webdav
+	 * @param condition фильтр поиска
+	 * @return список сообщений
+	 * @throws IOException при ошибке
 	 */
 	public abstract MessageList searchMessages(String folderName, Set<String> attributes, Condition condition)
 			throws IOException;
@@ -349,33 +351,33 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Exchange search filter.
+	 * Фильтр поиска обмена.
 	 */
 	public interface Condition {
 
 		/**
-		 * Append condition to buffer.
-		 * @param buffer search filter buffer
+		 * Добавить условие в буфер.
+		 * @param buffer буфер фильтра поиска
 		 */
 		void appendTo(StringBuilder buffer);
 
 		/**
-		 * True if condition is empty.
-		 * @return true if condition is empty
+		 * Истина, если условие пустое.
+		 * @return истина, если условие пустое
 		 */
 		boolean isEmpty();
 
 		/**
-		 * Test if the contact matches current condition.
-		 * @param contact Exchange Contact
-		 * @return true if contact matches condition
+		 * Проверяет, соответствует ли контакт текущему условию.
+		 * @param contact Контакт обмена
+		 * @return true, если контакт соответствует условию
 		 */
 		boolean isMatch(ExchangeSession.Contact contact);
 
 	}
 
 	/**
-	 * Attribute condition.
+	 * Условие атрибута.
 	 */
 	public abstract static class AttributeCondition implements Condition {
 
@@ -400,7 +402,7 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Multiple condition.
+	 * Множественное условие.
 	 */
 	@Getter
 	public abstract static class MultiCondition implements Condition {
@@ -420,8 +422,8 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Add a new condition.
-		 * @param condition single condition
+		 * Добавить новое условие.
+		 * @param condition одно условие
 		 */
 		public void add(Condition condition) {
 			if (condition != null) {
@@ -465,7 +467,7 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Not condition.
+	 * Не условие.
 	 */
 	public abstract static class NotCondition implements Condition {
 
@@ -486,7 +488,7 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Single search filter condition.
+	 * Условие единственного фильтра поиска.
 	 */
 	public abstract static class MonoCondition implements Condition {
 
@@ -513,134 +515,134 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * And search filter.
-	 * @param condition search conditions
+	 * И фильтр поиска.
+	 * @param condition условия поиска
 	 * @return condition
 	 */
 	public abstract MultiCondition and(Condition... condition);
 
 	/**
-	 * Or search filter.
-	 * @param condition search conditions
-	 * @return condition
+	 * Или фильтр поиска.
+	 * @param condition условия поиска
+	 * @return условие
 	 */
 	public abstract MultiCondition or(Condition... condition);
 
 	/**
-	 * Not search filter.
-	 * @param condition search condition
+	 * Не фильтр поиска.
+	 * @param condition условие поиска
 	 * @return condition
 	 */
 	public abstract Condition not(Condition condition);
 
 	/**
-	 * Equals condition.
-	 * @param attributeName logical Exchange attribute name
-	 * @param value attribute value
-	 * @return condition
+	 * Условие равно.
+	 * @param attributeName логическое имя атрибута Exchange
+	 * @param value значение атрибута
+	 * @return условие
 	 */
 	public abstract Condition isEqualTo(String attributeName, String value);
 
 	/**
-	 * Equals condition.
-	 * @param attributeName logical Exchange attribute name
-	 * @param value attribute value
-	 * @return condition
+	 * Условие равно.
+	 * @param attributeName логическое имя атрибута Exchange
+	 * @param value значение атрибута
+	 * @return условие
 	 */
 	public abstract Condition isEqualTo(String attributeName, int value);
 
 	/**
-	 * MIME header equals condition.
-	 * @param headerName MIME header name
-	 * @param value attribute value
-	 * @return condition
+	 * Условие равенства заголовка MIME.
+	 * @param headerName Название заголовка MIME
+	 * @param value Значение атрибута
+	 * @return условие
 	 */
 	public abstract Condition headerIsEqualTo(String headerName, String value);
 
 	/**
-	 * Greater than or equals condition.
-	 * @param attributeName logical Exchange attribute name
-	 * @param value attribute value
-	 * @return condition
+	 * Условие "больше или равно".
+	 * @param attributeName логическое имя атрибута Exchange
+	 * @param value значение атрибута
+	 * @return условие
 	 */
 	public abstract Condition gte(String attributeName, String value);
 
 	/**
-	 * Greater than condition.
-	 * @param attributeName logical Exchange attribute name
-	 * @param value attribute value
-	 * @return condition
+	 * Условие "больше чем".
+	 * @param attributeName название логического атрибута Exchange
+	 * @param value значение атрибута
+	 * @return условие
 	 */
 	public abstract Condition gt(String attributeName, String value);
 
 	/**
-	 * Lower than condition.
-	 * @param attributeName logical Exchange attribute name
-	 * @param value attribute value
-	 * @return condition
+	 * Условие "меньше чем".
+	 * @param attributeName логическое имя атрибута Exchange
+	 * @param value значение атрибута
+	 * @return условие
 	 */
 	public abstract Condition lt(String attributeName, String value);
 
 	/**
-	 * Lower than or equals condition.
-	 * @param attributeName logical Exchange attribute name
-	 * @param value attribute value
-	 * @return condition
+	 * Условие меньше или равно.
+	 * @param attributeName логическое имя атрибута Exchange
+	 * @param value значение атрибута
+	 * @return условие
 	 */
 	@SuppressWarnings({ "UnusedDeclaration" })
 	public abstract Condition lte(String attributeName, String value);
 
 	/**
-	 * Contains condition.
-	 * @param attributeName logical Exchange attribute name
-	 * @param value attribute value
-	 * @return condition
+	 * Содержит условие.
+	 * @param attributeName логическое имя атрибута Exchange
+	 * @param value значение атрибута
+	 * @return условие
 	 */
 	public abstract Condition contains(String attributeName, String value);
 
 	/**
-	 * Starts with condition.
-	 * @param attributeName logical Exchange attribute name
-	 * @param value attribute value
-	 * @return condition
+	 * Начинается с условия.
+	 * @param attributeName логическое имя атрибута Exchange
+	 * @param value значение атрибута
+	 * @return условие
 	 */
 	public abstract Condition startsWith(String attributeName, String value);
 
 	/**
-	 * Is null condition.
-	 * @param attributeName logical Exchange attribute name
-	 * @return condition
+	 * Условие для проверки на null.
+	 * @param attributeName логическое имя атрибута Exchange
+	 * @return условие
 	 */
 	public abstract Condition isNull(String attributeName);
 
 	/**
-	 * Exists condition.
-	 * @param attributeName logical Exchange attribute name
-	 * @return condition
+	 * Условие существования.
+	 * @param attributeName логическое имя атрибута Exchange
+	 * @return условие
 	 */
 	public abstract Condition exists(String attributeName);
 
 	/**
-	 * Is true condition.
-	 * @param attributeName logical Exchange attribute name
-	 * @return condition
+	 * Истинное условие.
+	 * @param attributeName логическое имя атрибута обмена
+	 * @return условие
 	 */
 	public abstract Condition isTrue(String attributeName);
 
 	/**
-	 * Is false condition.
-	 * @param attributeName logical Exchange attribute name
-	 * @return condition
+	 * Является ли ложным условием.
+	 * @param attributeName логическое имя атрибута Exchange
+	 * @return условие
 	 */
 	public abstract Condition isFalse(String attributeName);
 
 	/**
-	 * Search mail and generic folders under given folder. Exclude calendar and contacts
-	 * folders
-	 * @param folderName Exchange folder name
-	 * @param recursive deep search if true
-	 * @return list of folders
-	 * @throws IOException on error
+	 * Поиск почтовых и общих папок в заданной папке. Исключить папки календаря и
+	 * контактов
+	 * @param folderName Имя папки Exchange
+	 * @param recursive глубокий поиск, если true
+	 * @return список папок
+	 * @throws IOException при ошибке
 	 */
 	public List<Folder> getSubFolders(String folderName, boolean recursive, boolean wildcard) throws IOException {
 		MultiCondition folderCondition = and();
@@ -662,31 +664,31 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Search calendar folders under given folder.
-	 * @param folderName Exchange folder name
-	 * @param recursive deep search if true
-	 * @return list of folders
-	 * @throws IOException on error
+	 * Поиск календарных папок в данной папке.
+	 * @param folderName Имя папки Exchange
+	 * @param recursive глубокий поиск, если true
+	 * @return список папок
+	 * @throws IOException при ошибке
 	 */
 	public List<Folder> getSubCalendarFolders(String folderName, boolean recursive) throws IOException {
 		return getSubFolders(folderName, isEqualTo(FOLDER_CLASS, IPF_APPOINTMENT), recursive);
 	}
 
 	/**
-	 * Search folders under given folder matching filter.
-	 * @param folderName Exchange folder name
-	 * @param condition search filter
-	 * @param recursive deep search if true
-	 * @return list of folders
-	 * @throws IOException on error
+	 * Ищет папки в заданной папке, соответствующие фильтру.
+	 * @param folderName Название папки Exchange
+	 * @param condition фильтр поиска
+	 * @param recursive глубокий поиск, если true
+	 * @return список папок
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract List<Folder> getSubFolders(String folderName, Condition condition, boolean recursive)
 			throws IOException;
 
 	/**
-	 * Delete oldest messages in trash. keepDelay is the number of days to keep messages
-	 * in trash before delete
-	 * @throws IOException when unable to purge messages
+	 * Удалить старейшие сообщения в корзине. keepDelay - это количество дней, в течение
+	 * которых сообщения будут храниться в корзине перед удалением
+	 * @throws IOException при невозможности удалить сообщения
 	 */
 	public void purgeOldestTrashAndSentMessages() throws IOException {
 		int keepDelay = Settings.getIntProperty("mt.ews.keepDelay");
@@ -727,12 +729,12 @@ public abstract class ExchangeSession {
 	protected String lastSentMessageId;
 
 	/**
-	 * Send message in reader to recipients. Detect visible recipients in message body to
-	 * determine bcc recipients
-	 * @param rcptToRecipients recipients list
-	 * @param mimeMessage mime message
-	 * @throws IOException on error
-	 * @throws MessagingException on error
+	 * Отправить сообщение читателю получателям. Обнаружить видимых получателей в теле
+	 * сообщения для определения получателей в скрытой копии (bcc)
+	 * @param rcptToRecipients список получателей
+	 * @param mimeMessage mime сообщение
+	 * @throws IOException при ошибке
+	 * @throws MessagingException при ошибке
 	 */
 	public void sendMessage(List<String> rcptToRecipients, MimeMessage mimeMessage)
 			throws IOException, MessagingException {
@@ -786,19 +788,20 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Send Mime message.
-	 * @param mimeMessage MIME message
-	 * @throws IOException on error
-	 * @throws MessagingException on error
+	 * Отправить MIME сообщение.
+	 * @param mimeMessage MIME сообщение
+	 * @throws IOException в случае ошибки
+	 * @throws MessagingException в случае ошибки
 	 */
 	public abstract void sendMessage(MimeMessage mimeMessage) throws IOException, MessagingException;
 
 	/**
-	 * Get folder object. Folder name can be logical names INBOX, Drafts, Trash or
-	 * calendar, or a path relative to user base folder or absolute path.
-	 * @param folderPath folder path
-	 * @return Folder object
-	 * @throws IOException on error
+	 * Получить объект папки. Имя папки может быть логическими именами INBOX, Drafts,
+	 * Trash или календарь, или путем относительно базовой папки пользователя или
+	 * абсолютным путем.
+	 * @param folderPath путь к папке
+	 * @return объект папки
+	 * @throws IOException в случае ошибки
 	 */
 	public ExchangeSession.Folder getFolder(String folderPath) throws IOException {
 		Folder folder = internalGetFolder(folderPath);
@@ -812,10 +815,10 @@ public abstract class ExchangeSession {
 	protected abstract Folder internalGetFolder(String folderName) throws IOException;
 
 	/**
-	 * Check folder ctag and reload messages as needed.
-	 * @param currentFolder current folder
-	 * @return true if folder changed
-	 * @throws IOException on error
+	 * Проверить папку ctag и перезагрузить сообщения по мере необходимости.
+	 * @param currentFolder текущая папка
+	 * @return true, если папка изменилась
+	 * @throws IOException в случае ошибки
 	 */
 	public boolean refreshFolder(Folder currentFolder) throws IOException {
 		Folder newFolder = getFolder(currentFolder.folderPath);
@@ -844,67 +847,67 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Create Exchange message folder.
-	 * @param folderName logical folder name
-	 * @throws IOException on error
+	 * Создать папку для сообщений обмена.
+	 * @param folderName логическое имя папки
+	 * @throws IOException при ошибке
 	 */
 	public void createMessageFolder(String folderName) throws IOException {
 		createFolder(folderName, "IPF.Note", null);
 	}
 
 	/**
-	 * Create Exchange calendar folder.
-	 * @param folderName logical folder name
-	 * @param properties folder properties
-	 * @return status
-	 * @throws IOException on error
+	 * Создать папку календаря Exchange.
+	 * @param folderName логическое имя папки
+	 * @param properties свойства папки
+	 * @return статус
+	 * @throws IOException при ошибке
 	 */
 	public int createCalendarFolder(String folderName, Map<String, String> properties) throws IOException {
 		return createFolder(folderName, IPF_APPOINTMENT, properties);
 	}
 
 	/**
-	 * Create Exchange contact folder.
-	 * @param folderName logical folder name
-	 * @param properties folder properties
-	 * @throws IOException on error
+	 * Создать папку контактов Exchange.
+	 * @param folderName логическое имя папки
+	 * @param properties свойства папки
+	 * @throws IOException в случае ошибки
 	 */
 	public void createContactFolder(String folderName, Map<String, String> properties) throws IOException {
 		createFolder(folderName, "IPF.Contact", properties);
 	}
 
 	/**
-	 * Create Exchange folder with given folder class.
-	 * @param folderName logical folder name
-	 * @param folderClass folder class
-	 * @param properties folder properties
-	 * @return status
-	 * @throws IOException on error
+	 * Создать папку Exchange с заданным классом папки.
+	 * @param folderName логическое имя папки
+	 * @param folderClass класс папки
+	 * @param properties свойства папки
+	 * @return статус
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract int createFolder(String folderName, String folderClass, Map<String, String> properties)
 			throws IOException;
 
 	/**
-	 * Update Exchange folder properties.
-	 * @param folderName logical folder name
-	 * @param properties folder properties
-	 * @return status
-	 * @throws IOException on error
+	 * Обновить свойства папки Exchange.
+	 * @param folderName логическое имя папки
+	 * @param properties свойства папки
+	 * @return статус
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract int updateFolder(String folderName, Map<String, String> properties) throws IOException;
 
 	/**
-	 * Delete Exchange folder.
-	 * @param folderName logical folder name
-	 * @throws IOException on error
+	 * Удалить папку Exchange.
+	 * @param folderName логическое имя папки
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract void deleteFolder(String folderName) throws IOException;
 
 	/**
-	 * Copy message to target folder
-	 * @param message Exchange message
-	 * @param targetFolder target folder
-	 * @throws IOException on error
+	 * Скопировать сообщение в целевую папку
+	 * @param message Сообщение обмена
+	 * @param targetFolder Целевая папка
+	 * @throws IOException при ошибке
 	 */
 	public abstract void copyMessage(Message message, String targetFolder) throws IOException;
 
@@ -915,10 +918,10 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Move message to target folder
-	 * @param message Exchange message
-	 * @param targetFolder target folder
-	 * @throws IOException on error
+	 * Переместить сообщение в целевую папку
+	 * @param message Сообщение обмена
+	 * @param targetFolder целевая папка
+	 * @throws IOException при ошибке
 	 */
 	public abstract void moveMessage(Message message, String targetFolder) throws IOException;
 
@@ -929,27 +932,27 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Move folder to target name.
-	 * @param folderName current folder name/path
-	 * @param targetName target folder name/path
-	 * @throws IOException on error
+	 * Переместить папку в целевое имя.
+	 * @param folderName текущее имя/путь папки
+	 * @param targetName целевое имя/путь папки
+	 * @throws IOException при ошибке
 	 */
 	public abstract void moveFolder(String folderName, String targetName) throws IOException;
 
 	/**
-	 * Move item from source path to target path.
-	 * @param sourcePath item source path
-	 * @param targetPath item target path
-	 * @throws IOException on error
+	 * Переместить элемент из исходного пути в целевой путь.
+	 * @param sourcePath путь источника элемента
+	 * @param targetPath путь назначения элемента
+	 * @throws IOException при ошибке
 	 */
 	public abstract void moveItem(String sourcePath, String targetPath) throws IOException;
 
 	protected abstract void moveToTrash(Message message) throws IOException;
 
 	/**
-	 * Convert keyword value to IMAP flag.
-	 * @param value keyword value
-	 * @return IMAP flag
+	 * Преобразовать значение ключевого слова в флаг IMAP.
+	 * @param value значение ключевого слова
+	 * @return флаг IMAP
 	 */
 	public String convertKeywordToFlag(String value) {
 		// first test for keyword in settings
@@ -976,9 +979,9 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Convert IMAP flag to keyword value.
-	 * @param value IMAP flag
-	 * @return keyword value
+	 * Преобразовать IMAP-флаг в значение ключевого слова.
+	 * @param value IMAP-флаг
+	 * @return значение ключевого слова
 	 */
 	public String convertFlagToKeyword(String value) {
 		// first test for flag in settings
@@ -1003,9 +1006,9 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Convert IMAP flags to keyword value.
-	 * @param flags IMAP flags
-	 * @return keyword value
+	 * Преобразовать флаги IMAP в значение ключевого слова.
+	 * @param flags Флаги IMAP
+	 * @return значение ключевого слова
 	 */
 	public String convertFlagsToKeywords(Set<String> flags) {
 		HashSet<String> keywordSet = new HashSet<>();
@@ -1032,80 +1035,80 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Exchange folder with IMAP properties
+	 * Папка обмена с IMAP свойствами
 	 */
 	@Setter
 	@Getter
 	public class Folder {
 
 		/**
-		 * Logical (IMAP) folder path.
+		 * Логический (IMAP) путь к папке.
 		 */
 		private String folderPath;
 
 		/**
-		 * Display Name.
+		 * Имя пользователя.
 		 */
 		private String displayName;
 
 		/**
-		 * Folder class (PR_CONTAINER_CLASS).
+		 * Класс папки (PR_CONTAINER_CLASS).
 		 */
 		private String folderClass;
 
 		/**
-		 * Folder message count.
+		 * Количество сообщений в папке.
 		 */
 		private int count;
 
 		/**
-		 * Folder unread message count.
+		 * Количество непрочитанных сообщений в папке.
 		 */
 		private int unreadCount;
 
 		/**
-		 * true if folder has subfolders (DAV:hassubs).
+		 * истинно, если папка имеет подпапки (DAV:hassubs).
 		 */
 		private boolean hasChildren;
 
 		/**
-		 * true if folder has no subfolders (DAV:nosubs).
+		 * истинно, если папка не содержит подкаталогов (DAV:nosubs).
 		 */
 		private boolean noInferiors;
 
 		/**
-		 * Folder content tag (to detect folder content changes).
+		 * Тег содержимого папки (для обнаружения изменений в содержимом папки).
 		 */
 		private String ctag;
 
 		/**
-		 * Folder etag (to detect folder object changes).
+		 * Этикет папки (для обнаружения изменений в объекте папки).
 		 */
 		private String etag;
 
 		/**
-		 * Next IMAP uid
+		 * Следующий IMAP uid
 		 */
 		private long uidNext;
 
 		/**
-		 * recent count
+		 * недавнее количество
 		 */
 		private int recent;
 
 		/**
-		 * Folder message list, empty before loadMessages call.
+		 * Список сообщений папки, пуст перед вызовом loadMessages.
 		 */
 		private ExchangeSession.MessageList messages;
 
 		/**
-		 * Permanent uid (PR_SEARCH_KEY) to IMAP UID map.
+		 * Постоянная uid (PR_SEARCH_KEY) к IMAP UID сопоставление.
 		 */
 		private final Map<String, Long> permanentUrlToImapUidMap = new HashMap<>();
 
 		/**
-		 * Get IMAP folder flags.
-		 * @return folder flags in IMAP format
+		 * Получить флаги папки IMAP.
+		 * @return флаги папки в формате IMAP
 		 */
 		public String getFlags() {
 			String specialFlag = "";
@@ -1124,16 +1127,16 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Special folder flag (Sent, Drafts, Trash, Junk).
-		 * @return true if folder is special
+		 * Специальный флаг папки (Отправленные, Черновики, Корзина, Спам).
+		 * @return true если папка специальная
 		 */
 		public boolean isSpecial() {
 			return SPECIAL.contains(folderPath);
 		}
 
 		/**
-		 * Load folder messages.
-		 * @throws IOException on error
+		 * Загрузить сообщения из папки.
+		 * @throws IOException при ошибке
 		 */
 		public void loadMessages() throws IOException {
 			messages = ExchangeSession.this.searchMessages(folderPath, null);
@@ -1154,10 +1157,10 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Search messages in folder matching query.
-		 * @param condition search query
-		 * @return message list
-		 * @throws IOException on error
+		 * Ищет сообщения в папке, соответствующие запросу.
+		 * @param condition поисковый запрос
+		 * @return список сообщений
+		 * @throws IOException при ошибке
 		 */
 		public MessageList searchMessages(Condition condition) throws IOException {
 			MessageList localMessages = ExchangeSession.this.searchMessages(folderPath, condition);
@@ -1166,8 +1169,9 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Restore previous uids changed by a PROPPATCH (flag change).
-		 * @param messages message list
+		 * Восстановить предыдущие идентификаторы, измененные с помощью PROPPATCH
+		 * (изменение флага).
+		 * @param messages список сообщений
 		 */
 		protected void fixUids(MessageList messages) {
 			boolean sortNeeded = false;
@@ -1192,8 +1196,8 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Folder message count.
-		 * @return message count
+		 * Количество сообщений в папке.
+		 * @return количество сообщений
 		 */
 		public int getMessagesCount() {
 			if (messages == null) {
@@ -1205,17 +1209,17 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Get message at index.
-		 * @param index message index
-		 * @return message
+		 * Получить сообщение по индексу.
+		 * @param index индекс сообщения
+		 * @return сообщение
 		 */
 		public Message get(int index) {
 			return messages.get(index);
 		}
 
 		/**
-		 * Get current folder messages imap uids and flags
-		 * @return imap uid list
+		 * Получить UID сообщений папки и флаги imap
+		 * @return список uid imap
 		 */
 		public TreeMap<Long, String> getImapFlagMap() {
 			TreeMap<Long, String> imapFlagMap = new TreeMap<>();
@@ -1226,31 +1230,31 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Calendar folder flag.
-		 * @return true if this is a calendar folder
+		 * Флаг календарной папки.
+		 * @return true, если это календарная папка
 		 */
 		public boolean isCalendar() {
 			return IPF_APPOINTMENT.equals(folderClass);
 		}
 
 		/**
-		 * Contact folder flag.
-		 * @return true if this is a calendar folder
+		 * Флаг папки контактов.
+		 * @return true, если это папка календаря
 		 */
 		public boolean isContact() {
 			return "IPF.Contact".equals(folderClass);
 		}
 
 		/**
-		 * Task folder flag.
-		 * @return true if this is a task folder
+		 * Флаг папки задач.
+		 * @return true, если это папка задач
 		 */
 		public boolean isTask() {
 			return "IPF.Task".equals(folderClass);
 		}
 
 		/**
-		 * drop cached message
+		 * сбросить кэшированное сообщение
 		 */
 		public void clearCache() {
 			messages.cachedMimeContent = null;
@@ -1261,113 +1265,114 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Exchange message.
+	 * Сообщение обмена.
 	 */
 	public abstract class Message implements Comparable<Message> {
 
 		/**
-		 * enclosing message list
+		 * список вложенных сообщений
 		 */
 		public MessageList messageList;
 
 		/**
-		 * Message url.
+		 * URL сообщения.
 		 */
 		public String messageUrl;
 
 		/**
-		 * Message permanent url (does not change on message move).
+		 * Постоянный URL сообщения (не меняется при перемещении сообщения).
 		 */
 		public String permanentUrl;
 
 		/**
-		 * Message uid.
+		 * Уникальный идентификатор сообщения.
 		 */
 		public String uid;
 
 		/**
-		 * Message content class.
+		 * Класс содержимого сообщения.
 		 */
 		public String contentClass;
 
 		/**
-		 * Message keywords (categories).
+		 * Ключевые слова сообщения (категории).
 		 */
 		public String keywords;
 
 		/**
-		 * Message IMAP uid, unique in folder (x0e230003).
+		 * Сообщение IMAP uid, уникальное в папке (x0e230003).
 		 */
 		public long imapUid;
 
 		/**
-		 * MAPI message size.
+		 * Размер сообщения MAPI.
 		 */
 		public int size;
 
 		/**
-		 * Message date (urn:schemas:mailheader:date).
+		 * Дата сообщения (urn:schemas:mailheader:date).
 		 */
 		public String date;
 
 		/**
-		 * Message flag: read.
+		 * Флаг сообщения: прочитано.
 		 */
 		public boolean read;
 
 		/**
-		 * Message flag: deleted.
+		 * Флаг сообщения: удалено.
 		 */
 		public boolean deleted;
 
 		/**
-		 * Message flag: junk.
+		 * Флаг сообщения: мусор.
 		 */
 		public boolean junk;
 
 		/**
-		 * Message flag: flagged.
+		 * Флаг сообщения: помечено.
 		 */
 		public boolean flagged;
 
 		/**
-		 * Message flag: recent.
+		 * Флаг сообщения: недавнее.
 		 */
 		public boolean recent;
 
 		/**
-		 * Message flag: draft.
+		 * Флаг сообщения: черновик.
 		 */
 		public boolean draft;
 
 		/**
-		 * Message flag: answered.
+		 * Флаг сообщения: отвечено.
 		 */
 		public boolean answered;
 
 		/**
-		 * Message flag: fowarded.
+		 * Сообщение пометкой: переслано.
 		 */
 		public boolean forwarded;
 
 		/**
-		 * Unparsed message content.
+		 * Необработанное содержимое сообщения.
 		 */
 		protected byte[] mimeContent;
 
 		/**
-		 * Message content parsed in a MIME message.
+		 * Содержимое сообщения, разобранное в MIME-сообщении.
 		 */
 		protected MimeMessage mimeMessage;
 
 		/**
-		 * Get permanent message id. permanentUrl over WebDav or IitemId over EWS
-		 * @return permanent id
+		 * Получить постоянный идентификатор сообщения. permanentUrl через WebDav или
+		 * IitemId через EWS
+		 * @return постоянный идентификатор
 		 */
 		public abstract String getPermanentId();
 
 		/**
-		 * IMAP uid , unique in folder (x0e230003)
+		 * IMAP uid, уникальный в папке (x0e230003)
 		 * @return IMAP uid
 		 */
 		public long getImapUid() {
@@ -1375,15 +1380,15 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Set IMAP uid.
-		 * @param imapUid new uid
+		 * Установить IMAP uid.
+		 * @param imapUid новый uid
 		 */
 		public void setImapUid(long imapUid) {
 			this.imapUid = imapUid;
 		}
 
 		/**
-		 * Exchange uid.
+		 * Обмен uid.
 		 * @return uid
 		 */
 		public String getUid() {
@@ -1391,8 +1396,8 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Return message flags in IMAP format.
-		 * @return IMAP flags
+		 * Вернуть флаги сообщений в формате IMAP.
+		 * @return Флаги IMAP
 		 */
 		public String getImapFlags() {
 			StringBuilder buffer = new StringBuilder();
@@ -1429,9 +1434,9 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Load message content in a Mime message
-		 * @throws IOException on error
-		 * @throws MessagingException on error
+		 * Загруить содержимое сообщения в Mime-сообщение
+		 * @throws IOException в случае ошибки
+		 * @throws MessagingException в случае ошибки
 		 */
 		public void loadMimeMessage() throws IOException, MessagingException {
 			if (mimeMessage == null) {
@@ -1465,10 +1470,10 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Get message content as a Mime message.
-		 * @return mime message
-		 * @throws IOException on error
-		 * @throws MessagingException on error
+		 * Получить содержимое сообщения в виде Mime-сообщения.
+		 * @return mime-сообщение
+		 * @throws IOException в случае ошибки
+		 * @throws MessagingException в случае ошибки
 		 */
 		public MimeMessage getMimeMessage() throws IOException, MessagingException {
 			loadMimeMessage();
@@ -1514,10 +1519,10 @@ public abstract class ExchangeSession {
 		protected abstract InputStream getMimeHeaders();
 
 		/**
-		 * Get message body size.
-		 * @return mime message size
-		 * @throws IOException on error
-		 * @throws MessagingException on error
+		 * Получить размер тела сообщения.
+		 * @return размер MIME-сообщения
+		 * @throws IOException в случае ошибки
+		 * @throws MessagingException в случае ошибки
 		 */
 		public int getMimeMessageSize() throws IOException, MessagingException {
 			loadMimeMessage();
@@ -1525,10 +1530,10 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Get message body input stream.
-		 * @return mime message InputStream
-		 * @throws IOException on error
-		 * @throws MessagingException on error
+		 * Получить поток ввода тела сообщения.
+		 * @return поток InputStream для mime-сообщения
+		 * @throws IOException при ошибке
+		 * @throws MessagingException при ошибке
 		 */
 		public InputStream getRawInputStream() throws IOException, MessagingException {
 			loadMimeMessage();
@@ -1536,8 +1541,8 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Drop mime message to avoid keeping message content in memory, keep a single
-		 * message in MessageList cache to handle chunked fetch.
+		 * Удалить MIME-сообщение, чтобы избежать хранения содержимого сообщения в памяти,
+		 * сохранить одно сообщение в кэше MessageList для обработки выборки по частям.
 		 */
 		public void dropMimeMessage() {
 			// update single message cache
@@ -1561,16 +1566,16 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Delete message.
-		 * @throws IOException on error
+		 * Удалить сообщение.
+		 * @throws IOException при ошибке
 		 */
 		public void delete() throws IOException {
 			deleteMessage(this);
 		}
 
 		/**
-		 * Move message to trash, mark message read.
-		 * @throws IOException on error
+		 * Переместить сообщение в корзину, отметить сообщение как прочитанное.
+		 * @throws IOException при ошибке
 		 */
 		public void moveToTrash() throws IOException {
 			markRead();
@@ -1579,8 +1584,8 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Mark message as read.
-		 * @throws IOException on error
+		 * Отметить сообщение как прочитанное.
+		 * @throws IOException в случае ошибки
 		 */
 		public void markRead() throws IOException {
 			HashMap<String, String> properties = new HashMap<>();
@@ -1589,9 +1594,9 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Comparator to sort messages by IMAP uid
-		 * @param message other message
-		 * @return imapUid comparison result
+		 * Компаратор для сортировки сообщений по IMAP uid
+		 * @param message другое сообщение
+		 * @return результат сравнения imapUid
 		 */
 		public int compareTo(Message message) {
 			long compareValue = (imapUid - message.imapUid);
@@ -1607,9 +1612,9 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Override equals, compare IMAP uids
-		 * @param message other message
-		 * @return true if IMAP uids are equal
+		 * Переопределить equals, сравнить IMAP uid
+		 * @param message другое сообщение
+		 * @return true, если IMAP uid равны
 		 */
 		@Override
 		public boolean equals(Object message) {
@@ -1617,8 +1622,8 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Override hashCode, return imapUid hashcode.
-		 * @return imapUid hashcode
+		 * Переопределите hashCode, верните хэш-код imapUid.
+		 * @return хэш-код imapUid
 		 */
 		@Override
 		public int hashCode() {
@@ -1668,29 +1673,29 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Message list, includes a single messsage cache
+	 * Список сообщений, включает кэш одного сообщения
 	 */
 	public static class MessageList extends ArrayList<Message> {
 
 		/**
-		 * Cached message content parsed in a MIME message.
+		 * Закэшированное содержимое сообщения, разобранное в MIME-сообщении.
 		 */
 		protected transient MimeMessage cachedMimeMessage;
 
 		/**
-		 * Cached message uid.
+		 * Закэшированное uid сообщения.
 		 */
 		protected transient long cachedMessageImapUid;
 
 		/**
-		 * Cached unparsed message
+		 * Кэшированное неразобранное сообщение
 		 */
 		protected transient byte[] cachedMimeContent;
 
 	}
 
 	/**
-	 * Generic folder item.
+	 * Общий элемент папки.
 	 */
 	public abstract static class Item extends HashMap<String, String> {
 
@@ -1701,23 +1706,23 @@ public abstract class ExchangeSession {
 		protected String permanentUrl;
 
 		/**
-		 * Display name.
+		 * Отображаемое имя.
 		 */
 		public String displayName;
 
 		/**
-		 * item etag
+		 * элемент etag
 		 */
 		public String etag;
 
 		protected String noneMatch;
 
 		/**
-		 * Build item instance.
-		 * @param folderPath folder path
-		 * @param itemName item name class
-		 * @param etag item etag
-		 * @param noneMatch none match flag
+		 * Создать экземпляр элемента.
+		 * @param folderPath путь к папке
+		 * @param itemName имя класса элемента
+		 * @param etag etag элемента
+		 * @param noneMatch флаг отсутствия совпадений
 		 */
 		public Item(String folderPath, String itemName, String etag, String noneMatch) {
 			this.folderPath = folderPath;
@@ -1727,43 +1732,43 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Default constructor.
+		 * Конструктор по умолчанию.
 		 */
 		protected Item() {
 		}
 
 		/**
-		 * Return item content type
-		 * @return content type
+		 * Вернуть тип содержимого элемента
+		 * @return тип содержимого
 		 */
 		public abstract String getContentType();
 
 		/**
-		 * Retrieve item body from Exchange
-		 * @return item body
-		 * @throws IOException on error
+		 * Получить тело элемента от Exchange
+		 * @return тело элемента
+		 * @throws IOException при ошибке
 		 */
 		public abstract String getBody() throws IOException;
 
 		/**
-		 * Get event name (file name part in URL).
-		 * @return event name
+		 * Получить имя события (часть имени файла в URL).
+		 * @return имя события
 		 */
 		public String getName() {
 			return itemName;
 		}
 
 		/**
-		 * Get event etag (last change tag).
-		 * @return event etag
+		 * Получить etag события (метка последнего изменения).
+		 * @return etag события
 		 */
 		public String getEtag() {
 			return etag;
 		}
 
 		/**
-		 * Set item href.
-		 * @param href item href
+		 * Установить ссылку элемента.
+		 * @param href ссылка элемента
 		 */
 		public void setHref(String href) {
 			int index = href.lastIndexOf('/');
@@ -1777,8 +1782,8 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Return item href.
-		 * @return item href
+		 * Возвращает href элемента.
+		 * @return href элемента
 		 */
 		public String getHref() {
 			return folderPath + '/' + itemName;
@@ -1791,7 +1796,7 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Contact object
+	 * Объект контакта
 	 */
 	public abstract class Contact extends Item {
 
@@ -1817,8 +1822,8 @@ public abstract class ExchangeSession {
 		public abstract ItemResult createOrUpdate() throws IOException;
 
 		/**
-		 * Convert EML extension to vcf.
-		 * @return item name
+		 * Преобразовать расширение EML в vcf.
+		 * @return имя элемента
 		 */
 		@Override
 		public String getName() {
@@ -1830,15 +1835,15 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Set contact name
-		 * @param name contact name
+		 * Установить имя контакта
+		 * @param name имя контакта
 		 */
 		public void setName(String name) {
 			this.itemName = name;
 		}
 
 		/**
-		 * Compute vcard uid from name.
+		 * Вычислить vcard uid из имени.
 		 * @return uid
 		 */
 		public String getUid() {
@@ -1985,7 +1990,7 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Calendar event object.
+	 * Объект календарного события.
 	 */
 	public abstract class Event extends Item {
 
@@ -2030,9 +2035,9 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Retrieve item body from Exchange
-		 * @return item content
-		 * @throws IOException on error
+		 * Получить тело элемента из Exchange
+		 * @return содержимое элемента
+		 * @throws IOException в случае ошибки
 		 */
 		public abstract byte[] getEventContent() throws IOException;
 
@@ -2065,11 +2070,11 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Load ICS content from MIME message input stream
-		 * @param mimeInputStream mime message input stream
-		 * @return mime message ics attachment body
-		 * @throws IOException on error
-		 * @throws MessagingException on error
+		 * Загрузка ICS содержимого из входного потока MIME-сообщения
+		 * @param mimeInputStream входной поток MIME-сообщения
+		 * @return тело вложения ics мим-сообщения
+		 * @throws IOException в случае ошибки
+		 * @throws MessagingException в случае ошибки
 		 */
 		protected byte[] getICS(InputStream mimeInputStream) throws IOException, MessagingException {
 			byte[] result;
@@ -2194,9 +2199,9 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Build Mime body for event or event message.
-		 * @return mimeContent as byte array or null
-		 * @throws IOException on error
+		 * Создать Mime тело для события или сообщения события.
+		 * @return mimeContent в виде массива байтов или null
+		 * @throws IOException в случае ошибки
 		 */
 		public byte[] createMimeContent() throws IOException {
 			String boundary = UUID.randomUUID().toString();
@@ -2330,9 +2335,9 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Create or update item
-		 * @return action result
-		 * @throws IOException on error
+		 * Создать или обновить элемент
+		 * @return результат действия
+		 * @throws IOException в случае ошибки
 		 */
 		public abstract ItemResult createOrUpdate() throws IOException;
 
@@ -2341,11 +2346,11 @@ public abstract class ExchangeSession {
 	protected abstract Set<String> getItemProperties();
 
 	/**
-	 * Search contacts in provided folder.
-	 * @param folderPath Exchange folder path
-	 * @param includeDistList include distribution lists
-	 * @return list of contacts
-	 * @throws IOException on error
+	 * Поиск контактов в указанной папке.
+	 * @param folderPath Путь к папке Exchange
+	 * @param includeDistList включить списки рассылки
+	 * @return список контактов
+	 * @throws IOException при ошибке
 	 */
 	public List<ExchangeSession.Contact> getAllContacts(String folderPath, boolean includeDistList) throws IOException {
 		return searchContacts(folderPath, ExchangeSession.CONTACT_ATTRIBUTES,
@@ -2353,30 +2358,30 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Search contacts in provided folder matching the search query.
-	 * @param folderPath Exchange folder path
-	 * @param attributes requested attributes
-	 * @param condition Exchange search query
-	 * @param maxCount maximum item count
-	 * @return list of contacts
-	 * @throws IOException on error
+	 * Поиск контактов в указанной папке, соответствующих поисковому запросу.
+	 * @param folderPath Путь к папке Exchange
+	 * @param attributes запрашиваемые атрибуты
+	 * @param condition Поисковый запрос Exchange
+	 * @param maxCount максимальное количество элементов
+	 * @return список контактов
+	 * @throws IOException при ошибке
 	 */
 	public abstract List<Contact> searchContacts(String folderPath, Set<String> attributes, Condition condition,
 			int maxCount) throws IOException;
 
 	/**
-	 * Search calendar messages in provided folder.
-	 * @param folderPath Exchange folder path
-	 * @return list of calendar messages as Event objects
-	 * @throws IOException on error
+	 * Поиск сообщений календаря в указанной папке.
+	 * @param folderPath Путь к папке Exchange
+	 * @return список сообщений календаря в виде объектов Event
+	 * @throws IOException при ошибке
 	 */
 	public abstract List<Event> getEventMessages(String folderPath) throws IOException;
 
 	/**
-	 * Search calendar events in provided folder.
-	 * @param folderPath Exchange folder path
-	 * @return list of calendar events
-	 * @throws IOException on error
+	 * Поиск событий календаря в указанной папке.
+	 * @param folderPath Путь к папке Exchange
+	 * @return список событий календаря
+	 * @throws IOException при ошибке
 	 */
 	public List<Event> getAllEvents(String folderPath) throws IOException {
 		List<Event> results = searchEvents(folderPath, getCalendarItemCondition(getPastDelayCondition("dtstart")));
@@ -2420,12 +2425,12 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Search events between start and end.
-	 * @param folderPath Exchange folder path
-	 * @param timeRangeStart date range start in zulu format
-	 * @param timeRangeEnd date range start in zulu format
-	 * @return list of calendar events
-	 * @throws IOException on error
+	 * Поиск событий между началом и концом.
+	 * @param folderPath Путь к папке обмена
+	 * @param timeRangeStart Начало диапазона дат в формате zulu
+	 * @param timeRangeEnd Конец диапазона дат в формате zulu
+	 * @return список календарных событий
+	 * @throws IOException в случае ошибки
 	 */
 	public List<Event> searchEvents(String folderPath, String timeRangeStart, String timeRangeEnd) throws IOException {
 		Condition dateCondition = getRangeCondition(timeRangeStart, timeRangeEnd);
@@ -2435,12 +2440,12 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Search events between start and end, exclude tasks.
-	 * @param folderPath Exchange folder path
-	 * @param timeRangeStart date range start in zulu format
-	 * @param timeRangeEnd date range start in zulu format
-	 * @return list of calendar events
-	 * @throws IOException on error
+	 * Ищет события между началом и концом, исключая задачи.
+	 * @param folderPath Путь к папке Exchange
+	 * @param timeRangeStart начало диапазона дат в формате зулу
+	 * @param timeRangeEnd конец диапазона дат в формате зулу
+	 * @return список календарных событий
+	 * @throws IOException при ошибке
 	 */
 	public List<Event> searchEventsOnly(String folderPath, String timeRangeStart, String timeRangeEnd)
 			throws IOException {
@@ -2449,10 +2454,10 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Search tasks only (VTODO).
-	 * @param folderPath Exchange folder path
-	 * @return list of tasks
-	 * @throws IOException on error
+	 * Искать только задачи (VTODO).
+	 * @param folderPath Путь к папке Exchange
+	 * @return список задач
+	 * @throws IOException в случае ошибки
 	 */
 	public List<Event> searchTasksOnly(String folderPath) throws IOException {
 		return searchEvents(folderPath, and(isEqualTo("outlookmessageclass", "IPM.Task"),
@@ -2460,11 +2465,11 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Search calendar events in provided folder.
-	 * @param folderPath Exchange folder path
-	 * @param filter search filter
-	 * @return list of calendar events
-	 * @throws IOException on error
+	 * Ищет события календаря в предоставленной папке.
+	 * @param folderPath Путь к папке Exchange
+	 * @param filter фильтр поиска
+	 * @return список событий календаря
+	 * @throws IOException при ошибке
 	 */
 	public List<Event> searchEvents(String folderPath, Condition filter) throws IOException {
 
@@ -2478,20 +2483,21 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Search calendar events or messages in provided folder matching the search query.
-	 * @param folderPath Exchange folder path
-	 * @param attributes requested attributes
-	 * @param condition Exchange search query
-	 * @return list of calendar messages as Event objects
-	 * @throws IOException on error
+	 * Поиск событий календаря или сообщений в указанной папке, соответствующих запросу
+	 * поиска.
+	 * @param folderPath Путь к папке Exchange
+	 * @param attributes запрашиваемые атрибуты
+	 * @param condition Запрос поиска Exchange
+	 * @return список календарных сообщений в виде объектов Event
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract List<Event> searchEvents(String folderPath, Set<String> attributes, Condition condition)
 			throws IOException;
 
 	/**
-	 * convert vcf extension to EML.
-	 * @param itemName item name
-	 * @return EML item name
+	 * преобразовать расширение vcf в EML.
+	 * @param itemName имя элемента
+	 * @return имя элемента EML
 	 */
 	protected String convertItemNameToEML(String itemName) {
 		if (itemName.endsWith(".vcf")) {
@@ -2503,70 +2509,70 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Get item named eventName in folder
-	 * @param folderPath Exchange folder path
-	 * @param itemName event name
-	 * @return event object
-	 * @throws IOException on error
+	 * Получить элемент с именем eventName в папке
+	 * @param folderPath Путь к папке Exchange
+	 * @param itemName Имя события
+	 * @return Объект события
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract Item getItem(String folderPath, String itemName) throws IOException;
 
 	/**
-	 * Contact picture
+	 * Контактное изображение
 	 */
 	public static class ContactPhoto {
 
 		/**
-		 * Contact picture content type (always image/jpeg on read)
+		 * Тип содержимого изображения контакта (всегда image/jpeg при чтении)
 		 */
 		public String contentType;
 
 		/**
-		 * Base64 encoded picture content
+		 * Содержимое изображения в кодировке Base64
 		 */
 		public String content;
 
 	}
 
 	/**
-	 * Retrieve contact photo attached to contact
-	 * @param contact address book contact
-	 * @return contact photo
-	 * @throws IOException on error
+	 * Получить фотографию контакта, прикрепленную к контакту
+	 * @param contact контакт адресной книги
+	 * @return фотография контакта
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract ContactPhoto getContactPhoto(Contact contact) throws IOException;
 
 	/**
-	 * Retrieve contact photo from AD
-	 * @param email address book contact
-	 * @return contact photo
+	 * Получить фото контакта из AD
+	 * @param адрес книги контактов
+	 * @return фото контакта
 	 */
 	public ContactPhoto getADPhoto(String email) {
 		return null;
 	}
 
 	/**
-	 * Delete event named itemName in folder
-	 * @param folderPath Exchange folder path
-	 * @param itemName item name
-	 * @throws IOException on error
+	 * Удалить событие с именем itemName в папке
+	 * @param folderPath Путь к папке Exchange
+	 * @param itemName имя элемента
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract void deleteItem(String folderPath, String itemName) throws IOException;
 
 	/**
-	 * Mark event processed named eventName in folder
-	 * @param folderPath Exchange folder path
-	 * @param itemName item name
-	 * @throws IOException on error
+	 * Пометить событие как обработанное с именем eventName в папке
+	 * @param folderPath Путь к папке Exchange
+	 * @param itemName имя элемента
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract void processItem(String folderPath, String itemName) throws IOException;
 
 	private static int dumpIndex;
 
 	/**
-	 * Replace iCal4 (Snow Leopard) principal paths with mailto expression
-	 * @param value attendee value or ics line
-	 * @return fixed value
+	 * Заменить пути принципала iCal4 (Snow Leopard) на выражение mailto
+	 * @param value значение участника или строка ics
+	 * @return исправленное значение
 	 */
 	protected String replaceIcal4Principal(String value) {
 		if (value != null && value.contains("/principals/__uuids__/")) {
@@ -2578,45 +2584,45 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Event result object to hold HTTP status and event etag from an event
-	 * creation/update.
+	 * Объект результата события для хранения HTTP статуса и etag события
+	 * создания/обновления.
 	 */
 	public static class ItemResult {
 
 		/**
-		 * HTTP status
+		 * Статус HTTP
 		 */
 		public int status;
 
 		/**
-		 * Event etag from response HTTP header
+		 * Событие etag из HTTP заголовка ответа
 		 */
 		public String etag;
 
 		/**
-		 * Created item name
+		 * Название созданного элемента
 		 */
 		public String itemName;
 
 	}
 
 	/**
-	 * Build and send the MIME message for the provided ICS event.
-	 * @param icsBody event in iCalendar format
-	 * @return HTTP status
-	 * @throws IOException on error
+	 * Собрать и отправить MIME-сообщение для предоставленного события ICS.
+	 * @param icsBody событие в формате iCalendar
+	 * @return HTTP статус
+	 * @throws IOException в случае ошибки
 	 */
 	public abstract int sendEvent(String icsBody) throws IOException;
 
 	/**
-	 * Create or update item (event or contact) on the Exchange server
-	 * @param folderPath Exchange folder path
-	 * @param itemName event name
-	 * @param itemBody event body in iCalendar format
-	 * @param etag previous event etag to detect concurrent updates
-	 * @param noneMatch if-none-match header value
-	 * @return HTTP response event result (status and etag)
-	 * @throws IOException on error
+	 * Создать или обновить элемент (событие или контакт) на сервере Exchange
+	 * @param folderPath Путь к папке Exchange
+	 * @param itemName имя события
+	 * @param itemBody тело события в формате iCalendar
+	 * @param etag предыдущий etag события для обнаружения одновременных обновлений
+	 * @param noneMatch значение заголовка if-none-match
+	 * @return HTTP-ответ результат события (статус и etag)
+	 * @throws IOException при ошибке
 	 */
 	public ItemResult createOrUpdateItem(String folderPath, String itemName, String itemBody, String etag,
 			String noneMatch) throws IOException {
@@ -2898,8 +2904,8 @@ public abstract class ExchangeSession {
 			String icsBody, String etag, String noneMatch) throws IOException;
 
 	/**
-	 * Get current Exchange alias name from login name
-	 * @return user name
+	 * Получить текущее имя алиаса обмена из имени пользователя
+	 * @return имя пользователя
 	 */
 	public String getAliasFromLogin() {
 		// login is email, not alias
@@ -2916,50 +2922,50 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Test if folderPath is inside user mailbox.
-	 * @param folderPath absolute folder path
-	 * @return true if folderPath is a public or shared folder
+	 * Проверяет, находится ли folderPath внутри почтового ящика пользователя.
+	 * @param folderPath абсолютный путь к папке
+	 * @return true, если folderPath является публичной или общей папкой
 	 */
 	public abstract boolean isSharedFolder(String folderPath);
 
 	/**
-	 * Test if folderPath is main calendar.
-	 * @param folderPath absolute folder path
-	 * @return true if folderPath is a public or shared folder
+	 * Проверить, является ли folderPath основным календарем.
+	 * @param folderPath абсолютный путь к папке
+	 * @return true, если folderPath является публичной или общей папкой
 	 */
 	public abstract boolean isMainCalendar(String folderPath) throws IOException;
 
 	protected static final String MAILBOX_BASE = "/cn=";
 
 	/**
-	 * Get current user email
-	 * @return user email
+	 * Получить электронную почту текущего пользователя
+	 * @return электронная почта пользователя
 	 */
 	public String getEmail() {
 		return email;
 	}
 
 	/**
-	 * Get current user alias
-	 * @return user email
+	 * Получить alias текущего пользователя
+	 * @return email пользователя
 	 */
 	public String getAlias() {
 		return alias;
 	}
 
 	/**
-	 * Search global address list
-	 * @param condition search filter
-	 * @param returningAttributes returning attributes
-	 * @param sizeLimit size limit
-	 * @return matching contacts from gal
-	 * @throws IOException on error
+	 * Поиск глобального списка адресов
+	 * @param condition фильтр поиска
+	 * @param returningAttributes возвращаемые атрибуты
+	 * @param sizeLimit лимит размера
+	 * @return соответствующие контакты из gal
+	 * @throws IOException при ошибке
 	 */
 	public abstract Map<String, Contact> galFind(Condition condition, Set<String> returningAttributes, int sizeLimit)
 			throws IOException;
 
 	/**
-	 * Full Contact attribute list
+	 * Полный список атрибутов контакта
 	 */
 	public static final Set<String> CONTACT_ATTRIBUTES = new HashSet<>();
 
@@ -3042,24 +3048,24 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Get freebusy data string from Exchange.
-	 * @param attendee attendee email address
-	 * @param start start date in Exchange zulu format
-	 * @param end end date in Exchange zulu format
-	 * @param interval freebusy interval in minutes
-	 * @return freebusy data or null
-	 * @throws IOException on error
+	 * Получить строку данных о занятости из Exchange.
+	 * @param attendee адрес электронной почты участника
+	 * @param start дата начала в формате zulu Exchange
+	 * @param end дата окончания в формате zulu Exchange
+	 * @param interval интервал занятости в минутах
+	 * @return данные о занятости или null
+	 * @throws IOException при ошибке
 	 */
 	protected abstract String getFreeBusyData(String attendee, String start, String end, int interval)
 			throws IOException;
 
 	/**
-	 * Get freebusy info for attendee between start and end date.
-	 * @param attendee attendee email
-	 * @param startDateValue start date
-	 * @param endDateValue end date
-	 * @return FreeBusy info
-	 * @throws IOException on error
+	 * Получить информацию о занятости для участника между начальной и конечной датой.
+	 * @param attendee почта участника
+	 * @param startDateValue начальная дата
+	 * @param endDateValue конечная дата
+	 * @return Информация о занятости
+	 * @throws IOException в случае ошибки
 	 */
 	public FreeBusy getFreebusy(String attendee, String startDateValue, String endDateValue) throws IOException {
 		// replace ical encoded attendee name
@@ -3113,8 +3119,9 @@ public abstract class ExchangeSession {
 	}
 
 	/**
-	 * Exchange to iCalendar Free/Busy parser. Free time returns 0, Tentative returns 1,
-	 * Busy returns 2, and Out of Office (OOF) returns 3
+	 * Обмен на парсер iCalendar Занятости/Свободного времени. Свободное время возвращает
+	 * 0, Предварительное возвращает 1, Занятое возвращает 2, а Вне офиса (OOF) возвращает
+	 * 3
 	 */
 	public static final class FreeBusy {
 
@@ -3182,8 +3189,8 @@ public abstract class ExchangeSession {
 		}
 
 		/**
-		 * Append freebusy information to buffer.
-		 * @param buffer String buffer
+		 * Добавить информацию о занятости к буферу.
+		 * @param buffer Строковый буфер
 		 */
 		public void appendTo(StringBuilder buffer) {
 			for (Map.Entry<String, StringBuilder> entry : busyMap.entrySet()) {
@@ -3201,8 +3208,8 @@ public abstract class ExchangeSession {
 	protected VObject vTimezone;
 
 	/**
-	 * Load and return current user OWA timezone.
-	 * @return current timezone
+	 * Загрузить и вернуть текущий часовой пояс OWA пользователя.
+	 * @return текущий часовой пояс
 	 */
 	public VObject getVTimezone() {
 		if (vTimezone == null) {

@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Wrapper for HttpURLConnection to fix missing content type and add logging.
+ * Обертка для HttpURLConnection, чтобы исправить отсутствие типа содержимого и добавить
+ * логирование.
  */
 @Slf4j
 public class HttpURLConnectionWrapper extends HttpURLConnection {
@@ -136,8 +137,8 @@ public class HttpURLConnectionWrapper extends HttpURLConnection {
 	}
 
 	/**
-	 * Fix missing content type
-	 * @return content type or text/html if missing
+	 * Исправить отсутствующий тип контента
+	 * @return тип контента или text/html, если отсутствует
 	 */
 	@Override
 	public String getContentType() {

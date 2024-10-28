@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * Failover: Runtime.exec open URL
+ * Резервное копирование: Runtime.exec открыть URL
  */
 public final class XdgDesktopBrowser {
 
@@ -15,9 +15,10 @@ public final class XdgDesktopBrowser {
 	}
 
 	/**
-	 * Open default browser at location URI. Use xdg-open to open browser url
-	 * @param location location URI
-	 * @throws IOException on error
+	 * Открыть браузер по умолчанию по адресу URI. Используйте xdg-open для открытия URL
+	 * браузера
+	 * @param location адрес URI
+	 * @throws IOException при ошибке
 	 */
 	public static void browse(URI location) throws IOException {
 		Runtime.getRuntime().exec(new String[] { "xdg-open", location.toString() });

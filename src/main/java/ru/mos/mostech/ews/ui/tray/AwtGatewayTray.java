@@ -17,7 +17,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
- * Tray icon handler based on java 1.6
+ * Обработчик значка в трее, основанный на java 1.6
  */
 public class AwtGatewayTray implements MosTechEwsTrayInterface {
 
@@ -54,8 +54,8 @@ public class AwtGatewayTray implements MosTechEwsTrayInterface {
 	private boolean isActive = true;
 
 	/**
-	 * Return AWT Image icon for frame title.
-	 * @return frame icon
+	 * Возвращает AWT изображение иконки для заголовка окна.
+	 * @return иконка окна
 	 */
 	@Override
 	public java.util.List<Image> getFrameIcons() {
@@ -63,7 +63,7 @@ public class AwtGatewayTray implements MosTechEwsTrayInterface {
 	}
 
 	/**
-	 * Switch tray icon between active and standby icon.
+	 * Переключить значок в трее между активным и резервным значком.
 	 */
 	public void switchIcon() {
 		isActive = true;
@@ -78,14 +78,14 @@ public class AwtGatewayTray implements MosTechEwsTrayInterface {
 	}
 
 	/**
-	 * Set tray icon to inactive (network down)
+	 * Установить значок в трее в неактивное состояние (сеть не работает)
 	 */
 	public void resetIcon() {
 		SwingUtilities.invokeLater(() -> trayIcon.setImage(image));
 	}
 
 	/**
-	 * Set tray icon to inactive (network down)
+	 * Установить значок в трее в неактивное состояние (сеть не работает)
 	 */
 	public void inactiveIcon() {
 		isActive = false;
@@ -93,24 +93,24 @@ public class AwtGatewayTray implements MosTechEwsTrayInterface {
 	}
 
 	/**
-	 * Check if current tray status is inactive (network down).
-	 * @return true if inactive
+	 * Проверьте, неактивен ли текущий статус лотка (сеть отключена).
+	 * @return true, если неактивен
 	 */
 	public boolean isActive() {
 		return isActive;
 	}
 
 	/**
-	 * Display balloon message for log level.
-	 * @param message text message
-	 * @param level log level
+	 * Отобразить сообщение-воздушный шарик для уровня журнала.
+	 * @param message текст сообщения
+	 * @param level уровень журнала
 	 */
 	public void displayMessage(final String message, final Level level) {
 
 	}
 
 	/**
-	 * Open about window
+	 * Открыть окно "О программе"
 	 */
 	public void about() {
 		SwingUtilities.invokeLater(() -> {
@@ -122,7 +122,7 @@ public class AwtGatewayTray implements MosTechEwsTrayInterface {
 	}
 
 	/**
-	 * Open settings window
+	 * Открыть окно настроек
 	 */
 	public void preferences() {
 		SwingUtilities.invokeLater(() -> {
@@ -135,7 +135,7 @@ public class AwtGatewayTray implements MosTechEwsTrayInterface {
 	}
 
 	/**
-	 * Create tray icon and register frame listeners.
+	 * Создать значок в области уведомлений и зарегистрировать слушатели фрейма.
 	 */
 	public void init() {
 		SwingUtilities.invokeLater(this::createAndShowGUI);

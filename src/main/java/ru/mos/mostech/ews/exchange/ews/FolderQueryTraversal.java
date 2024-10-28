@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Folder folderQueryTraversalType search mode.
+ * Режим поиска folderQueryTraversalType.
  */
 public final class FolderQueryTraversal extends AttributeOption {
 
@@ -13,12 +13,12 @@ public final class FolderQueryTraversal extends AttributeOption {
 	}
 
 	/**
-	 * Search only in current folder.
+	 * Искать только в текущей папке.
 	 */
 	public static final FolderQueryTraversal SHALLOW = new FolderQueryTraversal("Shallow");
 
 	/**
-	 * Recursive search.
+	 * Рекурсивный поиск.
 	 */
 	@SuppressWarnings({ "UnusedDeclaration" })
 	public static final FolderQueryTraversal DEEP = new FolderQueryTraversal("Deep");

@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * Http get request with a string response handler.
+ * HTTP GET запрос с обработчиком строкового ответа.
  */
 public class GetRequest extends HttpGet implements ResponseHandler<String>, ResponseWrapper {
 
@@ -28,18 +28,18 @@ public class GetRequest extends HttpGet implements ResponseHandler<String>, Resp
 	}
 
 	/**
-	 * @throws IllegalArgumentException if the uri is invalid.
+	 * @throws IllegalArgumentException если uri недействителен.
 	 */
 	public GetRequest(final String uri) {
 		super(uri);
 	}
 
 	/**
-	 * Handle request response and return response as string. response body is null on
-	 * redirect
-	 * @param response response object
-	 * @return response body as string
-	 * @throws IOException on error
+	 * Обработать ответ на запрос и вернуть ответ в виде строки. Тело ответа равно null
+	 * при редиректе
+	 * @param response объект ответа
+	 * @return тело ответа в виде строки
+	 * @throws IOException при ошибке
 	 */
 	@Override
 	public String handleResponse(HttpResponse response) throws IOException {
@@ -67,8 +67,8 @@ public class GetRequest extends HttpGet implements ResponseHandler<String>, Resp
 	}
 
 	/**
-	 * Get status code from response.
-	 * @return Http status code
+	 * Получить код статуса из ответа.
+	 * @return Код статуса HTTP
 	 */
 	public int getStatusCode() {
 		checkResponse();
@@ -76,8 +76,8 @@ public class GetRequest extends HttpGet implements ResponseHandler<String>, Resp
 	}
 
 	/**
-	 * Get reason phrase from response.
-	 * @return reason phrase
+	 * Получить текст причины из ответа.
+	 * @return текст причины
 	 */
 	public String getReasonPhrase() {
 		checkResponse();
@@ -94,7 +94,7 @@ public class GetRequest extends HttpGet implements ResponseHandler<String>, Resp
 	}
 
 	/**
-	 * Check if response is available.
+	 * Проверьте, доступен ли ответ.
 	 */
 	private void checkResponse() {
 		if (response == null) {

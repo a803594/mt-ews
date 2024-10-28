@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Tray icon handler
+ * Обработчик значка в трее
  */
 @Slf4j
 public final class MosTechEwsTray {
@@ -31,8 +31,8 @@ public final class MosTechEwsTray {
 	static MosTechEwsTrayInterface mtEwsGatewayTray;
 
 	/**
-	 * Return AWT Image icon for frame title.
-	 * @return frame icon
+	 * Возвращает иконку AWT для заголовка окна.
+	 * @return иконка окна
 	 */
 	public static java.util.List<Image> getFrameIcons() {
 		java.util.List<Image> icons = null;
@@ -43,7 +43,7 @@ public final class MosTechEwsTray {
 	}
 
 	/**
-	 * Switch tray icon between active and standby icon.
+	 * Переключить иконку системного трея между активной и резервной иконкой.
 	 */
 	public static void switchIcon() {
 		if (mtEwsGatewayTray != null && !Settings.getBooleanProperty("mt.ews.disableTrayActivitySwitch")) {
@@ -55,7 +55,7 @@ public final class MosTechEwsTray {
 	}
 
 	/**
-	 * Set tray icon to inactive (network down)
+	 * Установить иконку лотка в неактивное состояние (сеть отключена)
 	 */
 	public static void resetIcon() {
 		if (mtEwsGatewayTray != null && isActive()) {
@@ -64,17 +64,17 @@ public final class MosTechEwsTray {
 	}
 
 	/**
-	 * Check if current tray status is inactive (network down).
-	 * @return true if inactive
+	 * Проверьте, является ли текущее состояние подноса неактивным (сеть отключена).
+	 * @return true, если неактивно
 	 */
 	public static boolean isActive() {
 		return mtEwsGatewayTray == null || mtEwsGatewayTray.isActive();
 	}
 
 	/**
-	 * Log and display balloon message according to log level.
-	 * @param message text message
-	 * @param level log level
+	 * Записать и отобразить сообщение в виде шара в зависимости от уровня журнала.
+	 * @param message текстовое сообщение
+	 * @param level уровень журнала
 	 */
 	private static void displayMessage(BundleMessage message, Level level) {
 		log.info("{}, {}", level, message.formatLog());
@@ -84,10 +84,11 @@ public final class MosTechEwsTray {
 	}
 
 	/**
-	 * Log and display balloon message and exception according to log level.
-	 * @param message text message
-	 * @param e exception
-	 * @param level log level
+	 * Записать и отобразить сообщение и исключение в виде воздушного шара в зависимости
+	 * от уровня журнала.
+	 * @param message текстовое сообщение
+	 * @param e исключение
+	 * @param level уровень журнала
 	 */
 	private static void displayMessage(BundleMessage message, Exception e, Level level) {
 		if (e instanceof NetworkDownException) {
@@ -106,48 +107,49 @@ public final class MosTechEwsTray {
 	}
 
 	/**
-	 * Log message at level DEBUG.
-	 * @param message bundle message
+	 * Логировать сообщение на уровне DEBUG.
+	 * @param message сообщение из бандла
 	 */
 	public static void debug(BundleMessage message) {
 		displayMessage(message, Level.DEBUG);
 	}
 
 	/**
-	 * Log message at level INFO.
-	 * @param message bundle message
+	 * Записать сообщение на уровне INFO.
+	 * @param message сообщение из пакета
 	 */
 	public static void info(BundleMessage message) {
 		displayMessage(message, Level.INFO);
 	}
 
 	/**
-	 * Log message at level WARN.
-	 * @param message bundle message
+	 * Записать сообщение на уровне WARN.
+	 * @param message сообщение из пакета
 	 */
 	public static void warn(BundleMessage message) {
 		displayMessage(message, Level.WARN);
 	}
 
 	/**
-	 * Log exception at level WARN.
-	 * @param e exception
+	 * Запись исключения на уровне WARN.
+	 * @param e исключение
 	 */
 	public static void warn(Exception e) {
 		displayMessage(null, e, Level.WARN);
 	}
 
 	/**
-	 * Log message at level ERROR.
-	 * @param message bundle message
+	 * Записать сообщение на уровне ОШИБКА.
+	 * @param message сообщение из пакета
 	 */
 	public static void error(BundleMessage message) {
 		displayMessage(message, Level.ERROR);
 	}
 
 	/**
-	 * Log exception at level WARN for NetworkDownException, ERROR for other exceptions.
-	 * @param e exception
+	 * Логировать исключение на уровне WARN для NetworkDownException, ERROR для других
+	 * исключений.
+	 * @param e исключение
 	 */
 	public static void log(Exception e) {
 		// only warn on network down
@@ -160,42 +162,42 @@ public final class MosTechEwsTray {
 	}
 
 	/**
-	 * Log exception at level ERROR.
-	 * @param e exception
+	 * Логировать исключение на уровне ОШИБКИ.
+	 * @param e исключение
 	 */
 	public static void error(Exception e) {
 		displayMessage(null, e, Level.ERROR);
 	}
 
 	/**
-	 * Log message and exception at level DEBUG.
-	 * @param message bundle message
-	 * @param e exception
+	 * Сообщение журнала и исключение на уровне DEBUG.
+	 * @param message сообщение из пакета
+	 * @param e исключение
 	 */
 	public static void debug(BundleMessage message, Exception e) {
 		displayMessage(message, e, Level.DEBUG);
 	}
 
 	/**
-	 * Log message and exception at level WARN.
-	 * @param message bundle message
-	 * @param e exception
+	 * Записать сообщение и исключение на уровне WARN.
+	 * @param message сообщение из бандла
+	 * @param e исключение
 	 */
 	public static void warn(BundleMessage message, Exception e) {
 		displayMessage(message, e, Level.WARN);
 	}
 
 	/**
-	 * Log message and exception at level ERROR.
-	 * @param message bundle message
-	 * @param e exception
+	 * Журнал сообщения и исключения на уровне ИСКЛЮЧЕНИЕ.
+	 * @param message сообщение из пакета
+	 * @param e исключение
 	 */
 	public static void error(BundleMessage message, Exception e) {
 		displayMessage(message, e, Level.ERROR);
 	}
 
 	/**
-	 * Create tray icon and register frame listeners.
+	 * Создать значок в трее и зарегистрировать слушатели для окна.
 	 */
 	public static void init(boolean notray) {
 		String currentDesktop = System.getenv("XDG_CURRENT_DESKTOP");
@@ -225,7 +227,7 @@ public final class MosTechEwsTray {
 					log.info("O365Interactive is not compatible with SWT, do not try to create SWT tray");
 				}
 				// try java6 tray support, except on Linux
-				if (mtEwsGatewayTray == null /* && !isLinux() */) {
+				if (mtEwsGatewayTray == null /* && !являетсяLinux() */) {
 					try {
 						if (SystemTray.isSupported()) {
 							if (isOSX()) {
@@ -257,33 +259,33 @@ public final class MosTechEwsTray {
 	}
 
 	/**
-	 * Test if running on OSX
-	 * @return true on Mac OS X
+	 * Проверка, работает ли на OSX
+	 * @return true на Mac OS X
 	 */
 	public static boolean isOSX() {
 		return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
 	}
 
 	/**
-	 * Test if running on Windows
-	 * @return true on Windows
+	 * Проверяет, выполняется ли код на Windows
+	 * @return true на Windows
 	 */
 	public static boolean isWindows() {
 		return System.getProperty("os.name").toLowerCase().startsWith("windows");
 	}
 
 	/**
-	 * Test if running on Linux
-	 * @return true on Linux
+	 * Проверьте, выполняется ли на Linux
+	 * @return true на Linux
 	 */
 	public static boolean isLinux() {
 		return System.getProperty("os.name").toLowerCase().startsWith("linux");
 	}
 
 	/**
-	 * Load image with current class loader.
-	 * @param fileName image resource file name
-	 * @return image
+	 * Загружает изображение с помощью текущего загрузчика классов.
+	 * @param fileName имя файла ресурса изображения
+	 * @return изображение
 	 */
 	public static BufferedImage loadImage(String fileName) {
 		BufferedImage result = null;
@@ -379,7 +381,7 @@ public final class MosTechEwsTray {
 	}
 
 	/**
-	 * Dispose application tray icon
+	 * Освободить значок приложения в трее
 	 */
 	public static void dispose() {
 		if (mtEwsGatewayTray != null) {
@@ -388,7 +390,7 @@ public final class MosTechEwsTray {
 	}
 
 	/**
-	 * Open logging window.
+	 * Открыть окно журналирования.
 	 */
 	public static void showLogs() {
 		throw new UnsupportedOperationException();

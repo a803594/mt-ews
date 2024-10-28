@@ -4,19 +4,19 @@ DIT
 package ru.mos.mostech.ews.exchange;
 
 /**
- * VCard Writer
+ * Запись VCard
  */
 public class VCardWriter extends ICSBufferedWriter {
 
 	/**
-	 * Begin VCard and version
+	 * Начало VCard и версия
 	 */
 	public void startCard() {
 		startCard(null);
 	}
 
 	/**
-	 * Begin VCard and version
+	 * Начало VCard и версия
 	 */
 	public void startCard(String version) {
 		writeLine("BEGIN:VCARD");
@@ -24,9 +24,9 @@ public class VCardWriter extends ICSBufferedWriter {
 	}
 
 	/**
-	 * Append compound value
-	 * @param propertyName property name
-	 * @param propertyValue property values
+	 * Добавить составное значение
+	 * @param propertyName имя свойства
+	 * @param propertyValue значения свойства
 	 */
 	public void appendProperty(String propertyName, String... propertyValue) {
 		boolean hasValue = false;
@@ -55,9 +55,9 @@ public class VCardWriter extends ICSBufferedWriter {
 	}
 
 	/**
-	 * Encode and append value to buffer
-	 * @param buffer current buffer
-	 * @param value property value
+	 * Кодирует и добавляет значение в буфер
+	 * @param buffer текущий буфер
+	 * @param value значение свойства
 	 */
 	private void appendEncodedValue(StringBuilder buffer, String value) {
 		if (value != null) {
@@ -77,7 +77,7 @@ public class VCardWriter extends ICSBufferedWriter {
 	}
 
 	/**
-	 * End VCard
+	 * Конец VCard
 	 */
 	public void endCard() {
 		writeLine("END:VCARD");

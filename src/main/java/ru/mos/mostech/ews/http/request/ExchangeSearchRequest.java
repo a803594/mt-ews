@@ -12,16 +12,16 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Custom Exchange SEARCH method. Does not load full DOM in memory.
+ * Пользовательский метод поиска Exchange. Не загружает полный DOM в память.
  */
 public class ExchangeSearchRequest extends ExchangeDavRequest {
 
 	protected final String searchRequest;
 
 	/**
-	 * Create search method.
-	 * @param uri method uri
-	 * @param searchRequest Exchange search request
+	 * Создайте метод поиска.
+	 * @param uri URI метода
+	 * @param searchRequest Запрос поиска обмена
 	 */
 	public ExchangeSearchRequest(String uri, String searchRequest) {
 		super(uri);

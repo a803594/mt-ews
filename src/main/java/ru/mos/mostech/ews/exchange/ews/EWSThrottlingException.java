@@ -5,13 +5,13 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Exchange throttling error.
+ * Ошибка ограничения обмена.
  */
 public class EWSThrottlingException extends EWSException {
 
 	/**
-	 * Create EWS throttling Exception with detailed error message
-	 * @param message error message
+	 * Создать исключение ограничения EWS с подробным сообщением об ошибке
+	 * @param message сообщение об ошибке
 	 */
 	public EWSThrottlingException(String message) {
 		super(message);

@@ -13,13 +13,13 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * Internationalization message.
+ * Сообщение для интернационализации.
  */
 @Slf4j
 public class BundleMessage implements Serializable {
 
 	/**
-	 * Root locale to get english messages for logging.
+	 * Корневая локализация для получения английских сообщений для логирования.
 	 */
 	public static final Locale ROOT_LOCALE = Locale.forLanguageTag("ru");
 
@@ -30,9 +30,9 @@ public class BundleMessage implements Serializable {
 	private final Object[] arguments;
 
 	/**
-	 * Internationalization message.
-	 * @param key message key in resource bundle
-	 * @param arguments message values
+	 * Сообщение интернационализации.
+	 * @param ключ ключ сообщения в ресурсном пакете
+	 * @param аргументы значения сообщения
 	 */
 	public BundleMessage(String key, Object... arguments) {
 		this.key = key;
@@ -40,35 +40,35 @@ public class BundleMessage implements Serializable {
 	}
 
 	/**
-	 * Format message with the default locale.
-	 * @return formatted message
+	 * Отформатировать сообщение в соответствии с локалью по умолчанию.
+	 * @return отформатированное сообщение
 	 */
 	public String format() {
 		return format(null);
 	}
 
 	/**
-	 * Format message with the given locale.
-	 * @param locale resource bundle locale
-	 * @return formatted message
+	 * Форматирует сообщение с учетом заданной локали.
+	 * @param locale локаль ресурсного пакета
+	 * @return форматированное сообщение
 	 */
 	public String format(Locale locale) {
 		return BundleMessage.format(locale, key, arguments);
 	}
 
 	/**
-	 * Format message for logging (with the root locale). Log file should remain in
-	 * english
-	 * @return log formatted message
+	 * Форматировать сообщение для ведения лога (с использованием корневой локали). Файл
+	 * лога должен оставаться на английском языке.
+	 * @return отформатированное сообщение для лога
 	 */
 	public String formatLog() {
 		return format(ROOT_LOCALE);
 	}
 
 	/**
-	 * Format message for logging (with the root locale). Log file should remain in
-	 * english
-	 * @return log formatted message
+	 * Форматировать сообщение для ведения лога (с использованием корневой локали). Файл
+	 * лога должен оставаться на английском языке.
+	 * @return отформатированное сообщение для лога
 	 */
 	@Override
 	public String toString() {
@@ -76,10 +76,10 @@ public class BundleMessage implements Serializable {
 	}
 
 	/**
-	 * Get bundle for the given locale. Load the properties file for the given locale in a
-	 * resource bundle
-	 * @param locale resource bundle locale
-	 * @return resource bundle
+	 * Получить пакет ресурсов для заданной локали. Загрузить файл свойств для заданной
+	 * локали в пакет ресурсов
+	 * @param locale локаль пакета ресурсов
+	 * @return пакет ресурсов
 	 */
 	protected static ResourceBundle getBundle(Locale locale) {
 		if (locale == null) {
@@ -91,21 +91,23 @@ public class BundleMessage implements Serializable {
 	}
 
 	/**
-	 * Get formatted message for message key and values with the default locale.
-	 * @param key message key in resource bundle
-	 * @param arguments message values
-	 * @return formatted message
+	 * Получить отформатированное сообщение для ключа сообщения и значений с
+	 * использованием локали по умолчанию.
+	 * @param key ключ сообщения в ресурсном пакете
+	 * @param arguments значения сообщения
+	 * @return отформатированное сообщение
 	 */
 	public static String format(String key, Object... arguments) {
 		return format(ROOT_LOCALE, key, arguments);
 	}
 
 	/**
-	 * Get formatted message for message key and values with the given locale.
-	 * @param locale resource bundle locale
-	 * @param key message key in resource bundle
-	 * @param arguments message values
-	 * @return formatted message
+	 * Получить отформатированное сообщение для ключа сообщения и значений с указанной
+	 * локализацией.
+	 * @param locale локализация ресурсного пакета
+	 * @param key ключ сообщения в ресурсном пакете
+	 * @param arguments значения сообщения
+	 * @return отформатированное сообщение
 	 */
 	public static String format(Locale locale, String key, Object... arguments) {
 		Object[] formattedArguments = null;
@@ -140,42 +142,45 @@ public class BundleMessage implements Serializable {
 	}
 
 	/**
-	 * Get formatted log message for message key and values. Use the root locale
-	 * @param key message key in resource bundle
-	 * @param arguments message values
-	 * @return formatted message
+	 * Получить форматированное сообщение лога для ключа сообщения и значений. Используйте
+	 * корневую локаль
+	 * @param key ключ сообщения в ресурсном пакете
+	 * @param arguments значения сообщения
+	 * @return форматированное сообщение
 	 */
 	public static String formatLog(String key, Object... arguments) {
 		return format(ROOT_LOCALE, key, arguments);
 	}
 
 	/**
-	 * Get formatted error message for bundle message and exception for logging. Use the
-	 * root locale
-	 * @param message bundle message
-	 * @param e exception
-	 * @return formatted message
+	 * Получить отформатированное сообщение об ошибке для сообщения из бандла и исключения
+	 * для логирования. Используйте корневую локализацию
+	 * @param message сообщение из бандла
+	 * @param e исключение
+	 * @return отформатированное сообщение
 	 */
 	public static String getExceptionLogMessage(BundleMessage message, Exception e) {
 		return getExceptionMessage(message, e, ROOT_LOCALE);
 	}
 
 	/**
-	 * Get formatted error message for bundle message and exception with default locale.
-	 * @param message bundle message
-	 * @param e exception
-	 * @return formatted message
+	 * Получить отформатированное сообщение об ошибке для сообщения пакета и исключения с
+	 * локалью по умолчанию.
+	 * @param message сообщение пакета
+	 * @param e исключение
+	 * @return отформатированное сообщение
 	 */
 	public static String getExceptionMessage(BundleMessage message, Exception e) {
 		return getExceptionMessage(message, e, null);
 	}
 
 	/**
-	 * Get formatted error message for bundle message and exception with given locale.
-	 * @param message bundle message
-	 * @param e exception
-	 * @param locale bundle locale
-	 * @return formatted message
+	 * Получить форматированное сообщение об ошибке для сообщения пакета и исключения с
+	 * заданной локалью.
+	 * @param message сообщение пакета
+	 * @param e исключение
+	 * @param locale локаль пакета
+	 * @return форматированное сообщение
 	 */
 	public static String getExceptionMessage(BundleMessage message, Exception e, Locale locale) {
 		StringBuilder buffer = new StringBuilder();
@@ -195,7 +200,7 @@ public class BundleMessage implements Serializable {
 	}
 
 	/**
-	 * Typed bundle message collection
+	 * Коллекция сообщений типизированного пакета
 	 */
 	public static class BundleMessageList extends ArrayList<BundleMessage> {
 

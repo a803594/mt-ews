@@ -21,8 +21,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Special X509 Key Manager that handles cases where more than one private key is
- * sufficient to establish the HTTPs connection by asking the user to select one.
+ * Специальный X509 менеджер ключей, который обрабатывает случаи, когда более одного
+ * закрытого ключа достаточно для установления HTTPS-соединения, запрашивая у пользователя
+ * выбор одного из них.
  */
 @Slf4j
 public class MosTechEwsX509KeyManager implements X509KeyManager {
@@ -34,26 +35,26 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
 	private String cachedAlias;
 
 	/**
-	 * Build the specialized key manager wrapping the default one
-	 * @param keyManager original key manager
+	 * Создает специализированный менеджер ключей, оборачивающий стандартный
+	 * @param keyManager оригинальный менеджер ключей
 	 */
 	public MosTechEwsX509KeyManager(X509KeyManager keyManager) {
 		this.keyManager = keyManager;
 	}
 
 	/**
-	 * Get the client aliases, simply pass this through to wrapped key manager
+	 * Получить алиасы клиента, просто передайте это в обернутый менеджер ключей
 	 */
 	public String[] getClientAliases(String string, Principal[] principals) {
 		return keyManager.getClientAliases(string, principals);
 	}
 
 	/**
-	 * Select a client alias. Some servers are misconfigured and claim to accept any
-	 * client certificate during the SSL handshake, however OWA only authenticates using a
-	 * single certificate.
+	 * Выберите псевдоним клиента. Некоторые серверы неправильно настроены и утверждают,
+	 * что принимают любой клиентский сертификат во время SSL-рукопожатия, однако OWA
+	 * аутентифицируется только с использованием одного сертификата.
 	 * <p/>
-	 * This method allows the user to select the right client certificate
+	 * Этот метод позволяет пользователю выбрать правильный клиентский сертификат
 	 */
 	public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
 		log.debug("Find client certificates issued by: " + Arrays.asList(issuers));
@@ -168,10 +169,10 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
 	}
 
 	/**
-	 * PKCS11 aliases are in the format: dd.0, dd is incremented every time the SSL
-	 * connection is re-negotiated
-	 * @param alias original alias
-	 * @return alias without prefix
+	 * Алиасы PKCS11 имеют формат: dd.0, где dd увеличивается каждый раз, когда соединение
+	 * SSL переобговаривается
+	 * @param alias исходный алиас
+	 * @return алиас без префикса
 	 */
 	protected String stripAlias(String alias) {
 		String value = alias;
@@ -186,21 +187,21 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
 	}
 
 	/**
-	 * Passthrough to wrapped keymanager
+	 * Проксирование к обернутому менеджеру ключей
 	 */
 	public String[] getServerAliases(String string, Principal[] prncpls) {
 		return keyManager.getServerAliases(string, prncpls);
 	}
 
 	/**
-	 * Passthrough to wrapped keymanager
+	 * Проксирование к обернутому менеджеру ключей
 	 */
 	public String chooseServerAlias(String string, Principal[] prncpls, Socket socket) {
 		return keyManager.chooseServerAlias(string, prncpls, socket);
 	}
 
 	/**
-	 * Passthrough to wrapped keymanager
+	 * Проксирование к обернутому менеджеру ключей
 	 */
 	public X509Certificate[] getCertificateChain(String string) {
 		X509Certificate[] certificates = keyManager.getCertificateChain(string);
@@ -211,7 +212,7 @@ public class MosTechEwsX509KeyManager implements X509KeyManager {
 	}
 
 	/**
-	 * Passthrough to wrapped keymanager
+	 * Проксирование к обернутому менеджеру ключей
 	 */
 	public PrivateKey getPrivateKey(String string) {
 		return keyManager.getPrivateKey(string);

@@ -22,7 +22,7 @@ import java.security.PrivilegedAction;
 import java.security.Security;
 
 /**
- * Kerberos helper class.
+ * Вспомогательный класс Kerberos.
  */
 @Slf4j
 public class KerberosHelper {
@@ -99,29 +99,29 @@ public class KerberosHelper {
 	}
 
 	/**
-	 * Force client principal in callback handler
-	 * @param principal client principal
+	 * Принудительный клиентский принципал в обработчике обратного вызова
+	 * @param principal клиентский принципал
 	 */
 	public static void setClientPrincipal(String principal) {
 		KERBEROS_CALLBACK_HANDLER.principal = principal;
 	}
 
 	/**
-	 * Force client password in callback handler
-	 * @param password client password
+	 * Принудительно устанавливает пароль клиента в обработчике обратного вызова
+	 * @param password пароль клиента
 	 */
 	public static void setClientPassword(String password) {
 		KERBEROS_CALLBACK_HANDLER.password = password;
 	}
 
 	/**
-	 * Get response Kerberos token for host with provided token.
-	 * @param protocol target protocol
-	 * @param host target host
-	 * @param token input token
-	 * @return response token
-	 * @throws GSSException on error
-	 * @throws LoginException on error
+	 * Получить токен Kerberos ответа для хоста с предоставленным токеном.
+	 * @param protocol целевой протокол
+	 * @param host целевой хост
+	 * @param token входной токен
+	 * @return токен ответа
+	 * @throws GSSException при ошибке
+	 * @throws LoginException при ошибке
 	 */
 	public static byte[] initSecurityContext(final String protocol, final String host, final byte[] token)
 			throws GSSException, LoginException {
@@ -129,17 +129,17 @@ public class KerberosHelper {
 	}
 
 	/**
-	 * Get response Kerberos token for host with provided token, use client provided
-	 * delegation credentials. Used to authenticate with target host on a gateway server
-	 * with client credentials, gateway must have its own principal authorized for
-	 * delegation
-	 * @param protocol target protocol
-	 * @param host target host
-	 * @param delegatedCredentials client delegated credentials
-	 * @param token input token
-	 * @return response token
-	 * @throws GSSException on error
-	 * @throws LoginException on error
+	 * Получите токен Kerberos ответа для хоста с указанным токеном, используйте
+	 * предоставленные клиентом делегированные учетные данные. Используется для
+	 * аутентификации с целевым хостом на шлюзовом сервере с учетными данными клиента,
+	 * шлюз должен иметь собственного принципала, уполномоченного на делегирование
+	 * @param protocol целевой протокол
+	 * @param host целевой хост
+	 * @param delegatedCredentials клиентские делегированные учетные данные
+	 * @param token входной токен
+	 * @return токен ответа
+	 * @throws GSSException при ошибке
+	 * @throws LoginException при ошибке
 	 */
 	public static byte[] initSecurityContext(final String protocol, final String host,
 			final GSSCredential delegatedCredentials, final byte[] token) throws GSSException, LoginException {
@@ -232,11 +232,12 @@ public class KerberosHelper {
 	}
 
 	/**
-	 * Create server side Kerberos login context for provided credentials.
-	 * @param serverPrincipal server principal
-	 * @param serverPassword server passsword
-	 * @return LoginContext server login context
-	 * @throws LoginException on error
+	 * Создать контекст входа Kerberos на стороне сервера для предоставленных учетных
+	 * данных.
+	 * @param serverPrincipal серверный принципал
+	 * @param serverPassword серверный пароль
+	 * @return LoginContext контекст входа сервера
+	 * @throws LoginException в случае ошибки
 	 */
 	public static LoginContext serverLogin(final String serverPrincipal, final String serverPassword)
 			throws LoginException {
@@ -261,33 +262,34 @@ public class KerberosHelper {
 	}
 
 	/**
-	 * Contains server Kerberos context information in server mode.
+	 * Содержит информацию о контексте Kerberos сервера в серверном режиме.
 	 */
 	public static class SecurityContext {
 
 		/**
-		 * response token
+		 * токен ответа
 		 */
 		public byte[] token;
 
 		/**
-		 * authenticated principal
+		 * аутентифицированный принципал
 		 */
 		public String principal;
 
 		/**
-		 * client delegated credential
+		 * делегированные учетные данные клиента
 		 */
 		public GSSCredential clientCredential;
 
 	}
 
 	/**
-	 * Check client provided Kerberos token in server login context
-	 * @param serverLoginContext server login context
-	 * @param token Kerberos client token
-	 * @return result with client principal and optional returned Kerberos token
-	 * @throws GSSException on error
+	 * Проверьте предоставленный клиентом токен Kerberos в контексте входа на сервер
+	 * @param serverLoginContext контекст входа на сервер
+	 * @param token токен клиента Kerberos
+	 * @return результат с клиентским принципалом и необязательным возвращаемым токеном
+	 * Kerberos
+	 * @throws GSSException в случае ошибки
 	 */
 	public static SecurityContext acceptSecurityContext(LoginContext serverLoginContext, final byte[] token)
 			throws GSSException {
@@ -301,8 +303,8 @@ public class KerberosHelper {
 				// get server credentials from context
 				Oid krb5oid = new Oid("1.2.840.113554.1.2.2");
 				GSSCredential serverCreds = manager.createCredential(
-						null/* use name from login context */, GSSCredential.DEFAULT_LIFETIME, krb5oid,
-						GSSCredential.ACCEPT_ONLY/* server mode */);
+						null/* используйте имя из контекста входа */, GSSCredential.DEFAULT_LIFETIME, krb5oid,
+						GSSCredential.ACCEPT_ONLY/* режим сервера */);
 				context = manager.createContext(serverCreds);
 
 				securityContext.token = context.acceptSecContext(token, 0, token.length);

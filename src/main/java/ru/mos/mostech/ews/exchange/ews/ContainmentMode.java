@@ -4,7 +4,7 @@ DIT
 package ru.mos.mostech.ews.exchange.ews;
 
 /**
- * Contains search mode.
+ * Содержит режим поиска.
  */
 @SuppressWarnings({ "UnusedDeclaration" })
 public final class ContainmentMode extends AttributeOption {
@@ -19,17 +19,17 @@ public final class ContainmentMode extends AttributeOption {
 	}
 
 	/**
-	 * Full String.
+	 * Полная строка.
 	 */
 	public static final ContainmentMode FullString = new ContainmentMode("FullString");
 
 	/**
-	 * Starts with.
+	 * Начинается с.
 	 */
 	public static final ContainmentMode Prefixed = new ContainmentMode("Prefixed");
 
 	/**
-	 * Contains
+	 * Содержит
 	 */
 	public static final ContainmentMode Substring = new ContainmentMode("Substring");
 
