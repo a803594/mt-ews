@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import ru.mos.mostech.ews.BundleMessage;
 import ru.mos.mostech.ews.Settings;
-import ru.mos.mostech.ews.ui.tray.MosTechEwsTray;
 
 import javax.swing.*;
 import javax.xml.XMLConstants;
@@ -81,12 +80,6 @@ public class O365InteractiveAuthenticatorFrame extends JFrame {
 		});
 
 		setTitle(BundleMessage.format("UI_MT_EWS_GATEWAY"));
-		try {
-			setIconImages(MosTechEwsTray.getFrameIcons());
-		}
-		catch (NoSuchMethodError error) {
-			MosTechEwsTray.debug(new BundleMessage("LOG_UNABLE_TO_SET_ICON_IMAGE"));
-		}
 
 		JPanel mainPanel = new JPanel();
 

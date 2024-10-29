@@ -85,12 +85,14 @@ public class HttpServer {
 
 		// String keystoreFile = Settings.getProperty("mt.ews.ssl.keystoreFile");
 		// if (keystoreFile == null || keystoreFile.isEmpty()) {
-		// 	return com.sun.net.httpserver.HttpServer.create(new InetSocketAddress("localhost", port), 0);
+		// return com.sun.net.httpserver.HttpServer.create(new
+		// InetSocketAddress("localhost", port), 0);
 		// }
 		// SSLContext sslContext = SSLContext.getInstance("TLS");
 		// sslContext.init(KeysUtils.getKeyManagers(), null, null);
 		// Создаем сервер на указанном порту
-		// HttpsServer server = HttpsServer.create(new InetSocketAddress("localhost", port), 0);
+		// HttpsServer server = HttpsServer.create(new InetSocketAddress("localhost",
+		// port), 0);
 		// server.setHttpsConfigurator(new HttpsConfigurator(sslContext));
 		// return server;
 	}
