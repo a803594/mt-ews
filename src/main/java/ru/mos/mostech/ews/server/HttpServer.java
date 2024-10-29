@@ -33,7 +33,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
 @Slf4j
 @UtilityClass
@@ -313,7 +312,7 @@ public class HttpServer {
 
 				if (userLogPath.isPresent()) {
 					File file = new File(userLogPath.get().toString());
-					sendZipFile(exchange, 200, file);
+					sendZipFile(exchange, file);
 				}
 				else {
 					throw new UnsupportedOperationException("Не удалось найти имя пользователя");
@@ -328,6 +327,19 @@ public class HttpServer {
 			}
 		}
 
+		private static void sendZipFile(HttpExchange exchange, File file) throws IOException {
+			Headers headers = exchange.getResponseHeaders();
+			headers.add(CONTENT_TYPE, APPLICATION_ZIP);
+			headers.add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+			headers.add(CONTENT_DISPOSITION, String.format("attachment; filename=%s", file.getName()));
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ZipUtil.zipFolder(file.toPath(), bos);
+			exchange.sendResponseHeaders(200, bos.size());
+			OutputStream os = exchange.getResponseBody();
+			bos.writeTo(os);
+			bos.close();
+			os.close();
+		}
 	}
 
 	private static String readBodyRequest(HttpExchange exchange) throws IOException {
@@ -343,20 +355,6 @@ public class HttpServer {
 		exchange.sendResponseHeaders(status, response.getBytes(StandardCharsets.UTF_8).length);
 		OutputStream os = exchange.getResponseBody();
 		os.write(response.getBytes(StandardCharsets.UTF_8));
-		os.close();
-	}
-
-	private static void sendZipFile(HttpExchange exchange, int status, File file) throws IOException {
-		Headers headers = exchange.getResponseHeaders();
-		headers.add(CONTENT_TYPE, APPLICATION_ZIP);
-		headers.add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-		headers.add(CONTENT_DISPOSITION, String.format("attachment; filename=%s", file.getName()));
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ZipUtil.zipFolder(file.toPath(), bos);
-		exchange.sendResponseHeaders(status, bos.size());
-		OutputStream os = exchange.getResponseBody();
-		bos.writeTo(os);
-		bos.close();
 		os.close();
 	}
 
