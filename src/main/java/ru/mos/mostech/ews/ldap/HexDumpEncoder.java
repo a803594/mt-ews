@@ -6,6 +6,7 @@ package ru.mos.mostech.ews.ldap;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Этот класс кодирует буфер в классический формат: "Шестнадцатеричный дамп" прошлого. Это
@@ -153,7 +154,7 @@ public class HexDumpEncoder {
 		try {
 			encode(inStream, outStream);
 			// explicit ascii->unicode conversion
-			retVal = outStream.toString("ISO-8859-1");
+			retVal = outStream.toString(StandardCharsets.ISO_8859_1);
 		}
 		catch (Exception IOException) {
 			// This should never happen.

@@ -63,7 +63,7 @@ public class MosTechEwsProxySelector extends ProxySelector {
 			final String[] domains = noProxyFor.toLowerCase().split(",\\s*");
 			for (String domain : domains) {
 				if (urihost.endsWith(domain)) {
-					return true; // break;
+					return true;
 				}
 			}
 		}

@@ -287,7 +287,6 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	// LDAP version
-	// static final int LDAP_VERSION2 = 0x02;
 	static final int LDAP_VERSION3 = 0x03;
 
 	// LDAP request operations
@@ -317,11 +316,8 @@ public class LdapConnection extends AbstractConnection {
 	// LDAP filter operators
 	static final int LDAP_FILTER_SUBSTRINGS = 0xa4;
 
-	// static final int LDAP_FILTER_GE = 0xa5;
-	// static final int LDAP_FILTER_LE = 0xa6;
 	static final int LDAP_FILTER_PRESENT = 0x87;
 
-	// static final int LDAP_FILTER_APPROX = 0xa8;
 	static final int LDAP_FILTER_EQUALITY = 0xa3;
 
 	// LDAP filter mode
@@ -336,9 +332,6 @@ public class LdapConnection extends AbstractConnection {
 
 	// LDAP search scope
 	static final int SCOPE_BASE_OBJECT = 0;
-
-	// static final int SCOPE_ONE_LEVEL = 1;
-	// static final int SCOPE_SUBTREE = 2;
 
 	/**
 	 * Сервис SASL для аутентификации DIGEST-MD5
@@ -497,7 +490,6 @@ public class LdapConnection extends AbstractConnection {
 	protected static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
 	protected void handleRequest(byte[] inbuf, int offset) throws IOException {
-		// dumpBer(inbuf, offset);
 		BerDecoder reqBer = new BerDecoder(inbuf, 0, offset);
 		int currentMessageId = 0;
 		try {
@@ -520,21 +512,19 @@ public class LdapConnection extends AbstractConnection {
 					CallbackHandler callbackHandler = callbacks -> {
 						// look for username in callbacks
 						for (Callback callback : callbacks) {
-							if (callback instanceof NameCallback) {
-								userName = extractRdnValue(((NameCallback) callback).getDefaultName());
+							if (callback instanceof NameCallback nameCallback) {
+								userName = extractRdnValue(nameCallback.getDefaultName());
 								// get password from session pool
 								password = ExchangeSessionFactory.getUserPassword(userName);
 							}
 						}
 						// handle other callbacks
 						for (Callback callback : callbacks) {
-							if (callback instanceof AuthorizeCallback) {
-								((AuthorizeCallback) callback).setAuthorized(true);
+							if (callback instanceof AuthorizeCallback authorizeCallback) {
+								authorizeCallback.setAuthorized(true);
 							}
-							else if (callback instanceof PasswordCallback) {
-								if (password != null) {
-									((PasswordCallback) callback).setPassword(password.toCharArray());
-								}
+							else if (callback instanceof PasswordCallback passwordCallback && password != null) {
+								passwordCallback.setPassword(password.toCharArray());
 							}
 						}
 					};
@@ -815,7 +805,6 @@ public class LdapConnection extends AbstractConnection {
 		Map<String, Object> attributes = new HashMap<>();
 		attributes.put("objectClass", "top");
 		attributes.put("namingContexts", NAMING_CONTEXTS);
-		// attributes.put("supportedsaslmechanisms", "PLAIN");
 
 		sendEntry(currentMessageId, "Root DSE", attributes);
 	}
@@ -926,8 +915,8 @@ public class LdapConnection extends AbstractConnection {
 				responseBer.encodeString(entry.getKey(), isLdapV3());
 				responseBer.beginSeq(LBER_SET);
 				Object values = entry.getValue();
-				if (values instanceof String) {
-					responseBer.encodeString((String) values, isLdapV3());
+				if (values instanceof String string) {
+					responseBer.encodeString(string, isLdapV3());
 				}
 				else if (values instanceof List) {
 					for (Object value : (Iterable) values) {
@@ -973,8 +962,6 @@ public class LdapConnection extends AbstractConnection {
 	}
 
 	protected void sendResponse() throws IOException {
-		// Ber.dumpBER(System.out, ">\n", responseBer.getBuf(), 0,
-		// responseBer.getDataLen());
 		os.write(responseBer.getBuf(), 0, responseBer.getDataLen());
 		os.flush();
 	}

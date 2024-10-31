@@ -360,9 +360,6 @@ public class GraphExchangeSession extends ExchangeSession {
 
 		JSONObject jsonResponse = executeJsonRequest(httpRequestBuilder);
 
-		// todo check missing folder
-		// throw new HttpNotFoundException("Folder " + folderPath + " not found");
-
 		Folder folder = buildFolder(jsonResponse);
 		folder.setFolderPath(folderPath);
 

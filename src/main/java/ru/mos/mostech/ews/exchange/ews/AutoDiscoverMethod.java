@@ -41,10 +41,9 @@ public class AutoDiscoverMethod extends HttpPost implements ResponseHandler {
 			Header contentTypeHeader = response.getFirstHeader("Content-Type");
 			if (contentTypeHeader != null && ("text/xml; charset=utf-8".equals(contentTypeHeader.getValue())
 					|| "text/html; charset=utf-8".equals(contentTypeHeader.getValue()))) {
-				BufferedReader autodiscoverReader = null;
-				try {
-					autodiscoverReader = new BufferedReader(
-							new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8));
+				try (BufferedReader autodiscoverReader = new BufferedReader(
+						new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8))) {
+
 					String line;
 					// find ews url
 					// noinspection StatementWithEmptyBody
@@ -57,16 +56,6 @@ public class AutoDiscoverMethod extends HttpPost implements ResponseHandler {
 				}
 				catch (IOException e) {
 					log.debug("", e);
-				}
-				finally {
-					if (autodiscoverReader != null) {
-						try {
-							autodiscoverReader.close();
-						}
-						catch (IOException e) {
-							log.debug("", e);
-						}
-					}
 				}
 			}
 

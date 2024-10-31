@@ -523,8 +523,6 @@ public class HttpClientAdapter implements Closeable {
 		MultiStatusResponse[] responses;
 		try (CloseableHttpResponse response = execute(request)) {
 			List<MultiStatusResponse> responseList = request.handleResponse(response);
-			// TODO check error handling
-			// request.checkSuccess(response);
 			responses = responseList.toArray(new MultiStatusResponse[0]);
 		}
 		return responses;

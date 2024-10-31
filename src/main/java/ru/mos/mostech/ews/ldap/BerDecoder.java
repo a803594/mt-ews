@@ -4,7 +4,6 @@
 
 package ru.mos.mostech.ews.ldap;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -216,7 +215,7 @@ public final class BerDecoder extends Ber {
 	public String parseStringWithTag(int tag, boolean decodeUTF8, int[] rlen) throws DecodeException {
 
 		int st;
-		int origOffset = offset;
+		int originOffset = offset;
 
 		if ((st = parseByte()) != tag) {
 			throw new DecodeException(
@@ -241,18 +240,13 @@ public final class BerDecoder extends Ber {
 				retstr = new String(buf2, StandardCharsets.UTF_8);
 			}
 			else {
-				try {
-					retstr = new String(buf2, "8859_1");
-				}
-				catch (UnsupportedEncodingException e) {
-					throw new DecodeException("8859_1 not available on platform");
-				}
+				retstr = new String(buf2, StandardCharsets.ISO_8859_1);
 			}
 			offset += len;
 		}
 
 		if (rlen != null) {
-			rlen[0] = offset - origOffset;
+			rlen[0] = offset - originOffset;
 		}
 
 		return retstr;
@@ -271,7 +265,7 @@ public final class BerDecoder extends Ber {
 	 */
 	public byte[] parseOctetString(int tag, int[] rlen) throws DecodeException {
 
-		int origOffset = offset;
+		int originOffset = offset;
 		int st;
 		if ((st = parseByte()) != tag) {
 
@@ -291,7 +285,7 @@ public final class BerDecoder extends Ber {
 		}
 
 		if (rlen != null) {
-			rlen[0] = offset - origOffset;
+			rlen[0] = offset - originOffset;
 		}
 
 		return retarr;

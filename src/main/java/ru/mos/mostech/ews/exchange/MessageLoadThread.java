@@ -28,6 +28,7 @@ public class MessageLoadThread extends Thread {
 		this.message = message;
 	}
 
+	@Override
 	public void run() {
 		try {
 			message.loadMimeMessage();

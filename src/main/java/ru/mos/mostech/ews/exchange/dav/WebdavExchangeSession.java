@@ -88,13 +88,11 @@ public class WebdavExchangeSession extends ExchangeSession {
 	static final Map<String, String> taskTovTodoStatusMap = new HashMap<>();
 
 	static {
-		// taskTovTodoStatusMap.put("0", null);
 		taskTovTodoStatusMap.put("1", "IN-PROCESS");
 		taskTovTodoStatusMap.put("2", "COMPLETED");
 		taskTovTodoStatusMap.put("3", "NEEDS-ACTION");
 		taskTovTodoStatusMap.put("4", "CANCELLED");
 
-		// vTodoToTaskStatusMap.put(null, "0");
 		vTodoToTaskStatusMap.put("IN-PROCESS", "1");
 		vTodoToTaskStatusMap.put("COMPLETED", "2");
 		vTodoToTaskStatusMap.put("NEEDS-ACTION", "3");
@@ -1200,7 +1198,7 @@ public class WebdavExchangeSession extends ExchangeSession {
 		 * @throws IOException в случае ошибки
 		 * @throws MosTechEwsException в случае ошибки
 		 */
-		public Contact(MultiStatusResponse multiStatusResponse) throws IOException, MosTechEwsException {
+		public Contact(MultiStatusResponse multiStatusResponse) throws IOException {
 			setHref(URIUtil.decode(multiStatusResponse.getHref()));
 			DavPropertySet properties = multiStatusResponse.getProperties(HttpStatus.SC_OK);
 			permanentUrl = getURLPropertyIfExists(properties, "permanenturl");
@@ -1355,8 +1353,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 
 					Set<PropertyValue> picturePropertyValues = new HashSet<>();
 					picturePropertyValues.add(Field.createPropertyValue("attachmentContactPhoto", "true"));
-					// picturePropertyValues.add(Field.createPropertyValue("renderingPosition",
-					// "-1"));
 					picturePropertyValues.add(Field.createPropertyValue("attachExtension", ".jpg"));
 
 					final ExchangePropPatchRequest attachmentPropPatchRequest = new ExchangePropPatchRequest(
@@ -1476,12 +1472,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 					throw e;
 				}
 			}
-			// debug code
-			/*
-			 * if (new String(result).indexOf("VTODO") < 0) { log.debug("Исходное тело: "
-			 * + new String(result)); result = getICSFromItemProperties();
-			 * log.debug("Перестроенное тело: " + new String(result)); }
-			 */
 
 			return result;
 		}
@@ -1492,8 +1482,6 @@ public class WebdavExchangeSession extends ExchangeSession {
 			// experimental: build VCALENDAR from properties
 
 			try {
-				// MultiStatusResponse[] responses =
-				// DavGatewayHttpClientFacade.executeMethod(httpClient, propFindMethod);
 				Set<String> eventProperties = new HashSet<>();
 				eventProperties.add("method");
 
@@ -2093,18 +2081,18 @@ public class WebdavExchangeSession extends ExchangeSession {
 		}
 		else {
 			Object value = property.getValue();
-			if (value instanceof Node) {
-				return ((Node) value).getTextContent();
+			if (value instanceof Node node) {
+				return node.getTextContent();
 			}
-			else if (value instanceof List) {
+			else if (value instanceof List list) {
 				StringBuilder buffer = new StringBuilder();
-				for (Object node : (List) value) {
-					if (buffer.length() > 0) {
+				for (Object node : list) {
+					if (!buffer.isEmpty()) {
 						buffer.append(',');
 					}
-					if (node instanceof Node) {
+					if (node instanceof Node n) {
 						// jackrabbit
-						buffer.append(((Node) node).getTextContent());
+						buffer.append(n.getTextContent());
 					}
 					else {
 						// ExchangeDavMethod
@@ -2805,8 +2793,7 @@ public class WebdavExchangeSession extends ExchangeSession {
 				propertyList.add(Field.createDavProperty("message-id", mimeMessage.getHeader("message-id", ",")));
 
 				MimePart mimePart = mimeMessage;
-				if (mimeMessage.getContent() instanceof MimeMultipart) {
-					MimeMultipart multiPart = (MimeMultipart) mimeMessage.getContent();
+				if (mimeMessage.getContent() instanceof MimeMultipart multiPart) {
 					for (int i = 0; i < multiPart.getCount(); i++) {
 						String contentType = multiPart.getBodyPart(i).getContentType();
 						if (contentType.startsWith("text/")) {
@@ -2937,18 +2924,11 @@ public class WebdavExchangeSession extends ExchangeSession {
 		}
 	}
 
-	// protected static final long MAPI_SEND_NO_RICH_INFO = 0x00010000L;
 	protected static final long ENCODING_PREFERENCE = 0x00020000L;
 
 	protected static final long ENCODING_MIME = 0x00040000L;
 
-	// protected static final long BODY_ENCODING_HTML = 0x00080000L;
 	protected static final long BODY_ENCODING_TEXT_AND_HTML = 0x00100000L;
-
-	// protected static final long MAC_ATTACH_ENCODING_UUENCODE = 0x00200000L;
-	// protected static final long MAC_ATTACH_ENCODING_APPLESINGLE = 0x00400000L;
-	// protected static final long MAC_ATTACH_ENCODING_APPLEDOUBLE = 0x00600000L;
-	// protected static final long OOP_DONT_LOOKUP = 0x10000000L;
 
 	@Override
 	public void sendMessage(MimeMessage mimeMessage) throws IOException {

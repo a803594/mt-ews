@@ -3,8 +3,6 @@ DIT
  */
 package ru.mos.mostech.ews.http;
 
-import ru.mos.mostech.ews.BundleMessage;
-
 import java.awt.*;
 
 /**

@@ -1617,7 +1617,7 @@ public abstract class ExchangeSession {
 		 */
 		@Override
 		public boolean equals(Object message) {
-			return message instanceof Message && imapUid == ((Message) message).imapUid;
+			return message instanceof Message msg && imapUid == msg.imapUid;
 		}
 
 		/**
@@ -2059,8 +2059,8 @@ public abstract class ExchangeSession {
 				}
 				else if (contentType.startsWith("multipart")) {
 					Object content = multiPart.getBodyPart(i).getContent();
-					if (content instanceof MimeMultipart) {
-						bodyPart = getCalendarMimePart((MimeMultipart) content);
+					if (content instanceof MimeMultipart multipart) {
+						bodyPart = getCalendarMimePart(multipart);
 					}
 				}
 			}
@@ -2086,8 +2086,8 @@ public abstract class ExchangeSession {
 			}
 			Object mimeBody = mimeMessage.getContent();
 			MimePart bodyPart = null;
-			if (mimeBody instanceof MimeMultipart) {
-				bodyPart = getCalendarMimePart((MimeMultipart) mimeBody);
+			if (mimeBody instanceof MimeMultipart multipart) {
+				bodyPart = getCalendarMimePart(multipart);
 			}
 			else if (isCalendarContentType(mimeMessage.getContentType())) {
 				// no multipart, single body
@@ -2171,27 +2171,14 @@ public abstract class ExchangeSession {
 					.append(after ? "-to" : "-from")
 					.append((after ^ fromServer) ? "-server" : "-client")
 					.append(".ics");
-				if ((icsBody != null) && (icsBody.length() > 0)) {
-					OutputStreamWriter writer = null;
-					try {
-						writer = new OutputStreamWriter(new FileOutputStream(filePath.toString()),
-								StandardCharsets.UTF_8);
+				if ((icsBody != null) && (!icsBody.isEmpty())) {
+					try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(filePath.toString()),
+							StandardCharsets.UTF_8)) {
 						writer.write(icsBody);
 					}
 					catch (IOException e) {
 						log.error("", e);
 					}
-					finally {
-						if (writer != null) {
-							try {
-								writer.close();
-							}
-							catch (IOException e) {
-								log.error("", e);
-							}
-						}
-					}
-
 				}
 			}
 
@@ -2527,7 +2514,7 @@ public abstract class ExchangeSession {
 
 	/**
 	 * Получить фото контакта из AD
-	 * @param адрес книги контактов
+	 * @param email книги контактов
 	 * @return фото контакта
 	 */
 	public ContactPhoto getADPhoto(String email) {

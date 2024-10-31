@@ -1118,10 +1118,9 @@ public class ImapConnection extends AbstractConnection {
 							}
 
 							Object mimeBody = bodyPart.getContent();
-							if (mimeBody instanceof MimeMultipart) {
-								MimeMultipart multiPart = (MimeMultipart) mimeBody;
-								if (subPartIndex - 1 < multiPart.getCount()) {
-									bodyPart = (MimePart) multiPart.getBodyPart(subPartIndex - 1);
+							if (mimeBody instanceof MimeMultipart multipart) {
+								if (subPartIndex - 1 < multipart.getCount()) {
+									bodyPart = (MimePart) multipart.getBodyPart(subPartIndex - 1);
 								}
 								else {
 									throw new MosTechEwsException("EXCEPTION_INVALID_PARAMETER", param);
@@ -1134,8 +1133,8 @@ public class ImapConnection extends AbstractConnection {
 
 						// write selected part, without headers
 						partOutputStream = new PartialOutputStream(baos, startIndex, maxSize);
-						if (bodyPart instanceof MimeMessage) {
-							partInputStream = ((MimeMessage) bodyPart).getRawInputStream();
+						if (bodyPart instanceof MimeMessage mimeMessage) {
+							partInputStream = mimeMessage.getRawInputStream();
 						}
 						else {
 							partInputStream = ((MimeBodyPart) bodyPart).getRawInputStream();
@@ -1442,8 +1441,8 @@ public class ImapConnection extends AbstractConnection {
 		try {
 			MimeMessage mimeMessage = message.getMimeMessage();
 			Object mimeBody = mimeMessage.getContent();
-			if (mimeBody instanceof MimeMultipart) {
-				appendBodyStructure(buffer, (MimeMultipart) mimeBody);
+			if (mimeBody instanceof MimeMultipart multipart) {
+				appendBodyStructure(buffer, multipart);
 			}
 			else {
 				// no multipart, single body
@@ -1465,8 +1464,8 @@ public class ImapConnection extends AbstractConnection {
 			MimeBodyPart bodyPart = (MimeBodyPart) multiPart.getBodyPart(i);
 			try {
 				Object mimeBody = bodyPart.getContent();
-				if (mimeBody instanceof MimeMultipart) {
-					appendBodyStructure(buffer, (MimeMultipart) mimeBody);
+				if (mimeBody instanceof MimeMultipart mimeMultipart) {
+					appendBodyStructure(buffer, mimeMultipart);
 				}
 				else {
 					// no multipart, single body
@@ -1583,8 +1582,7 @@ public class ImapConnection extends AbstractConnection {
 		}
 		else if ("MESSAGE".equals(type)) {
 			Object bodyPartContent = bodyPart.getContent();
-			if (bodyPartContent instanceof MimeMessage) {
-				MimeMessage innerMessage = (MimeMessage) bodyPartContent;
+			if (bodyPartContent instanceof MimeMessage innerMessage) {
 				appendEnvelope(buffer, innerMessage);
 				appendBodyStructure(buffer, innerMessage);
 				appendBodyStructureValue(buffer, lineCount);
@@ -1709,7 +1707,6 @@ public class ImapConnection extends AbstractConnection {
 		if ("NOT".equals(token)) {
 			String nextToken = tokens.nextToken();
 			if ("DELETED".equals(nextToken)) {
-				// conditions.deleted = Boolean.FALSE;
 				return session.isNull("deleted");
 			}
 			else if ("KEYWORD".equals(nextToken)) {
@@ -1770,11 +1767,9 @@ public class ImapConnection extends AbstractConnection {
 			conditions.draft = Boolean.FALSE;
 		}
 		else if ("DELETED".equals(token)) {
-			// conditions.deleted = Boolean.TRUE;
 			return session.isEqualTo("deleted", "1");
 		}
 		else if ("UNDELETED".equals(token) || "NOT DELETED".equals(token)) {
-			// conditions.deleted = Boolean.FALSE;
 			return session.isNull("deleted");
 		}
 		else if ("FLAGGED".equals(token)) {
@@ -2315,6 +2310,7 @@ public class ImapConnection extends AbstractConnection {
 			return message;
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
@@ -2405,6 +2401,7 @@ public class ImapConnection extends AbstractConnection {
 			return messages.get(currentIndex++);
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}

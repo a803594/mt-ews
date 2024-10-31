@@ -195,7 +195,7 @@ public class O365InteractiveAuthenticatorFrame extends JFrame {
 
 			transformer.transform(new DOMSource(document),
 					new StreamResult(new OutputStreamWriter(baos, StandardCharsets.UTF_8)));
-			result = baos.toString("UTF-8");
+			result = baos.toString(StandardCharsets.UTF_8);
 		}
 		catch (Exception e) {
 			result = e + " " + e.getMessage();
