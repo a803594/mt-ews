@@ -32,15 +32,10 @@ public class KerberosLoginConfiguration extends Configuration {
 
 		clientLoginModuleOptions.put("useTicketCache", "true");
 		clientLoginModuleOptions.put("renewTGT", "true");
-		// clientLoginModuleOptions.put("doNotPrompt", "true");
 		String krb5ccName = System.getenv().get("KRB5CCNAME");
 		if (krb5ccName != null && !krb5ccName.isEmpty()) {
 			clientLoginModuleOptions.put("ticketCache", krb5ccName);
 		}
-		// clientLoginModuleOptions.put("ticketCache",
-		// FileCredentialsCache.getDefaultCacheName());
-		// clientLoginModuleOptions.put("refreshKrb5Config", "true");
-		// clientLoginModuleOptions.put("storeKey", "true");
 		CLIENT_LOGIN_MODULE = new AppConfigurationEntry[] {
 				new AppConfigurationEntry("com.sun.security.auth.module.Krb5LoginModule",
 						AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, clientLoginModuleOptions) };

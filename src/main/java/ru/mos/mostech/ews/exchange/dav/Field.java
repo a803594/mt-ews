@@ -193,7 +193,6 @@ public class Field {
 		createField(URN_SCHEMAS_CALENDAR, "dtstart"); // 0x10C3 SystemTime
 		createField(URN_SCHEMAS_CALENDAR, "dtend"); // 0x10C4 SystemTime
 
-		// createField(URN_SCHEMAS_CALENDAR, "prodid"); // //
 		// DistinguishedPropertySetType.PublicStrings/urn:schemas:calendar:prodid/String
 		createField("calendarversion", URN_SCHEMAS_CALENDAR, "version"); // DistinguishedPropertySetType.PublicStrings/urn:schemas:calendar:version/String
 		createField(URN_SCHEMAS_CALENDAR, "method"); // //
@@ -405,7 +404,7 @@ public class Field {
 
 		createField("attachmentContactPhoto", 0x7FFF, PropertyType.Boolean); // PR_ATTACHMENT_CONTACTPHOTO
 		createField("renderingPosition", 0x370B, PropertyType.Integer);// PR_RENDERING_POSITION
-		// createField("attachFilename", 0x3704, PropertyType.String); //
+
 		// PR_ATTACH_FILENAME
 		createField("attachExtension", 0x3703, PropertyType.String); // PR_ATTACH_EXTENSION
 

@@ -51,24 +51,24 @@ public class KerberosHelper {
 
 		public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 			for (Callback callback : callbacks) {
-				if (callback instanceof NameCallback) {
+				if (callback instanceof NameCallback nameCallback) {
 					if (principal == null) {
-						System.out.print(((NameCallback) callback).getPrompt());
+						System.out.print(nameCallback.getPrompt());
 						BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
 						principal = inReader.readLine();
 					}
 					if (principal == null) {
 						throw new IOException("KerberosCallbackHandler: failed to retrieve principal");
 					}
-					((NameCallback) callback).setName(principal);
+					nameCallback.setName(principal);
 
 				}
-				else if (callback instanceof PasswordCallback) {
+				else if (callback instanceof PasswordCallback passwordCallback) {
 					if (password == null) {
 						// if we get there kerberos token is missing or invalid
 						if (Settings.getBooleanProperty("mt.ews.server") || GraphicsEnvironment.isHeadless()) {
 							// headless or server mode
-							System.out.print(((PasswordCallback) callback).getPrompt());
+							System.out.print(passwordCallback.getPrompt());
 							BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
 							password = inReader.readLine();
 						}
@@ -76,7 +76,7 @@ public class KerberosHelper {
 					if (password == null) {
 						throw new IOException("KerberosCallbackHandler: failed to retrieve password");
 					}
-					((PasswordCallback) callback).setPassword(password.toCharArray());
+					passwordCallback.setPassword(password.toCharArray());
 
 				}
 				else {
@@ -172,11 +172,10 @@ public class KerberosHelper {
 			}
 
 			Object result = internalInitSecContext(protocol, host, delegatedCredentials, token);
-			if (result instanceof GSSException) {
-				log.info("KerberosHelper.initSecurityContext exception code " + ((GSSException) result).getMajor()
-						+ " minor code " + ((GSSException) result).getMinor() + " message "
-						+ ((Throwable) result).getMessage());
-				throw (GSSException) result;
+			if (result instanceof GSSException exception) {
+				log.info("KerberosHelper.initSecurityContext exception code " + exception.getMajor() + " minor code "
+						+ exception.getMinor() + " message " + ((Throwable) result).getMessage());
+				throw exception;
 			}
 
 			log.debug("KerberosHelper.initSecurityContext return " + ((byte[]) result).length + " bytes token");
@@ -197,7 +196,6 @@ public class KerberosHelper {
 
 				context = manager.createContext(serverName, krb5Oid, delegatedCredentials, GSSContext.DEFAULT_LIFETIME);
 
-				// context.requestMutualAuth(true);
 				// TODO: used by IIS to pass token to Exchange ?
 				context.requestCredDeleg(true);
 
@@ -232,12 +230,10 @@ public class KerberosHelper {
 			throws LoginException {
 		LoginContext serverLoginContext = new LoginContext("spnego-server", callbacks -> {
 			for (Callback callback : callbacks) {
-				if (callback instanceof NameCallback) {
-					final NameCallback nameCallback = (NameCallback) callback;
+				if (callback instanceof NameCallback nameCallback) {
 					nameCallback.setName(serverPrincipal);
 				}
-				else if (callback instanceof PasswordCallback) {
-					final PasswordCallback passCallback = (PasswordCallback) callback;
+				else if (callback instanceof PasswordCallback passCallback) {
 					passCallback.setPassword(serverPassword.toCharArray());
 				}
 				else {
@@ -325,11 +321,10 @@ public class KerberosHelper {
 			}
 			return innerResult;
 		});
-		if (result instanceof GSSException) {
-			log.info("KerberosHelper.acceptSecurityContext exception code " + ((GSSException) result).getMajor()
-					+ " minor code " + ((GSSException) result).getMinor() + " message "
-					+ ((Throwable) result).getMessage());
-			throw (GSSException) result;
+		if (result instanceof GSSException exception) {
+			log.info("KerberosHelper.acceptSecurityContext exception code " + exception.getMajor() + " minor code "
+					+ exception.getMinor() + " message " + ((Throwable) result).getMessage());
+			throw exception;
 		}
 		return (SecurityContext) result;
 	}

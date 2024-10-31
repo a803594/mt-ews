@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -23,7 +24,7 @@ public class MimeOutputStreamWriter extends OutputStreamWriter {
 	 * @throws UnsupportedEncodingException в случае ошибки
 	 */
 	public MimeOutputStreamWriter(OutputStream out) throws UnsupportedEncodingException {
-		super(out, "ASCII");
+		super(out, StandardCharsets.US_ASCII);
 	}
 
 	/**
@@ -34,7 +35,7 @@ public class MimeOutputStreamWriter extends OutputStreamWriter {
 	 */
 	public void writeHeader(String header, String value) throws IOException {
 		// do not write empty headers
-		if (value != null && value.length() > 0) {
+		if (value != null && !value.isEmpty()) {
 			write(header);
 			write(": ");
 			write(MimeUtility.encodeText(value, "UTF-8", null));

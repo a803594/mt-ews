@@ -84,9 +84,6 @@ public class MosTechEwsSSLSocketFactory extends SSLSocketFactory {
 		// required)
 		if ("MSCAPI".equals(clientKeystoreType)) {
 			try {
-				// Provider provider = (Provider)
-				// Class.forName("sun.security.mscapi.SunMSCAPI").getDeclaredConstructor().newInstance();
-				// KeyStore keyStore = KeyStore.getInstance("Windows-MY", provider);
 				KeyStore keyStore = KeyStore.getInstance("Windows-MY");
 				keyStore.load(null, null);
 				keyStoreBuilders.add(KeyStore.Builder.newInstance(keyStore, new KeyStore.PasswordProtection(null)));
@@ -106,8 +103,8 @@ public class MosTechEwsSSLSocketFactory extends SSLSocketFactory {
 		// a specialized wrapped MT-EWS X509 Key Manager
 		for (int i = 0; i < keyManagers.length; i++) {
 			KeyManager keyManager = keyManagers[i];
-			if (keyManager instanceof X509KeyManager) {
-				keyManagers[i] = new MosTechEwsX509KeyManager((X509KeyManager) keyManager);
+			if (keyManager instanceof X509KeyManager x509KeyManager) {
+				keyManagers[i] = new MosTechEwsX509KeyManager(x509KeyManager);
 			}
 		}
 

@@ -432,8 +432,8 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 					for (TagNode script : scriptList) {
 						List<? extends BaseToken> contents = script.getAllChildren();
 						for (Object content : contents) {
-							if (content instanceof CommentNode) {
-								String scriptValue = ((CommentNode) content).getCommentedContent();
+							if (content instanceof CommentNode commentNode) {
+								String scriptValue = commentNode.getCommentedContent();
 								String sUrl = StringUtil.getToken(scriptValue, "var a_sUrl = \"", "\"");
 								String sLgn = StringUtil.getToken(scriptValue, "var a_sLgnQS = \"", "\"");
 								if (sLgn == null) {
@@ -447,9 +447,9 @@ public class ExchangeFormAuthenticator implements ExchangeAuthenticator {
 								}
 
 							}
-							else if (content instanceof ContentNode) {
+							else if (content instanceof ContentNode contentNode) {
 								// Microsoft Forefront Unified Access Gateway redirect
-								String scriptValue = ((ContentNode) content).getContent();
+								String scriptValue = contentNode.getContent();
 								String location = StringUtil.getToken(scriptValue, "window.location.replace(\"", "\"");
 								if (location != null) {
 									log.debug("Post logon redirect to: " + location);

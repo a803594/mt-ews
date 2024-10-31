@@ -105,11 +105,10 @@ public class MosTechEwsSPNegoScheme extends SPNegoScheme {
 
 			Object result = internalGenerateGSSToken(input, oid, authServer, credentials);
 
-			if (result instanceof GSSException) {
-				log.info("KerberosHelper.initSecurityContext exception code " + ((GSSException) result).getMajor()
-						+ " minor code " + ((GSSException) result).getMinor() + " message "
-						+ ((Throwable) result).getMessage());
-				throw (GSSException) result;
+			if (result instanceof GSSException exception) {
+				log.info("KerberosHelper.initSecurityContext exception code " + exception.getMajor() + " minor code "
+						+ exception.getMinor() + " message " + ((Throwable) result).getMessage());
+				throw exception;
 			}
 
 			log.debug("KerberosHelper.initSecurityContext return " + ((byte[]) result).length + " bytes token");

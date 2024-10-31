@@ -16,6 +16,9 @@ import java.util.zip.ZipOutputStream;
 @Slf4j
 public class ZipUtil {
 
+	private ZipUtil() {
+	}
+
 	public static void zipFolder(Path source, OutputStream os) throws IOException {
 		try (ZipOutputStream zos = new ZipOutputStream(os)) {
 			Files.walkFileTree(source, new SimpleFileVisitor<>() {

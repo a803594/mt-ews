@@ -31,8 +31,8 @@ public class BundleMessage implements Serializable {
 
 	/**
 	 * Сообщение интернационализации.
-	 * @param ключ ключ сообщения в ресурсном пакете
-	 * @param аргументы значения сообщения
+	 * @param key ключ сообщения в ресурсном пакете
+	 * @param arguments значения сообщения
 	 */
 	public BundleMessage(String key, Object... arguments) {
 		this.key = key;
@@ -114,21 +114,21 @@ public class BundleMessage implements Serializable {
 		if (arguments != null) {
 			formattedArguments = new Object[arguments.length];
 			for (int i = 0; i < arguments.length; i++) {
-				if (arguments[i] instanceof BundleMessage) {
-					formattedArguments[i] = ((BundleMessage) arguments[i]).format(locale);
+				if (arguments[i] instanceof BundleMessage argument) {
+					formattedArguments[i] = argument.format(locale);
 				}
-				else if (arguments[i] instanceof BundleMessageList) {
+				else if (arguments[i] instanceof BundleMessageList argument) {
 					StringBuilder buffer = new StringBuilder();
-					for (BundleMessage bundleMessage : (BundleMessageList) arguments[i]) {
+					for (BundleMessage bundleMessage : argument) {
 						buffer.append(bundleMessage.format(locale));
 					}
 					formattedArguments[i] = buffer.toString();
 				}
-				else if (arguments[i] instanceof MosTechEwsException) {
-					formattedArguments[i] = ((MosTechEwsException) arguments[i]).getMessage(locale);
+				else if (arguments[i] instanceof MosTechEwsException argument) {
+					formattedArguments[i] = argument.getMessage(locale);
 				}
-				else if (arguments[i] instanceof Throwable) {
-					formattedArguments[i] = ((Throwable) arguments[i]).getMessage();
+				else if (arguments[i] instanceof Throwable argument) {
+					formattedArguments[i] = argument.getMessage();
 					if (formattedArguments[i] == null) {
 						formattedArguments[i] = arguments[i].toString();
 					}
@@ -187,8 +187,8 @@ public class BundleMessage implements Serializable {
 		if (message != null) {
 			buffer.append(message.format(locale)).append(' ');
 		}
-		if (e instanceof MosTechEwsException) {
-			buffer.append(((MosTechEwsException) e).getMessage(locale));
+		if (e instanceof MosTechEwsException exception) {
+			buffer.append(exception.getMessage(locale));
 		}
 		else if (e.getMessage() != null) {
 			buffer.append(e.getMessage());

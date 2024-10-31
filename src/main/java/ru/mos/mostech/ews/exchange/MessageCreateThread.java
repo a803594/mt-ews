@@ -43,6 +43,7 @@ public class MessageCreateThread extends Thread {
 		this.mimeMessage = mimeMessage;
 	}
 
+	@Override
 	public void run() {
 		try {
 			this.message = session.createMessage(folderPath, messageName, properties, mimeMessage);

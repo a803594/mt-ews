@@ -812,12 +812,12 @@ public class VCalendar extends VObject {
 								|| (property.hasParam("RSVP", "TRUE")) || (
 								// workaround for iCal bug: do not notify if reply
 								// explicitly not requested
-								!(property.hasParam("RSVP", "FALSE")) && ((property.hasParam("PARTSTAT", "NEEDS-ACTION")
+								!(property.hasParam("RSVP", "FALSE")) && (property.hasParam("PARTSTAT", "NEEDS-ACTION")
 										// need to include other PARTSTATs participants
 										// for CANCEL notifications
 										|| property.hasParam("PARTSTAT", "ACCEPTED")
 										|| property.hasParam("PARTSTAT", "DECLINED")
-										|| property.hasParam("PARTSTAT", "TENTATIVE")))))) {
+										|| property.hasParam("PARTSTAT", "TENTATIVE"))))) {
 					if (property.hasParam("ROLE", "OPT-PARTICIPANT")) {
 						optionalAttendees.add(attendeeEmail);
 					}

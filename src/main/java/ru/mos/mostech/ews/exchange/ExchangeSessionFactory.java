@@ -57,9 +57,8 @@ public final class ExchangeSessionFactory {
 
 		@Override
 		public boolean equals(Object object) {
-			return object == this || object instanceof PoolKey && ((PoolKey) object).url.equals(this.url)
-					&& ((PoolKey) object).userName.equals(this.userName)
-					&& ((PoolKey) object).password.equals(this.password);
+			return object == this || object instanceof PoolKey poolKey && poolKey.url.equals(this.url)
+					&& poolKey.userName.equals(this.userName) && poolKey.password.equals(this.password);
 		}
 
 		@Override
@@ -266,9 +265,9 @@ public final class ExchangeSessionFactory {
 	/**
 	 * Получить не истекшую сессию. Если текущая сессия не истекла, вернуть текущую
 	 * сессию, в противном случае попытаться создать новую сессию
-	 * @param текущаяСессия текущая сессия
-	 * @param имяПользователя имя пользователя
-	 * @param пароль пароль пользователя
+	 * @param currentSession текущая сессия
+	 * @param userName имя пользователя
+	 * @param password пароль пользователя
 	 * @return аутентифицированная сессия
 	 * @throws IOException при ошибке
 	 */

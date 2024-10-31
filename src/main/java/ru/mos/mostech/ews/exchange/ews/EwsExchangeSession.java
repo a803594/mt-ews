@@ -66,10 +66,6 @@ public class EwsExchangeSession extends ExchangeSession {
 		MESSAGE_TYPES.add("PostItem");
 
 		// exclude types from IMAP
-		// MESSAGE_TYPES.add("Contact");
-		// MESSAGE_TYPES.add("DistributionList");
-		// MESSAGE_TYPES.add("Task");
-
 		// ReplyToItem
 		// ForwardItem
 		// ReplyAllToItem
@@ -90,13 +86,11 @@ public class EwsExchangeSession extends ExchangeSession {
 	static final Map<String, String> statusToBusyStatusMap = new HashMap<>();
 
 	static {
-		// taskTovTodoStatusMap.put("NotStarted", null);
 		taskTovTodoStatusMap.put("InProgress", "IN-PROCESS");
 		taskTovTodoStatusMap.put("Completed", "COMPLETED");
 		taskTovTodoStatusMap.put("WaitingOnOthers", "NEEDS-ACTION");
 		taskTovTodoStatusMap.put("Deferred", "CANCELLED");
 
-		// vTodoToTaskStatusMap.put(null, "NotStarted");
 		vTodoToTaskStatusMap.put("IN-PROCESS", "InProgress");
 		vTodoToTaskStatusMap.put("COMPLETED", "Completed");
 		vTodoToTaskStatusMap.put("NEEDS-ACTION", "WaitingOnOthers");
@@ -830,11 +824,11 @@ public class EwsExchangeSession extends ExchangeSession {
 			}
 			buffer.append("<t:Constant Value=\"");
 			// encode urlcompname
-			if (fieldURI instanceof ExtendedFieldURI && "0x10f3".equals(((ExtendedFieldURI) fieldURI).propertyTag)) {
+			if (fieldURI instanceof ExtendedFieldURI uri && "0x10f3".equals(uri.propertyTag)) {
 				buffer.append(StringUtil.xmlEncodeAttribute(StringUtil.encodeUrlcompname(value)));
 			}
-			else if (fieldURI instanceof ExtendedFieldURI
-					&& ((ExtendedFieldURI) fieldURI).propertyType == ExtendedFieldURI.PropertyType.Integer) {
+			else if (fieldURI instanceof ExtendedFieldURI uri
+					&& uri.propertyType == ExtendedFieldURI.PropertyType.Integer) {
 				// check value
 				try {
 					Integer.parseInt(value);
@@ -1899,9 +1893,6 @@ public class EwsExchangeSession extends ExchangeSession {
 					updates.add(Field.createFieldUpdate("taskstatus", vTodoToTaskStatusMap.get(vTodoStatus)));
 				}
 
-				// updates.add(Field.createFieldUpdate("iscomplete",
-				// "COMPLETED".equals(vTodoStatus)?"True":"False"));
-
 				if (currentItemId != null) {
 					// update
 					createOrUpdateItemMethod = new UpdateItemMethod(MessageDisposition.SaveOnly,
@@ -1971,8 +1962,6 @@ public class EwsExchangeSession extends ExchangeSession {
 					if (!vCalendar.hasVAlarm()) {
 						updates.add(Field.createFieldUpdate("reminderset", "false"));
 					}
-					// updates.add(Field.createFieldUpdate("outlookmessageclass",
-					// "IPM.Appointment"));
 					// force urlcompname
 					updates.add(Field.createFieldUpdate("urlcompname", convertItemNameToEML(itemName)));
 					if (vCalendar.isMeeting()) {
@@ -2042,10 +2031,10 @@ public class EwsExchangeSession extends ExchangeSession {
 							}
 						}
 
-						if (requiredAttendees.size() > 0) {
+						if (!requiredAttendees.isEmpty()) {
 							updates.add(Field.createFieldUpdate("to", StringUtil.join(requiredAttendees, ", ")));
 						}
-						if (optionalAttendees.size() > 0) {
+						if (!optionalAttendees.isEmpty()) {
 							updates.add(Field.createFieldUpdate("cc", StringUtil.join(optionalAttendees, ", ")));
 						}
 					}
@@ -2313,7 +2302,6 @@ public class EwsExchangeSession extends ExchangeSession {
 					localVCalendar.setFirstVeventPropertyValue("X-MOZ-SNOOZE-TIME",
 							getItemMethod.getResponseItem().get(Field.get("xmozsnoozetime").getResponseName()));
 					// overwrite method
-					// localVCalendar.setPropertyValue("METHOD", "REQUEST");
 					content = localVCalendar.toString().getBytes(StandardCharsets.UTF_8);
 				}
 			}
@@ -2338,7 +2326,6 @@ public class EwsExchangeSession extends ExchangeSession {
 						else {
 							attendeeProperty.addParam("PARTSTAT", attendee.partstat);
 						}
-						// attendeeProperty.addParam("RSVP", "TRUE");
 						attendeeProperty.addParam("ROLE", attendee.role);
 						vEvent.addProperty(attendeeProperty);
 					}

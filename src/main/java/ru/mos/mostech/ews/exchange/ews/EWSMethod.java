@@ -865,7 +865,7 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 		if (event == XMLStreamConstants.START_ELEMENT && localName.equals(reader.getLocalName())) {
 			result = new StringBuilder();
 			while (reader.hasNext()
-					&& !((event == XMLStreamConstants.END_ELEMENT && localName.equals(reader.getLocalName())))) {
+					&& !(event == XMLStreamConstants.END_ELEMENT && localName.equals(reader.getLocalName()))) {
 				event = reader.next();
 				if (event == XMLStreamConstants.CHARACTERS) {
 					result.append(reader.getText());
@@ -1182,7 +1182,7 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 
 	protected String getTagContent(XMLStreamReader reader) throws XMLStreamException {
 		String tagLocalName = reader.getLocalName();
-		while (reader.hasNext() && !(reader.getEventType() == XMLStreamConstants.END_ELEMENT)) {
+		while (reader.hasNext() && (reader.getEventType() != XMLStreamConstants.END_ELEMENT)) {
 			reader.next();
 			if (reader.getEventType() == XMLStreamConstants.CHARACTERS) {
 				return reader.getText();
@@ -1244,10 +1244,6 @@ public abstract class EWSMethod extends HttpPost implements ResponseHandler<EWSM
 								EWSMethod.this.getURI()));
 						lastLogCount = totalCount;
 					}
-					/*
-					 * если (count > 0 && log.isDebugEnabled()) { log.debug(new
-					 * String(buffer, offset, count, "UTF-8")); }
-					 */
 					return count;
 				}
 			};

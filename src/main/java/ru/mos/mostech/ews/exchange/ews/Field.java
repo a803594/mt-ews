@@ -38,10 +38,6 @@ public final class Field {
 		FIELD_MAP.put("permanenturl", new ExtendedFieldURI(0x670E, ExtendedFieldURI.PropertyType.String)); // PR_FLAT_URL_NAME
 		FIELD_MAP.put("instancetype", new ExtendedFieldURI(ExtendedFieldURI.DistinguishedPropertySetType.PublicStrings,
 				"urn:schemas:calendar:instancetype", ExtendedFieldURI.PropertyType.Integer));
-		// FIELD_MAP.put("dtstart", new ExtendedFieldURI(0x10C3,
-		// ExtendedFieldURI.PropertyType.SystemTime));
-		// FIELD_MAP.put("dtend", new ExtendedFieldURI(0x10C4,
-		// ExtendedFieldURI.PropertyType.SystemTime));
 		FIELD_MAP.put("dtstart", new UnindexedFieldURI("calendar:Start"));
 		FIELD_MAP.put("dtend", new UnindexedFieldURI("calendar:End"));
 
@@ -103,9 +99,6 @@ public final class Field {
 		FIELD_MAP.put("subject", new ExtendedFieldURI(0x0037, ExtendedFieldURI.PropertyType.String));
 
 		FIELD_MAP.put("middlename", new ExtendedFieldURI(0x3A44, ExtendedFieldURI.PropertyType.String));
-		// FIELD_MAP.put("fileas", new
-		// ExtendedFieldURI(ExtendedFieldURI.DistinguishedPropertySetType.PublicStrings,
-		// "urn:schemas:contacts:fileas"));
 		FIELD_MAP.put("fileas", new UnindexedFieldURI("contacts:FileAs"));
 
 		FIELD_MAP.put("members", new UnindexedFieldURI("distributionlist:Members"));
@@ -252,9 +245,6 @@ public final class Field {
 		FIELD_MAP.put("isalldayevent", new UnindexedFieldURI("calendar:IsAllDayEvent"));
 		FIELD_MAP.put("myresponsetype", new UnindexedFieldURI("calendar:MyResponseType"));
 
-		// does not work with Office 365, see
-		// https://msdn.microsoft.com/en-us/library/office/bb204271(v=exchg.150).aspx
-		// FIELD_MAP.put("isrecurring", new UnindexedFieldURI("calendar:IsRecurring"));
 		FIELD_MAP.put("isrecurring", new ExtendedFieldURI(ExtendedFieldURI.DistinguishedPropertySetType.Appointment,
 				0x8223, ExtendedFieldURI.PropertyType.Boolean)); // PidLidRecurring
 

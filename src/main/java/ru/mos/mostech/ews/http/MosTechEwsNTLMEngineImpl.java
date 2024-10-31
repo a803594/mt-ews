@@ -171,8 +171,6 @@ final class MosTechEwsNTLMEngineImpl implements NTLMEngine {
 	 * @return String сообщение для добавления в заголовок HTTP-запроса.
 	 */
 	static String getType1Message(final String host, final String domain) {
-		// For compatibility reason do not include domain and host in type 1 message
-		// return new Type1Message(domain, host).getResponse();
 		return TYPE_1_MESSAGE;
 	}
 

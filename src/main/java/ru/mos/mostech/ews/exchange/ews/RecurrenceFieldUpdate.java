@@ -109,6 +109,7 @@ public class RecurrenceFieldUpdate extends FieldUpdate {
 	 * @param writer писатель запроса
 	 * @throws IOException при ошибке
 	 */
+	@Override
 	public void write(String itemType, Writer writer) throws IOException {
 		if (itemType != null) {
 			writer.write("<t:Set");

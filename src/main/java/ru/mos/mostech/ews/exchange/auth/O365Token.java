@@ -131,8 +131,6 @@ public class O365Token {
 			log.debug("Access token expires soon, trying to refresh it");
 			refreshToken();
 		}
-		// log.debug("Access token for " + username + " expires in " + (expiresOn -
-		// System.currentTimeMillis()) / 60000 + " minutes");
 		return accessToken;
 	}
 

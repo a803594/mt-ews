@@ -4,7 +4,6 @@
 
 package ru.mos.mostech.ews.ldap;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -215,11 +214,6 @@ public final class BerEncoder extends Ber {
 	// encodes an int using numbytes for the actual encoding.
 	//
 	private void encodeInt(int i, int tag, int intsize) {
-
-		//
-		// integer ::= 0x02 asnlength byte {byte}*
-		//
-
 		if (intsize > 4) {
 			throw new IllegalArgumentException("BER encode error: INTEGER too long.");
 		}
@@ -290,13 +284,8 @@ public final class BerEncoder extends Ber {
 			count = bytes.length;
 		}
 		else {
-			try {
-				bytes = str.getBytes("8859_1");
-				count = bytes.length;
-			}
-			catch (UnsupportedEncodingException e) {
-				throw new EncodeException("8859_1 not available on platform");
-			}
+			bytes = str.getBytes(StandardCharsets.ISO_8859_1);
+			count = bytes.length;
 		}
 
 		encodeLength(count);
