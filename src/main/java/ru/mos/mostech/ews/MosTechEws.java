@@ -41,23 +41,15 @@ public final class MosTechEws {
 	 * @param args параметр командной строки путь к файлу конфигурации
 	 */
 	public static void main(String[] args) throws IOException {
-		boolean notray = false;
-		boolean server = false;
+        boolean server = false;
 		boolean token = false;
 		for (String arg : args) {
 			if (arg.startsWith("-")) {
-				if ("-notray".equals(arg)) {
-					notray = true;
-				}
-				else if ("-server".equals(arg)) {
-					server = true;
-				}
-				else if ("-token".equals(arg)) {
-					token = true;
-				}
-				else if ("-useconfig".equals(arg)) {
-					Settings.setUserConfig(true);
-				}
+                switch (arg) {
+                    case "-server" -> server = true;
+                    case "-token" -> token = true;
+                    case "-useconfig" -> Settings.setUserConfig(true);
+                }
 			}
 			else {
 				Settings.setConfigFilePath(arg);
@@ -195,16 +187,6 @@ public final class MosTechEws {
 		log.info("{}", new BundleMessage("LOG_GATEWAY_STOP"));
 	}
 
-	/**
-	 * Остановить все слушатели и очистить кэш сессии.
-	 */
-	public static void restart() {
-		MosTechEws.stopServers();
-		// clear session cache
-		ExchangeSessionFactory.shutdown();
-		MosTechEws.start();
-	}
-
 	private static void stopServers() {
 		for (AbstractServer server : SERVER_LIST) {
 			server.close();
@@ -237,6 +219,7 @@ public final class MosTechEws {
 				: "Приложение закрывается";
 		log.info(message);
 		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.schedule(() -> System.exit(exitStatus), milliseconds, TimeUnit.MILLISECONDS);
+		scheduler.schedule(() -> Runtime.getRuntime().halt(exitStatus), milliseconds, TimeUnit.MILLISECONDS);
 	}
+
 }
