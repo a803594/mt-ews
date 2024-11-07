@@ -4,6 +4,8 @@ DIT
 
 package ru.mos.mostech.ews.exchange.auth;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import ru.mos.mostech.ews.BundleMessage;
@@ -35,31 +37,19 @@ public class O365ManualAuthenticator implements ExchangeAuthenticator {
 
 	private O365ManualAuthenticatorDialog o365ManualAuthenticatorDialog;
 
+	@Getter
+	@Setter
 	private String username;
 
+	@Setter
 	private String password;
 
+	@Getter
 	private O365Token token;
-
-	public O365Token getToken() {
-		return token;
-	}
 
 	@Override
 	public URI getExchangeUri() {
 		return ewsUrl;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	/**
@@ -128,14 +118,14 @@ public class O365ManualAuthenticator implements ExchangeAuthenticator {
 			.append("\n")
 			.append(BundleMessage.format("UI_0365_AUTHENTICATION_CODE"));
 		try {
-			System.out.print(buffer.toString());
+			log.info(buffer.toString());
 			code = inReader.readLine();
 			if (code != null && code.contains("code=") && code.contains("&session_state=")) {
 				code = code.substring(code.indexOf("code=") + 5, code.indexOf("&session_state="));
 			}
 		}
 		catch (IOException e) {
-			System.err.println(e + " " + e.getMessage());
+			log.error(e.getMessage(), e);
 		}
 		return code;
 	}
@@ -144,7 +134,6 @@ public class O365ManualAuthenticator implements ExchangeAuthenticator {
 		try {
 			Settings.setDefaultSettings();
 			Settings.setProperty("mt.ews.server", "false");
-			// Settings.setLoggingLevel("httpclient.wire", Level.DEBUG);
 
 			O365ManualAuthenticator authenticator = new O365ManualAuthenticator();
 			authenticator.setUsername("");
@@ -160,7 +149,7 @@ public class O365ManualAuthenticator implements ExchangeAuthenticator {
 				checkMethod.handleResponse(response);
 				checkMethod.checkSuccess();
 			}
-			System.out.println("Retrieved folder id " + checkMethod.getResponseItem().get("FolderId"));
+			log.info("Retrieved folder id {}", checkMethod.getResponseItem().get("FolderId"));
 
 			// loop to check expiration
 			int i = 0;
@@ -173,7 +162,7 @@ public class O365ManualAuthenticator implements ExchangeAuthenticator {
 
 					checkMethod.checkSuccess();
 				}
-				System.out.println(getUserConfigurationMethod.getResponseItem());
+				log.info(getUserConfigurationMethod.getResponseItem().toString());
 
 				Thread.sleep(5000);
 			}

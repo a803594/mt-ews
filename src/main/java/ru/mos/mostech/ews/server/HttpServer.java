@@ -5,7 +5,9 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jettison.json.JSONObject;
+import ru.mos.mostech.ews.EwsErrorHolder;
 import ru.mos.mostech.ews.Settings;
+import ru.mos.mostech.ews.SettingsKey;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsParams;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsResults;
@@ -28,9 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.time.Duration;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -67,6 +67,7 @@ public class HttpServer {
 		server.createContext("/pst-eml-file", new MdcHttpHandler(new PstEmlFileHandler()));
 		server.createContext("/autodiscovery", new MdcHttpHandler(new AutoDiscoveryHandler()));
 		server.createContext("/ews-settings", new MdcHttpHandler(new EwsSettingsHandler()));
+		server.createContext("/ews-status", new MdcHttpHandler(new EwsStatusHandler()));
 		server.createContext("/ews-logs", new MdcHttpHandler(new EwsLogsHandler()));
 
 		// Запускаем сервер
@@ -254,8 +255,8 @@ public class HttpServer {
 
 		private void response200Isp(ResolveEwsResults results, HttpExchange exchange) throws IOException {
 			String response = IspResponse.build(results.getDomain(), results.getUser(),
-					Settings.getIntProperty("mt.ews.imapPort"), Settings.getIntProperty("mt.ews.smtpPort"),
-					Settings.getIntProperty("mt.ews.caldavPort"), Settings.isSecure());
+					Settings.getIntProperty(SettingsKey.IMAP_PORT), Settings.getIntProperty(SettingsKey.SMTP_PORT),
+					Settings.getIntProperty(SettingsKey.CALDAV_PORT), Settings.isSecure());
 			log.info(response);
 			sendResponse(exchange, 200, response, APPLICATION_XML_CHARSET_UTF_8);
 		}
@@ -265,9 +266,9 @@ public class HttpServer {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("domain", results.getDomain());
 			jsonObject.put("user", results.getUser());
-			jsonObject.put("imapPort", Settings.getIntProperty("mt.ews.imapPort"));
-			jsonObject.put("smtpPort", Settings.getIntProperty("mt.ews.smtpPort"));
-			jsonObject.put("caldavPort", Settings.getIntProperty("mt.ews.caldavPort"));
+			jsonObject.put("imapPort", Settings.getIntProperty(SettingsKey.IMAP_PORT));
+			jsonObject.put("smtpPort", Settings.getIntProperty(SettingsKey.SMTP_PORT));
+			jsonObject.put("caldavPort", Settings.getIntProperty(SettingsKey.CALDAV_PORT));
 			jsonObject.put("isSecure", Settings.isSecure());
 			String response = jsonObject.toString();
 			sendResponse(exchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
@@ -282,7 +283,9 @@ public class HttpServer {
 		public void handle(HttpExchange exchange) throws IOException {
 			try {
 				JSONObject jsonObject = new JSONObject();
-				for (String[] setting : Settings.getAll()) {
+				List<String[]> allSettings = Settings.getAll();
+				List<String[]> filteredSettings = filterSettings(allSettings);
+				for (String[] setting : filteredSettings) {
 					jsonObject.put(setting[0], setting[1]);
 				}
 				String response = jsonObject.toString();
@@ -294,6 +297,39 @@ public class HttpServer {
 				jsonObject.put(ERROR_FIELD, e.getMessage());
 				String response = jsonObject.toString();
 				sendResponse(exchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
+			}
+		}
+
+		private List<String[]> filterSettings(List<String[]> settings) {
+			Set<String> allowedSettings = Set.of(SettingsKey.HTTP_PORT, SettingsKey.IMAP_PORT, SettingsKey.SMTP_PORT,
+					SettingsKey.CALDAV_PORT, SettingsKey.LDAP_PORT);
+			return settings.stream().filter(s -> allowedSettings.contains(s[0])).toList();
+		}
+
+	}
+
+	static class EwsStatusHandler implements HttpHandler {
+
+		@SneakyThrows
+		@Override
+		public void handle(HttpExchange httpExchange) throws IOException {
+			try {
+				JSONObject jsonObject = new JSONObject();
+				if (EwsErrorHolder.hasErrors()) {
+					jsonObject.put("errors", EwsErrorHolder.getErrors());
+				}
+				else {
+					jsonObject.put("status", "ok");
+				}
+				String response = jsonObject.toString();
+				sendResponse(httpExchange, 200, response, APPLICATION_JSON_CHARSET_UTF_8);
+			}
+			catch (Exception e) {
+				log.error(e.getMessage(), e);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put(ERROR_FIELD, e.getMessage());
+				String response = jsonObject.toString();
+				sendResponse(httpExchange, 500, response, APPLICATION_JSON_CHARSET_UTF_8);
 			}
 		}
 

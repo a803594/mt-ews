@@ -17,6 +17,9 @@ import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Основной класс DavGateway
@@ -152,6 +155,7 @@ public final class MosTechEws {
 			SERVER_LIST.add(new LdapServer(ldapPort));
 		}
 
+		boolean waitForExit = false;
 		for (AbstractServer server : SERVER_LIST) {
 			try {
 				server.bind();
@@ -162,8 +166,12 @@ public final class MosTechEws {
 								Settings.getProperty("mt.ews.bindAddress")));
 			}
 			catch (MosTechEwsException e) {
+				EwsErrorHolder.addError(e.getMessage());
 				log.error("Ошибка при запуске приложения", e);
-				System.exit(98);
+				if (!waitForExit) {
+					waitForExit = true;
+					exitAfterTimeout(Settings.getIntProperty("mt.ews.exitTimeout"), 98);
+				}
 			}
 		}
 
@@ -224,4 +232,11 @@ public final class MosTechEws {
 		return currentVersion;
 	}
 
+	private static void exitAfterTimeout(long milliseconds, int exitStatus) {
+		String message = milliseconds != 0 ? "Приложение будет закрыто через " + milliseconds / 1000 + " секунд"
+				: "Приложение закрывается";
+		log.info(message);
+		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+		scheduler.schedule(() -> System.exit(exitStatus), milliseconds, TimeUnit.MILLISECONDS);
+	}
 }

@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.apache.http.util.TextUtils.isEmpty;
 
@@ -59,8 +58,6 @@ public final class Settings {
 
 	private static volatile String configFilePath;
 
-	private static volatile boolean isFirstStart;
-
 	private static final String USER_HOME = "user.home";
 
 	private Settings() {
@@ -98,14 +95,6 @@ public final class Settings {
 	}
 
 	/**
-	 * Обнаружить первый запуск (файл свойств не существует).
-	 * @return true, если это первый старт с текущим путем файла
-	 */
-	public static synchronized boolean isFirstStart() {
-		return isFirstStart;
-	}
-
-	/**
 	 * Загрузить свойства из предоставленного потока (используется в веб-приложении).
 	 * @param inputStream поток свойств
 	 * @throws IOException в случае ошибки
@@ -130,7 +119,6 @@ public final class Settings {
 				}
 			}
 			else {
-				isFirstStart = true;
 
 				// first start : set default values, ports above 1024 for unix/linux
 				setDefaultSettings();
@@ -150,11 +138,11 @@ public final class Settings {
 		SETTINGS_PROPERTIES.put("mt.ews.url", "https://owa.mos.ru/EWS/Exchange.asmx");
 
 		// in use
-		SETTINGS_PROPERTIES.put("mt.ews.httpPort", "51081");
-		SETTINGS_PROPERTIES.put("mt.ews.imapPort", "51143");
-		SETTINGS_PROPERTIES.put("mt.ews.smtpPort", "51025");
-		SETTINGS_PROPERTIES.put("mt.ews.caldavPort", "51080");
-		SETTINGS_PROPERTIES.put("mt.ews.ldapPort", "51389");
+		SETTINGS_PROPERTIES.put(SettingsKey.HTTP_PORT, "51081");
+		SETTINGS_PROPERTIES.put(SettingsKey.IMAP_PORT, "51143");
+		SETTINGS_PROPERTIES.put(SettingsKey.SMTP_PORT, "51025");
+		SETTINGS_PROPERTIES.put(SettingsKey.CALDAV_PORT, "51080");
+		SETTINGS_PROPERTIES.put(SettingsKey.LDAP_PORT, "51389");
 		// end
 
 		SETTINGS_PROPERTIES.put("mt.ews.popPort", "1110");
@@ -216,6 +204,8 @@ public final class Settings {
 		SETTINGS_PROPERTIES.put("slf4j.logger.httpclient.wire", Level.WARN.toString());
 		SETTINGS_PROPERTIES.put("slf4j.logger.httpclient", Level.WARN.toString());
 		SETTINGS_PROPERTIES.put("mt.ews.logFilePath", "");
+
+		SETTINGS_PROPERTIES.put("mt.ews.exitTimeout", "60000"); // Миллисекунды
 	}
 
 	/**
@@ -558,15 +548,6 @@ public final class Settings {
 	}
 
 	/**
-	 * Вернуть уровень ведения журнала Log4J для категории.
-	 * @param category категория ведения журнала
-	 * @return уровень ведения журнала
-	 */
-	public static synchronized Level getLoggingLevel(String category) {
-		return Level.DEBUG;
-	}
-
-	/**
 	 * Получить все свойства, которые находятся в указанной области, то есть начинаются с
 	 * '&lt;scope&gt;.'.
 	 * @param scope начало имени свойства
@@ -592,15 +573,6 @@ public final class Settings {
 			}
 		}
 		return result;
-	}
-
-	/**
-	 * Установить уровень логирования Log4J для категории
-	 * @param category категория логирования
-	 * @param level уровень логирования
-	 */
-	public static synchronized void setLoggingLevel(String category, Level level) {
-
 	}
 
 	/**
@@ -675,10 +647,6 @@ public final class Settings {
 			}
 		}
 		return list;
-	}
-
-	public static String printAll() {
-		return getAll().stream().map(it -> String.format("%s = '%s'", it[0], it[1])).collect(Collectors.joining("\n"));
 	}
 
 	public static void setSecure(boolean value) {
