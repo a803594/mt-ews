@@ -6,7 +6,7 @@
     </root>
 
     <!-- Установите уровень логирования для конкретного пакета или класса -->
-    <logger name="ru" level="DEBUG">
+    <logger name="ru" level="INFO">
         <appender-ref ref="SIFT" />
     </logger>
 
