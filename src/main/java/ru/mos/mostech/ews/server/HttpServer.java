@@ -12,6 +12,8 @@ import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsParams;
 import ru.mos.mostech.ews.autodiscovery.AutoDiscoveryFacade.ResolveEwsResults;
 import ru.mos.mostech.ews.pst.PstConverter;
+import ru.mos.mostech.ews.server.handler.extension.EwsExtensionDownloadHandler;
+import ru.mos.mostech.ews.server.handler.extension.EwsExtensionUpdateHandler;
 import ru.mos.mostech.ews.util.IOUtil;
 import ru.mos.mostech.ews.util.KeysUtils;
 import ru.mos.mostech.ews.util.MdcUserPathUtils;
@@ -50,7 +52,9 @@ public class HttpServer {
 
 	public static final String APPLICATION_ZIP = "application/zip";
 
-	private static final String ERROR_FIELD = "error";
+	public static final String APPLICATION_XPINSTALL = "application/x-xpinstall";
+
+	public static final String ERROR_FIELD = "error";
 
 	private static final AtomicReference<com.sun.net.httpserver.HttpServer> SERVER = new AtomicReference<>();
 
@@ -69,6 +73,8 @@ public class HttpServer {
 		server.createContext("/ews-settings", new MdcHttpHandler(new EwsSettingsHandler()));
 		server.createContext("/ews-status", new MdcHttpHandler(new EwsStatusHandler()));
 		server.createContext("/ews-logs", new MdcHttpHandler(new EwsLogsHandler()));
+		server.createContext("/ews-extension-updates", new MdcHttpHandler(new EwsExtensionUpdateHandler()));
+		server.createContext("/ews-extension-download", new MdcHttpHandler(new EwsExtensionDownloadHandler()));
 
 		// Запускаем сервер
 		SERVER.set(server);
@@ -383,7 +389,7 @@ public class HttpServer {
 		}
 	}
 
-	private static void sendResponse(HttpExchange exchange, int status, String response, String contentType)
+	public static void sendResponse(HttpExchange exchange, int status, String response, String contentType)
 			throws IOException {
 		exchange.getResponseHeaders().add(CONTENT_TYPE, contentType);
 		exchange.getResponseHeaders().add(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
