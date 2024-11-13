@@ -41,15 +41,15 @@ public final class MosTechEws {
 	 * @param args параметр командной строки путь к файлу конфигурации
 	 */
 	public static void main(String[] args) throws IOException {
-        boolean server = false;
+		boolean server = false;
 		boolean token = false;
 		for (String arg : args) {
 			if (arg.startsWith("-")) {
-                switch (arg) {
-                    case "-server" -> server = true;
-                    case "-token" -> token = true;
-                    case "-useconfig" -> Settings.setUserConfig(true);
-                }
+				switch (arg) {
+					case "-server" -> server = true;
+					case "-token" -> token = true;
+					case "-useconfig" -> Settings.setUserConfig(true);
+				}
 			}
 			else {
 				Settings.setConfigFilePath(arg);
@@ -69,7 +69,7 @@ public final class MosTechEws {
 			}
 			catch (IOException | ClassNotFoundException | NoSuchMethodException | InstantiationException
 					| IllegalAccessException | InvocationTargetException e) {
-				log.error(e + " " + e.getMessage());
+                log.error("{} {}", e, e.getMessage());
 			}
 			// force shutdown on Linux
 			System.exit(0);
@@ -162,7 +162,7 @@ public final class MosTechEws {
 				log.error("Ошибка при запуске приложения", e);
 				if (!waitForExit) {
 					waitForExit = true;
-					exitAfterTimeout(Settings.getIntProperty("mt.ews.exitTimeout"), 98);
+					exitAfterTimeout(Settings.getIntProperty("mt.ews.exitTimeout"));
 				}
 			}
 		}
@@ -214,12 +214,12 @@ public final class MosTechEws {
 		return currentVersion;
 	}
 
-	private static void exitAfterTimeout(long milliseconds, int exitStatus) {
+	private static void exitAfterTimeout(long milliseconds) {
 		String message = milliseconds != 0 ? "Приложение будет закрыто через " + milliseconds / 1000 + " секунд"
 				: "Приложение закрывается";
 		log.info(message);
 		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.schedule(() -> Runtime.getRuntime().halt(exitStatus), milliseconds, TimeUnit.MILLISECONDS);
+		scheduler.schedule(() -> Runtime.getRuntime().halt(98), milliseconds, TimeUnit.MILLISECONDS);
 	}
 
 }

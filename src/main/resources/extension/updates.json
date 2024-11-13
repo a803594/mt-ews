@@ -1,0 +1,12 @@
+{
+    "addons": {
+        "mt-ews-extension@mostech.mos.ru": {
+            "updates": [
+                {
+                    "version": "1.0",
+                    "update_link": "https://localhost:51081/ews-extension-download"
+                }
+            ]
+        }
+    }
+}
